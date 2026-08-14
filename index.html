@@ -152,7 +152,87 @@
     <button id="sendBtn" onclick="sendChatMessage()" class="bg-blue-600 hover:bg-blue-700 text-white px-3 py-2 rounded-lg text-xs font-semibold transition">Gửi</button>
   </div>
 </div>
+    // 1. URL Web App Google Apps Script (Hãy đảm bảo URL này đúng)
+const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbw8sj1kVGg5lfNYTO_xR7tOCEOaWMDzNHGIByW5XlYgrEZMWTAJRtplm4J0ZIjE-upz/exec";
+
+// 2. Hàm ẩn/mở cửa sổ chat
+function toggleChat() {
+    const chatWin = document.getElementById('chat-window');
+    if (chatWin) {
+        chatWin.classList.toggle('hidden');
+    }
+}
+
+// 3. Hàm gửi tin nhắn khi bấm nút Gửi hoặc phím Enter
+async function sendChatMessage() {
+    const input = document.getElementById('chatInput');
+    if (!input) return;
     
+    const question = input.value.trim();
+    if (!question) return;
+
+    // Hiển thị câu hỏi của người dùng
+    appendMessage('user', question);
+    input.value = '';
+
+    // Hiển thị thông báo đang xử lý
+    const loadingId = appendMessage('ai', 'Đang suy nghĩ và tra cứu văn bản...');
+
+    try {
+        const response = await fetch(`${WEB_APP_URL}?action=askAI&q=${encodeURIComponent(question)}`);
+        const data = await response.json();
+
+        removeMessage(loadingId);
+        if (data && data.answer) {
+            appendMessage('ai', data.answer);
+        } else {
+            appendMessage('ai', 'Không nhận được câu trả lời từ máy chủ AI.');
+        }
+    } catch (error) {
+        console.error("Lỗi Chatbot:", error);
+        removeMessage(loadingId);
+        appendMessage('ai', 'Có lỗi xảy ra khi kết nối máy chủ AI!');
+    }
+}
+
+// 4. Hàm bổ trợ hiển thị tin nhắn lên giao diện
+function appendMessage(sender, text) {
+    const chatBody = document.getElementById('chatMessages');
+    if (!chatBody) return null;
+
+    const msgDiv = document.createElement('div');
+    const msgId = 'msg-' + Date.now();
+    msgDiv.id = msgId;
+
+    if (sender === 'user') {
+        msgDiv.className = 'flex justify-end mb-3';
+        msgDiv.innerHTML = `<div class="bg-blue-600 text-white rounded-lg p-2.5 max-w-[85%] text-xs">${escapeHtml(text)}</div>`;
+    } else {
+        msgDiv.className = 'flex justify-start mb-3';
+        msgDiv.innerHTML = `<div class="bg-blue-100 text-blue-900 rounded-lg p-2.5 max-w-[85%] text-xs leading-relaxed">${escapeHtml(text)}</div>`;
+    }
+
+    chatBody.appendChild(msgDiv);
+    chatBody.scrollTop = chatBody.scrollHeight; // Tự động cuộn xuống tin nhắn mới
+    return msgId;
+}
+
+// 5. Hàm xóa tin nhắn chờ
+function removeMessage(msgId) {
+    const el = document.getElementById(msgId);
+    if (el) el.remove();
+}
+
+// 6. Hàm chống lỗi hiển thị ký tự đặc biệt
+function escapeHtml(text) {
+    return text
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+}
+
     <!-- ================= TOÀN BỘ CODE JAVASCRIPT ================= -->
     <script>
         // 1. THAY BẰNG LINK APPS SCRIPT VÀ GEMINI API KEY CỦA BẠN
@@ -461,83 +541,3 @@ async function sendChatMessage() {
     </script>
 </body>
 </html>
-// 1. URL Web App Google Apps Script (Hãy đảm bảo URL này đúng)
-const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbw8sj1kVGg5lfNYTO_xR7tOCEOaWMDzNHGIByW5XlYgrEZMWTAJRtplm4J0ZIjE-upz/exec";
-
-// 2. Hàm ẩn/mở cửa sổ chat
-function toggleChat() {
-    const chatWin = document.getElementById('chat-window');
-    if (chatWin) {
-        chatWin.classList.toggle('hidden');
-    }
-}
-
-// 3. Hàm gửi tin nhắn khi bấm nút Gửi hoặc phím Enter
-async function sendChatMessage() {
-    const input = document.getElementById('chatInput');
-    if (!input) return;
-    
-    const question = input.value.trim();
-    if (!question) return;
-
-    // Hiển thị câu hỏi của người dùng
-    appendMessage('user', question);
-    input.value = '';
-
-    // Hiển thị thông báo đang xử lý
-    const loadingId = appendMessage('ai', 'Đang suy nghĩ và tra cứu văn bản...');
-
-    try {
-        const response = await fetch(`${WEB_APP_URL}?action=askAI&q=${encodeURIComponent(question)}`);
-        const data = await response.json();
-
-        removeMessage(loadingId);
-        if (data && data.answer) {
-            appendMessage('ai', data.answer);
-        } else {
-            appendMessage('ai', 'Không nhận được câu trả lời từ máy chủ AI.');
-        }
-    } catch (error) {
-        console.error("Lỗi Chatbot:", error);
-        removeMessage(loadingId);
-        appendMessage('ai', 'Có lỗi xảy ra khi kết nối máy chủ AI!');
-    }
-}
-
-// 4. Hàm bổ trợ hiển thị tin nhắn lên giao diện
-function appendMessage(sender, text) {
-    const chatBody = document.getElementById('chatMessages');
-    if (!chatBody) return null;
-
-    const msgDiv = document.createElement('div');
-    const msgId = 'msg-' + Date.now();
-    msgDiv.id = msgId;
-
-    if (sender === 'user') {
-        msgDiv.className = 'flex justify-end mb-3';
-        msgDiv.innerHTML = `<div class="bg-blue-600 text-white rounded-lg p-2.5 max-w-[85%] text-xs">${escapeHtml(text)}</div>`;
-    } else {
-        msgDiv.className = 'flex justify-start mb-3';
-        msgDiv.innerHTML = `<div class="bg-blue-100 text-blue-900 rounded-lg p-2.5 max-w-[85%] text-xs leading-relaxed">${escapeHtml(text)}</div>`;
-    }
-
-    chatBody.appendChild(msgDiv);
-    chatBody.scrollTop = chatBody.scrollHeight; // Tự động cuộn xuống tin nhắn mới
-    return msgId;
-}
-
-// 5. Hàm xóa tin nhắn chờ
-function removeMessage(msgId) {
-    const el = document.getElementById(msgId);
-    if (el) el.remove();
-}
-
-// 6. Hàm chống lỗi hiển thị ký tự đặc biệt
-function escapeHtml(text) {
-    return text
-        .replace(/&/g, "&amp;")
-        .replace(/</g, "&lt;")
-        .replace(/>/g, "&gt;")
-        .replace(/"/g, "&quot;")
-        .replace(/'/g, "&#039;");
-}
