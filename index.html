@@ -9,58 +9,59 @@
 <body class="bg-slate-100 p-4 md:p-8 font-sans">
     <div class="max-w-5xl mx-auto bg-white p-6 rounded-xl shadow-lg">
         
-        <!-- HEADER -->
         <div class="border-b-2 border-blue-600 pb-4 mb-4 text-center">
-            <h1 id="uiSchoolName" class="text-xl md:text-2xl font-bold text-blue-800 uppercase">
-                Đang tải thông tin...
-            </h1>
+            <h1 id="uiSchoolName" class="text-xl md:text-2xl font-bold text-blue-800 uppercase">Đang tải...</h1>
             <p class="text-gray-600 text-sm mt-1">Hệ thống Quản lý Thành tích & Thi đua Đoàn viên</p>
         </div>
 
-        <!-- THÔNG BÁO -->
         <div id="uiAnnouncementBox" class="bg-amber-50 border-l-4 border-amber-500 p-3 mb-6 rounded hidden">
-            <p class="text-xs font-bold text-amber-800 uppercase">📢 Thông báo từ BCH Đoàn:</p>
+            <p class="text-xs font-bold text-amber-800 uppercase">📢 Thông báo:</p>
             <p id="uiAnnouncement" class="text-sm text-amber-900 mt-1"></p>
         </div>
 
         <!-- FORM NỘP MINH CHỨNG -->
         <div class="bg-blue-50 p-5 rounded-lg border border-blue-200 mb-8">
-            <h2 class="text-md font-bold text-blue-900 mb-4 flex items-center gap-2">
-                📝 NỘP MINH CHỨNG THÀNH TÍCH / HOẠT ĐỘNG
-            </h2>
+            <h2 class="text-md font-bold text-blue-900 mb-4">📝 NỘP MINH CHỨNG THÀNH TÍCH / HOẠT ĐỘNG</h2>
             <form id="uploadForm" class="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                    <label class="block text-xs font-semibold text-gray-700 uppercase mb-1">Mã Sinh Viên</label>
-                    <input type="text" id="studentId" required class="w-full p-2 border rounded-md outline-none">
+                    <label class="block text-xs font-semibold text-gray-700 uppercase mb-1">Mã Sinh Viên <span class="text-gray-400 font-normal">(Nếu có)</span></label>
+                    <input type="text" id="studentId" placeholder="Bỏ trống nếu chưa có mã" class="w-full p-2 border rounded-md outline-none bg-white">
                 </div>
                 <div>
-                    <label class="block text-xs font-semibold text-gray-700 uppercase mb-1">Họ và Tên Đoàn viên</label>
-                    <input type="text" id="studentName" required class="w-full p-2 border rounded-md outline-none">
+                    <label class="block text-xs font-semibold text-gray-700 uppercase mb-1">Họ và Tên Đoàn viên (*)</label>
+                    <input type="text" id="studentName" required class="w-full p-2 border rounded-md outline-none bg-white">
                 </div>
+
+                <!-- DROPDOWN CHỌN CHI ĐOÀN / LỚP -->
                 <div>
-                    <label class="block text-xs font-semibold text-gray-700 uppercase mb-1">Chi đoàn / Lớp</label>
-                    <input type="text" id="classId" placeholder="VD: CĐ CNTT K46" required class="w-full p-2 border rounded-md outline-none">
+                    <label class="block text-xs font-semibold text-gray-700 uppercase mb-1">Chi đoàn / Lớp (*)</label>
+                    <select id="classId" required class="w-full p-2 border rounded-md outline-none bg-white">
+                        <option value="">-- Chọn Chi đoàn / Lớp --</option>
+                    </select>
                 </div>
 
                 <!-- DROPDOWN CHỌN LIÊN CHI ĐOÀN -->
                 <div>
-                    <label class="block text-xs font-semibold text-gray-700 uppercase mb-1">Liên Chi Đoàn / Khoa</label>
+                    <label class="block text-xs font-semibold text-gray-700 uppercase mb-1">Liên Chi Đoàn / Khoa (*)</label>
                     <select id="facultyId" required class="w-full p-2 border rounded-md outline-none bg-white">
-                        <option value="">-- Đang tải danh sách Liên chi --</option>
+                        <option value="">-- Chọn Liên Chi Đoàn --</option>
                     </select>
                 </div>
 
                 <div class="md:col-span-2">
-                    <label class="block text-xs font-semibold text-gray-700 uppercase mb-1">Tên Thành tích / Hoạt động</label>
-                    <input type="text" id="title" required class="w-full p-2 border rounded-md outline-none">
+                    <label class="block text-xs font-semibold text-gray-700 uppercase mb-1">Tên Thành tích / Hoạt động (*)</label>
+                    <input type="text" id="title" placeholder="VD: Tham gia Chiến dịch Mùa hè xanh 2026..." required class="w-full p-2 border rounded-md outline-none bg-white">
                 </div>
                 
-                <!-- UPLOAD FILE MINH CHỨNG -->
-                <div class="md:col-span-2">
+                <!-- UPLOAD FILE GIỚI HẠN -->
+                <div class="md:col-span-2 bg-white p-3 border rounded-md">
                     <label class="block text-xs font-semibold text-gray-700 uppercase mb-1">
-                        📎 File / Hình ảnh Minh chứng (Ảnh Bằng khen, Giấy chứng nhận PDF/JPG/PNG)
+                        📎 Minh chứng (Tối đa 01 File Tài liệu PDF/Word + 03 File Ảnh)
                     </label>
-                    <input type="file" id="evidenceFile" accept="image/*,.pdf" required class="w-full p-2 bg-white border rounded-md text-sm">
+                    <input type="file" id="evidenceFiles" multiple accept="image/*,.pdf,.doc,.docx" required class="w-full text-sm text-gray-500">
+                    <p class="text-xs text-blue-600 mt-1 italic">
+                        * Mẹo: Hệ thống sẽ tự động đổi tên file tải lên theo chuẩn: <b>HỌ TÊN - CHI ĐOÀN</b> để Ban Chấp hành dễ lưu trữ.
+                    </p>
                 </div>
 
                 <div class="md:col-span-2 mt-2">
@@ -71,28 +72,24 @@
             </form>
         </div>
 
-        <!-- KHUNG TRA CỨU ĐA NĂNG (MỚI) -->
+        <!-- TRA CỨU & XUẤT BÁO CÁO -->
         <div class="bg-slate-50 p-4 rounded-lg border border-slate-200 mb-6">
-            <h2 class="text-sm font-bold text-slate-800 uppercase mb-2 flex items-center gap-2">
-                🔍 TRA CỨU KẾT QUẢ THI ĐƯA DOÀN VIÊN
-            </h2>
+            <h2 class="text-sm font-bold text-slate-800 uppercase mb-2">🔍 TRA CỨU & XUẤT BÁO CÁO CÁ NHÂN</h2>
             <div class="flex flex-col md:flex-row gap-2">
-                <input type="text" id="searchKeyword" oninput="searchData()" placeholder="Nhập Họ tên, Mã SV, Chi đoàn hoặc Liên chi đoàn..." class="flex-1 p-2 border rounded-md text-sm outline-none focus:border-blue-500">
-                <div class="flex gap-2">
-                    <button type="button" onclick="searchData()" class="bg-blue-800 hover:bg-blue-900 text-white text-sm px-4 py-2 rounded-md font-medium transition">
-                        Tìm kiếm
-                    </button>
-                    <button type="button" onclick="resetSearch()" class="bg-slate-500 hover:bg-slate-600 text-white text-sm px-3 py-2 rounded-md font-medium transition">
-                        Xóa lọc
-                    </button>
-                </div>
+                <input type="text" id="searchKeyword" oninput="searchData()" placeholder="Nhập Họ tên, Chi đoàn hoặc Khoa để tra cứu..." class="flex-1 p-2 border rounded-md text-sm outline-none">
+                <button type="button" onclick="exportPersonalReport()" class="bg-emerald-600 hover:bg-emerald-700 text-white text-sm px-4 py-2 rounded-md font-medium transition flex items-center justify-center gap-1">
+                    🖨️ Xuất Báo Cáo Cá Nhân
+                </button>
+                <button type="button" onclick="resetSearch()" class="bg-slate-500 hover:bg-slate-600 text-white text-sm px-3 py-2 rounded-md font-medium transition">
+                    Xóa lọc
+                </button>
             </div>
             <div id="searchResultCount" class="text-xs text-slate-600 mt-2 font-medium"></div>
         </div>
 
-        <!-- DANH SÁCH DỮ LIỆU -->
+        <!-- BANG DANH SACH -->
         <div>
-            <h2 class="text-md font-bold text-gray-800 uppercase mb-3">📋 Danh sách đã nộp & File lưu trữ</h2>
+            <h2 class="text-md font-bold text-gray-800 uppercase mb-3">📋 Danh sách minh chứng đã nộp</h2>
             <div class="overflow-x-auto border rounded-lg">
                 <table class="w-full border-collapse text-left text-sm">
                     <thead>
@@ -101,7 +98,7 @@
                             <th class="p-3">Họ và Tên</th>
                             <th class="p-3">Chi đoàn</th>
                             <th class="p-3">Liên Chi Đoàn</th>
-                            <th class="p-3">Thành tích</th>
+                            <th class="p-3">Thành tích / Hoạt động</th>
                             <th class="p-3">Minh chứng</th>
                             <th class="p-3">Trạng thái</th>
                         </tr>
@@ -114,14 +111,14 @@
         </div>
     </div>
 
+    <!-- KHUNG ẨN DÙNG ĐỂ IN BÁO CÁO CÁ NHÂN -->
+    <div id="printArea" class="hidden"></div>
+
     <script>
-        // DÁN LINK GOOGLE APPS SCRIPT CỦA BẠN VÀO ĐÂY:
-        const API_URL = "https://script.google.com/macros/s/AKfycbwiGtvxspo2Iityv5tte_43ggv1jiqxZGxVxeB2Xyqf_SZ6DqnwzJEbLqIjTgNqeV8/exec";
-
-        // Biến toàn cục lưu trữ dữ liệu
+        const API_URL = "https://script.google.com/macros/s/AKfycbwiDPNzzJoXIyQdo0bQoWGNPmnLBwDgsJse_bodJAZ0oz5JOAvtFi4PdAKHfyuhzDOW/exec";
         let globalData = [];
+        let currentFilteredData = [];
 
-        // Tải dữ liệu ban đầu
         async function loadData() {
             try {
                 const res = await fetch(API_URL);
@@ -134,122 +131,195 @@
                         document.getElementById('uiAnnouncementBox').classList.remove('hidden');
                     }
 
-                    // Nạp danh sách Liên chi vào Dropdown
+                    // Nạp danh sách Liên chi
                     const facultySelect = document.getElementById('facultyId');
                     facultySelect.innerHTML = '<option value="">-- Chọn Liên Chi Đoàn --</option>';
-                    if(result.config.faculties && result.config.faculties.length > 0) {
-                        result.config.faculties.forEach(fac => {
-                            facultySelect.innerHTML += `<option value="${fac}">${fac}</option>`;
-                        });
-                    }
+                    (result.config.faculties || []).forEach(f => facultySelect.innerHTML += `<option value="${f}">${f}</option>`);
+
+                    // Nạp danh sách Lớp / Chi đoàn
+                    const classSelect = document.getElementById('classId');
+                    classSelect.innerHTML = '<option value="">-- Chọn Chi đoàn / Lớp --</option>';
+                    (result.config.classes || []).forEach(c => classSelect.innerHTML += `<option value="${c}">${c}</option>`);
                 }
 
-                // Lưu dữ liệu vào biến globalData
                 globalData = result.data || [];
+                currentFilteredData = globalData;
                 renderTable(globalData);
-
             } catch (err) {
                 console.error(err);
-                alert("Lỗi tải dữ liệu. Kiểm tra lại kết nối!");
             }
         }
 
-        // Hàm hiển thị dữ liệu ra bảng
         function renderTable(dataRows) {
             const container = document.getElementById('listContainer');
             container.innerHTML = '';
             
             if(!dataRows || dataRows.length === 0) {
-                container.innerHTML = `<tr><td colspan="7" class="p-4 text-center text-gray-500">Không tìm thấy dữ liệu phù hợp.</td></tr>`;
+                container.innerHTML = `<tr><td colspan="7" class="p-4 text-center text-gray-500">Không tìm thấy dữ liệu.</td></tr>`;
                 return;
             }
 
             dataRows.forEach(row => {
-                const [studentId, name, classId, facultyId, title, fileUrl, status] = row;
+                const [studentId, name, classId, facultyId, title, fileUrlStr, status] = row;
                 
                 let statusColor = "bg-amber-100 text-amber-800";
                 if(status === "Đã duyệt") statusColor = "bg-green-100 text-green-800";
                 if(status === "Từ chối") statusColor = "bg-red-100 text-red-800";
 
+                // Tách nhiều link file nếu có
+                let linksHtml = "Không có";
+                if (fileUrlStr) {
+                    const links = fileUrlStr.split('\n');
+                    linksHtml = links.map((url, idx) => `<a href="${url}" target="_blank" class="text-blue-600 hover:underline block text-xs">📄 File ${idx+1}</a>`).join('');
+                }
+
                 container.innerHTML += `
                     <tr class="hover:bg-slate-50 transition">
-                        <td class="p-3 font-semibold text-blue-900">${studentId || ''}</td>
+                        <td class="p-3 font-semibold text-blue-900">${studentId || 'Chưa có'}</td>
                         <td class="p-3 font-medium text-slate-800">${name || ''}</td>
                         <td class="p-3 text-gray-600">${classId || ''}</td>
                         <td class="p-3 text-gray-700 font-medium">${facultyId || ''}</td>
                         <td class="p-3 text-slate-700">${title || ''}</td>
-                        <td class="p-3">
-                            ${fileUrl && fileUrl.startsWith('http') 
-                                ? `<a href="${fileUrl}" target="_blank" class="text-blue-600 hover:underline font-medium flex items-center gap-1">📄 Xem file</a>` 
-                                : '<span class="text-gray-400">Không có</span>'}
-                        </td>
-                        <td class="p-3">
-                            <span class="${statusColor} px-2.5 py-1 rounded-full text-xs font-semibold">${status || 'Chờ duyệt'}</span>
-                        </td>
+                        <td class="p-3">${linksHtml}</td>
+                        <td class="p-3"><span class="${statusColor} px-2.5 py-1 rounded-full text-xs font-semibold">${status || 'Chờ duyệt'}</span></td>
                     </tr>
                 `;
             });
         }
 
-        // Hàm Tra cứu đa năng: Tìm theo Mã SV, Họ tên, Chi đoàn hoặc Liên chi đoàn
         function searchData() {
             const keyword = document.getElementById('searchKeyword').value.trim().toLowerCase();
             const countDiv = document.getElementById('searchResultCount');
 
             if (!keyword) {
+                currentFilteredData = globalData;
                 renderTable(globalData);
                 countDiv.innerText = "";
                 return;
             }
 
-            // Lọc dữ liệu trên cả 4 trường thông tin
-            const filtered = globalData.filter(row => {
-                const studentId   = String(row[0] || "").toLowerCase(); // Mã SV
-                const studentName = String(row[1] || "").toLowerCase(); // Họ tên
-                const classId     = String(row[2] || "").toLowerCase(); // Chi đoàn
-                const facultyId   = String(row[3] || "").toLowerCase(); // Liên chi đoàn
-
-                return studentId.includes(keyword) || 
-                       studentName.includes(keyword) || 
-                       classId.includes(keyword) || 
-                       facultyId.includes(keyword);
+            currentFilteredData = globalData.filter(row => {
+                return String(row[0]||'').toLowerCase().includes(keyword) ||
+                       String(row[1]||'').toLowerCase().includes(keyword) ||
+                       String(row[2]||'').toLowerCase().includes(keyword) ||
+                       String(row[3]||'').toLowerCase().includes(keyword);
             });
 
-            renderTable(filtered);
-            countDiv.innerHTML = `✅ Tìm thấy <b class="text-blue-700">${filtered.length}</b> kết quả phù hợp cho từ khóa "<b class="text-slate-900">${keyword}</b>"`;
+            renderTable(currentFilteredData);
+            countDiv.innerHTML = `✅ Tìm thấy <b class="text-blue-700">${currentFilteredData.length}</b> mục phù hợp.`;
         }
 
-        // Hàm Xóa lọc
         function resetSearch() {
             document.getElementById('searchKeyword').value = '';
             document.getElementById('searchResultCount').innerText = '';
+            currentFilteredData = globalData;
             renderTable(globalData);
         }
 
-        // Chuyển File sang Base64
+        // XUẤT MẪU BÁO CÁO THỐNG KÊ CÁ NHÂN / CHI ĐOÀN CHUẨN ĐƠN VỊ
+        function exportPersonalReport() {
+            const keyword = document.getElementById('searchKeyword').value.trim();
+            if (!keyword) {
+                alert("Vui lòng nhập Họ tên hoặc Chi đoàn vào ô Tìm kiếm trước khi xuất báo cáo!");
+                return;
+            }
+
+            if (currentFilteredData.length === 0) {
+                alert("Không có dữ liệu để xuất báo cáo!");
+                return;
+            }
+
+            const firstRow = currentFilteredData[0];
+            const studentName = firstRow[1];
+            const classId = firstRow[2];
+            const facultyId = firstRow[3];
+
+            let tableRows = "";
+            currentFilteredData.forEach((item, index) => {
+                tableRows += `
+                    <tr>
+                        <td style="border: 1px solid #000; padding: 6px; text-align: center;">${index + 1}</td>
+                        <td style="border: 1px solid #000; padding: 6px;">${item[4]}</td>
+                        <td style="border: 1px solid #000; padding: 6px; text-align: center;">${item[6]}</td>
+                    </tr>
+                `;
+            });
+
+            const printWindow = window.open('', '', 'width=800,height=600');
+            printWindow.document.write(`
+                <html>
+                <head>
+                    <title>Báo cáo thành tích cá nhân</title>
+                    <style>
+                        body { font-family: "Times New Roman", Times, serif; font-size: 13pt; padding: 20px; }
+                        .header { display: flex; justify-content: space-between; text-align: center; font-weight: bold; }
+                        .title { text-align: center; font-size: 16pt; font-weight: bold; margin: 20px 0; }
+                        table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+                        .footer { margin-top: 30px; display: flex; justify-content: space-between; text-align: center; }
+                    </style>
+                </head>
+                <body>
+                    <div class="header">
+                        <div>ĐOÀN TNCS HỒ CHÍ MINH<br><b>BCH LÊN CHI ĐOÀN / KHOA</b></div>
+                        <div>CỘNG HÒA XÃ HỘI CHỦ NGHĨA VIỆT NAM<br>Độc lập - Tự do - Hạnh phúc</div>
+                    </div>
+                    <div class="title">BẢNG XÁC NHẬN THAM GIA HOẠT ĐỘNG & THI ĐƯA</div>
+                    <p><b>Họ và tên Đoàn viên:</b> ${studentName}</p>
+                    <p><b>Chi đoàn / Lớp:</b> ${classId} &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <b>Khoa:</b> ${facultyId}</p>
+                    <table>
+                        <thead>
+                            <tr style="background-color: #f2f2f2;">
+                                <th style="border: 1px solid #000; padding: 6px; width: 50px;">STT</th>
+                                <th style="border: 1px solid #000; padding: 6px;">Tên Hoạt động / Thành tích</th>
+                                <th style="border: 1px solid #000; padding: 6px; width: 120px;">Trạng thái</th>
+                            </tr>
+                        </thead>
+                        <tbody>${tableRows}</tbody>
+                    </table>
+                    <div class="footer">
+                        <div><b>XÁC NHẬN CỦA CHI ĐOÀN</b><br><br><br><br></div>
+                        <div><i>Đắk Lắk, Ngày ..... tháng ..... năm 2026</i><br><b>TM. BAN CHẤP HÀNH ĐOÀN TRƯỜNG</b><br><br><br><br></div>
+                    </div>
+                </body>
+                </html>
+            `);
+            printWindow.document.close();
+            printWindow.print();
+        }
+
+        // CHUYỂN NHIỀU FILE SANG BASE64
         const fileToBase64 = file => new Promise((resolve, reject) => {
             const reader = new FileReader();
             reader.readAsDataURL(file);
-            reader.onload = () => resolve(reader.result);
+            reader.onload = () => resolve({ name: file.name, type: file.type, data: reader.result });
             reader.onerror = error => reject(error);
         });
 
-        // Submit Form nộp minh chứng
+        // XỬ LÝ SUBMIT CÓ GIỚI HẠN FILE
         document.getElementById('uploadForm').addEventListener('submit', async function(e) {
             e.preventDefault();
+            
+            const fileFiles = Array.from(document.getElementById('evidenceFiles').files);
+            
+            // Kiểm tra giới hạn: Tối đa 1 tài liệu + 3 ảnh
+            const docFiles = fileFiles.filter(f => f.type.includes('pdf') || f.type.includes('word') || f.name.endsWith('.doc') || f.name.endsWith('.docx'));
+            const imgFiles = fileFiles.filter(f => f.type.includes('image'));
+
+            if (docFiles.length > 1) {
+                alert("⚠️ Bạn chỉ được chọn TỐI ĐA 01 file tài liệu (PDF/Word)!");
+                return;
+            }
+            if (imgFiles.length > 3) {
+                alert("⚠️ Bạn chỉ được chọn TỐI ĐA 03 file hình ảnh!");
+                return;
+            }
+
             const submitBtn = document.getElementById('submitBtn');
             submitBtn.disabled = true;
-            submitBtn.innerText = "⏳ Đang gửi dữ liệu...";
+            submitBtn.innerText = "⏳ Đang tải tệp & gửi dữ liệu...";
 
             try {
-                const fileInput = document.getElementById('evidenceFile').files[0];
-                let fileData = "", fileName = "", fileType = "";
-
-                if (fileInput) {
-                    fileData = await fileToBase64(fileInput);
-                    fileName = fileInput.name;
-                    fileType = fileInput.type;
-                }
+                const preparedFiles = await Promise.all(fileFiles.map(f => fileToBase64(f)));
 
                 const payload = {
                     studentId: document.getElementById('studentId').value,
@@ -257,29 +327,22 @@
                     classId: document.getElementById('classId').value,
                     facultyId: document.getElementById('facultyId').value,
                     title: document.getElementById('title').value,
-                    fileData: fileData,
-                    fileName: fileName,
-                    fileType: fileType
+                    files: preparedFiles
                 };
 
-                await fetch(API_URL, {
-                    method: 'POST',
-                    body: JSON.stringify(payload)
-                });
+                await fetch(API_URL, { method: 'POST', body: JSON.stringify(payload) });
 
                 alert("Nộp minh chứng thành công!");
                 this.reset();
-                loadData(); // Tải lại bảng dữ liệu mới nhất
+                loadData();
             } catch (err) {
                 alert("Lỗi khi gửi dữ liệu!");
-                console.error(err);
             } finally {
                 submitBtn.disabled = false;
                 submitBtn.innerText = "Gửi duyệt minh chứng";
             }
         });
 
-        // Kích hoạt tải dữ liệu khi vừa mở trang
         loadData();
     </script>
 </body>
