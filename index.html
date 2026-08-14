@@ -15,14 +15,13 @@
             <img id="uiLogo" src="" alt="" class="h-16 md:h-20 w-auto object-contain mb-2 hidden" onerror="this.classList.add('hidden')">
             <div>
                 <h1 id="uiSchoolName" class="text-xl md:text-2xl font-bold text-blue-900 uppercase">Đang tải thông tin...</h1>
-                <!-- 1. SỬA LỖI CHÍNH TẢ RÈN LUYỆN -->
                 <p class="text-blue-700 font-semibold text-xs md:text-sm mt-1 uppercase tracking-wide">
                     HỆ THỐNG CỔNG THÔNG TIN THI ĐUA & KẾT QUẢ RÈN LUYỆN ĐOÀN VIÊN
                 </p>
             </div>
         </div>
 
-        <!-- 2. NỘI DUNG THÔNG BÁO TO & NỔI BẬT -->
+        <!-- 2. THÔNG BÁO -->
         <div id="uiAnnouncementBox" class="bg-gradient-to-r from-amber-50 to-orange-50 border-l-8 border-orange-500 p-4 mb-6 rounded-r-lg shadow-sm hidden">
             <div class="flex items-center gap-2">
                 <span class="text-xl">📢</span>
@@ -31,7 +30,7 @@
             <p id="uiAnnouncement" class="text-base md:text-lg font-bold text-orange-950 mt-1 pl-7 leading-relaxed"></p>
         </div>
 
-        <!-- FORM NỘP MINH CHỨNG -->
+        <!-- 3. FORM NỘP MINH CHỨNG -->
         <div class="bg-blue-50/70 p-5 rounded-lg border border-blue-200 mb-8">
             <h2 class="text-md font-bold text-blue-900 mb-4 flex items-center gap-2">
                 📝 NỘP MINH CHỨNG THÀNH TÍCH / HOẠT ĐỘNG
@@ -46,7 +45,6 @@
                     <input type="text" id="studentName" required class="w-full p-2.5 border rounded-md outline-none bg-white text-sm">
                 </div>
 
-                <!-- SELECT CHI ĐOÀN & KHOA -->
                 <div>
                     <label class="block text-xs font-semibold text-gray-700 uppercase mb-1">Chi đoàn / Lớp (*)</label>
                     <select id="classId" required class="w-full p-2.5 border rounded-md outline-none bg-white text-sm">
@@ -60,7 +58,6 @@
                     </select>
                 </div>
 
-                <!-- CHỌN TÊN HOẠT ĐỘNG (DROPDOWN ADMIN TẠO) -->
                 <div>
                     <label class="block text-xs font-semibold text-gray-700 uppercase mb-1">Tên Hoạt động Đoàn</label>
                     <select id="activityName" class="w-full p-2.5 border rounded-md outline-none bg-white text-sm">
@@ -68,16 +65,11 @@
                     </select>
                 </div>
 
-                <!-- TÊN THÀNH TÍCH RIÊNG (NHẬP CHỮ) -->
                 <div>
                     <label class="block text-xs font-semibold text-gray-700 uppercase mb-1">Tên Thành tích / Bằng khen / Chứng nhận</label>
                     <input type="text" id="achievementName" placeholder="VD: Sinh viên 5 tốt / Giải Nhất..." class="w-full p-2.5 border rounded-md outline-none bg-white text-sm">
                 </div>
-                <p class="md:col-span-2 text-xs text-blue-700 italic -mt-2">
-                    * Nhắc nhở: Bạn có thể chọn <b>Tên hoạt động</b>, điền <b>Tên thành tích</b> hoặc điền cả 2 mục trên.
-                </p>
 
-                <!-- FILE UPLOAD -->
                 <div class="md:col-span-2 bg-white p-3.5 border rounded-md">
                     <label class="block text-xs font-semibold text-gray-700 uppercase mb-1">
                         📎 Minh chứng (Tối đa 01 File PDF/Word + Tối đa 03 File Ảnh)
@@ -93,25 +85,19 @@
             </form>
         </div>
 
-        <!-- TRA CỨU & XUẤT BÁO CÁO -->
+        <!-- 4. TRA CỨU BÁO CÁO -->
         <div class="bg-slate-50 p-4 rounded-lg border border-slate-200 mb-6">
             <h2 class="text-sm font-bold text-slate-800 uppercase mb-2">🔍 TRA CỨU & XUẤT BÁO CÁO KẾT QUẢ</h2>
             <div class="flex flex-col md:flex-row gap-2">
                 <input type="text" id="searchKeyword" oninput="searchData()" placeholder="Nhập Họ tên, Chi đoàn hoặc Khoa để tra cứu..." class="flex-1 p-2.5 border rounded-md text-sm outline-none">
-                <button type="button" onclick="exportReport('personal')" class="bg-emerald-600 hover:bg-emerald-700 text-white text-xs md:text-sm px-3 py-2 rounded-md font-bold transition">
-                    📄 Xuất BC Cá Nhân
-                </button>
-                <button type="button" onclick="exportReport('group')" class="bg-indigo-600 hover:bg-indigo-700 text-white text-xs md:text-sm px-3 py-2 rounded-md font-bold transition">
-                    📊 Xuất BC Tập Thể
-                </button>
-                <button type="button" onclick="resetSearch()" class="bg-slate-500 hover:bg-slate-600 text-white text-xs md:text-sm px-3 py-2 rounded-md font-medium transition">
-                    Xóa lọc
-                </button>
+                <button type="button" onclick="exportReport('personal')" class="bg-emerald-600 hover:bg-emerald-700 text-white text-xs md:text-sm px-3 py-2 rounded-md font-bold transition">📄 Xuất BC Cá Nhân</button>
+                <button type="button" onclick="exportReport('group')" class="bg-indigo-600 hover:bg-indigo-700 text-white text-xs md:text-sm px-3 py-2 rounded-md font-bold transition">📊 Xuất BC Tập Thể</button>
+                <button type="button" onclick="resetSearch()" class="bg-slate-500 hover:bg-slate-600 text-white text-xs md:text-sm px-3 py-2 rounded-md font-medium transition">Xóa lọc</button>
             </div>
             <div id="searchResultCount" class="text-xs text-slate-600 mt-2 font-medium"></div>
         </div>
 
-        <!-- BẢNG HIỂN THỊ THÔNG TIN -->
+        <!-- 5. BẢNG DỮ LIỆU -->
         <div class="overflow-x-auto border rounded-lg">
             <table class="w-full border-collapse text-left text-xs md:text-sm">
                 <thead>
@@ -119,10 +105,8 @@
                         <th class="p-3 whitespace-nowrap">Mã SV</th>
                         <th class="p-3 min-w-[130px]">Họ và Tên</th>
                         <th class="p-3 min-w-[100px]">Chi đoàn</th>
-                        <!-- 2. TĂNG ĐỘ RỘNG KHOA / LIÊN CHI ĐOÀN -->
                         <th class="p-3 min-w-[180px] w-1/4">Liên Chi Đoàn / Khoa</th>
                         <th class="p-3 min-w-[150px]">Hoạt động</th>
-                        <!-- 2. GIẢM ĐỘ RỘNG THÀNH TÍCH -->
                         <th class="p-3 min-w-[110px] max-w-[140px]">Thành tích</th>
                         <th class="p-3 min-w-[90px]">Minh chứng</th>
                         <th class="p-3 whitespace-nowrap">Trạng thái</th>
@@ -135,16 +119,48 @@
         </div>
     </div>
 
-    <!-- CHÂN TRANG THÔNG TIN NGƯỜI TẠO -->
+    <!-- FOOTER -->
     <footer class="text-center py-4 text-xs text-slate-500 border-t border-slate-200 max-w-5xl mx-auto w-full">
         <p id="uiFooterInfo">Hệ thống Quản lý Thi đua Đoàn viên</p>
     </footer>
 
+    <!-- ================= WIDGET CHATBOT AI (GÓC MÀN HÌNH) ================= -->
+    <div id="chat-bubble" onclick="toggleChat()" class="fixed bottom-5 right-5 bg-blue-600 hover:bg-blue-700 text-white rounded-full p-4 shadow-xl cursor-pointer transition-all z-50 flex items-center justify-center">
+        💬 <span class="ml-2 font-bold text-sm hidden sm:inline">Hỏi đáp Tiêu chí Đoàn</span>
+    </div>
+
+    <div id="chat-window" class="hidden fixed bottom-20 right-5 w-80 sm:w-96 h-[480px] bg-white rounded-2xl shadow-2xl border border-gray-200 flex flex-col z-50 overflow-hidden">
+        <div class="bg-blue-800 text-white p-3 font-bold flex justify-between items-center text-sm">
+            <div class="flex items-center space-x-2">
+                <span>🤖</span>
+                <span>Trợ lý AI Quy định Đoàn</span>
+            </div>
+            <button onclick="toggleChat()" class="text-white hover:text-gray-200 font-bold px-2">✕</button>
+        </div>
+
+        <div id="chat-messages" class="flex-1 p-3 overflow-y-auto text-sm space-y-3 bg-slate-50">
+            <div class="bg-blue-100 text-blue-900 p-2.5 rounded-lg max-w-[85%] text-xs leading-relaxed">
+                Xin chào! Mọi dữ liệu của tôi được cập nhật trực tiếp từ file văn bản PDF do Ban Chấp hành ban hành. Bạn cần hỏi gì về quy định hay tiêu chí thi đua?
+            </div>
+        </div>
+
+        <div class="p-2 bg-white border-t border-gray-200 flex gap-2">
+            <input type="text" id="chat-input" onkeypress="if(event.key==='Enter') sendMessage()" placeholder="Nhập câu hỏi..." class="flex-1 border rounded-lg px-3 py-2 text-xs focus:outline-none focus:ring-2 focus:ring-blue-500">
+            <button onclick="sendMessage()" class="bg-blue-600 hover:bg-blue-700 text-white px-3 py-2 rounded-lg text-xs font-semibold transition">Gửi</button>
+        </div>
+    </div>
+
+    <!-- ================= TOÀN BỘ CODE JAVASCRIPT ================= -->
     <script>
-        const API_URL = "https://script.google.com/macros/s/AKfycbxbLKF7u84mESHYdlrHgkWQlBv1Mhn2Es9439JQUaMH8dirObHf34bjymI_vA0rSUYd/exec";
+        // 1. THAY BẰNG LINK APPS SCRIPT VÀ GEMINI API KEY CỦA BẠN
+        const API_URL = "https://script.google.com/macros/s/AKfycbxJo8N9CBqpOWAA-oxdAN0tnpxE3W9pkUlzQc4xVzRrtSzlloUQ16vdBcWOARTwDBr4/exec";
+        const GEMINI_API_KEY = "";
+
         let globalData = [];
         let currentFilteredData = [];
+        let pdfRuleContent = "Chưa có nội dung văn bản PDF.";
 
+        // --- HÀM TẢI DỮ LIỆU TỪ SHEET ---
         async function loadData() {
             try {
                 const res = await fetch(API_URL);
@@ -168,6 +184,11 @@
                         document.getElementById('uiFooterInfo').innerHTML = result.config.footerInfo;
                     }
 
+                    // Nhận văn bản PDF từ Sheet Config gửi về cho AI Chatbot
+                    if(result.config.pdfContent) {
+                        pdfRuleContent = result.config.pdfContent;
+                    }
+
                     const facultySelect = document.getElementById('facultyId');
                     facultySelect.innerHTML = '<option value="">-- Chọn Liên Chi Đoàn --</option>';
                     (result.config.faculties || []).forEach(f => facultySelect.innerHTML += `<option value="${f}">${f}</option>`);
@@ -187,6 +208,7 @@
             } catch (err) { console.error(err); }
         }
 
+        // --- HÀM VẼ BẢNG KÈM MÀU TRẠNG THÁI NỔI BẬT ---
         function renderTable(dataRows) {
             const container = document.getElementById('listContainer');
             container.innerHTML = '';
@@ -199,9 +221,15 @@
             dataRows.forEach(row => {
                 const [studentId, name, classId, facultyId, actName, achName, fileUrlStr, status] = row;
                 
-                let statusColor = "bg-amber-100 text-amber-800";
-                if(status === "Đã duyệt") statusColor = "bg-green-100 text-green-800";
-                if(status === "Từ chối") statusColor = "bg-red-100 text-red-800";
+                // Phân biệt màu sắc Trạng thái
+                let statusColor = "bg-amber-100 text-amber-800 border border-amber-300"; // Vàng (Chờ duyệt)
+                let statusText = status || 'Chờ duyệt';
+
+                if (status === "Đã duyệt" || status === "Duyệt") {
+                    statusColor = "bg-emerald-100 text-emerald-800 border border-emerald-300 font-bold"; // Xanh lá
+                } else if (status === "Từ chối" || status === "Không duyệt" || status === "Không Duyệt") {
+                    statusColor = "bg-rose-100 text-rose-800 border border-rose-300 font-bold"; // Đỏ
+                }
 
                 let linksHtml = "Không";
                 if (fileUrlStr) {
@@ -218,12 +246,17 @@
                         <td class="p-3 text-slate-700">${actName || '-'}</td>
                         <td class="p-3 text-slate-700 break-words">${achName || '-'}</td>
                         <td class="p-3">${linksHtml}</td>
-                        <td class="p-3 whitespace-nowrap"><span class="${statusColor} px-2.5 py-1 rounded-full text-xs font-semibold">${status || 'Chờ duyệt'}</span></td>
+                        <td class="p-3 whitespace-nowrap">
+                            <span class="${statusColor} px-2.5 py-1 rounded-full text-xs shadow-sm inline-block">
+                                ${statusText}
+                            </span>
+                        </td>
                     </tr>
                 `;
             });
         }
 
+        // --- CHỨC NĂNG TRA CỨU & BÁO CÁO ---
         function searchData() {
             const keyword = document.getElementById('searchKeyword').value.trim().toLowerCase();
             const countDiv = document.getElementById('searchResultCount');
@@ -265,7 +298,7 @@
             }
 
             const firstRow = currentFilteredData[0];
-            let reportTitle = type === 'personal' ? 'BẢNG XÁC NHẬN THÀNH TÍCH CÁ NHÂN' : 'BÁO CÁO TỔNG HỢP THI ĐUA TẬP THỂ';
+            let reportTitle = type === 'personal' ? 'BẢNG XÁC NHẬN THÀNH TÍCH CÁ NHÂN' : 'BÁO CÁO TỔNG HỢP THI ĐƯA TẬP THỂ';
             let infoHeader = type === 'personal' 
                 ? `<p><b>Họ và tên Đoàn viên:</b> ${firstRow[1]}</p><p><b>Chi đoàn / Lớp:</b> ${firstRow[2]} &nbsp;&nbsp;&nbsp;&nbsp; <b>Khoa:</b> ${firstRow[3]}</p>`
                 : `<p><b>Đơn vị / Tập thể:</b> "${keyword.toUpperCase()}"</p><p><b>Tổng số lượt nộp minh chứng:</b> ${currentFilteredData.length}</p>`;
@@ -298,7 +331,7 @@
                 </head>
                 <body>
                     <div class="header">
-                        <div>ĐOÀN TNCS HỒ CHÍ MINH<br><b>BCH TRƯỜNG CAO ĐẲNG ĐẮK LẮK</b></div>
+                        <div>ĐOÀN TỈNH ĐẮK LẮK<br><b>BCH TRƯỜNG CAO ĐẲNG ĐẮK LẮK</b></div>
                         <div>CỘNG HÒA XÃ HỘI CHỦ NGHĨA VIỆT NAM<br>Độc lập - Tự do - Hạnh phúc</div>
                     </div>
                     <div class="title">${reportTitle}</div>
@@ -308,8 +341,8 @@
                             <tr style="background-color: #f2f2f2;">
                                 <th style="border: 1px solid #000; padding: 6px; width: 40px;">STT</th>
                                 ${type === 'group' ? `<th style="border: 1px solid #000; padding: 6px;">Họ tên (Lớp)</th>` : ''}
-                                <th style="border: 1px solid #000; padding: 6px; width: 80px">Tên Hoạt động</th>
-                                <th style="border: 1px solid #000; padding: 6px; ">Tên Thành tích</th>
+                                <th style="border: 1px solid #000; padding: 6px;">Tên Hoạt động</th>
+                                <th style="border: 1px solid #000; padding: 6px;">Tên Thành tích</th>
                                 <th style="border: 1px solid #000; padding: 6px; width: 100px;">Trạng thái</th>
                             </tr>
                         </thead>
@@ -319,126 +352,6 @@
                         <div><b>XÁC NHẬN CỦA CHI ĐOÀN</b><br><br><br><br></div>
                         <div><i>Đắk Lắk, Ngày ..... tháng ..... năm 2026</i><br><b>TM. BAN CHẤP HÀNH ĐOÀN TRƯỜNG</b><br><br><br><br></div>
                     </div>
-<!-- ================= WIDGET CHATBOT GEMINI DÙNG VĂN BẢN PDF ================= -->
-<div id="chat-bubble" onclick="toggleChat()" class="fixed bottom-5 right-5 bg-blue-600 hover:bg-blue-700 text-white rounded-full p-4 shadow-xl cursor-pointer transition-all z-50 flex items-center justify-center">
-    💬 <span class="ml-2 font-bold text-sm hidden sm:inline">Hỏi đáp Tiêu chí Đoàn</span>
-</div>
-
-<div id="chat-window" class="hidden fixed bottom-20 right-5 w-80 sm:w-96 h-[480px] bg-white rounded-2xl shadow-2xl border border-gray-200 flex flex-col z-50 overflow-hidden">
-    <!-- Header -->
-    <div class="bg-blue-800 text-white p-3 font-bold flex justify-between items-center text-sm">
-        <div class="flex items-center space-x-2">
-            <span>🤖</span>
-            <span>Trợ lý AI Tiêu chí & Quy định Đoàn</span>
-        </div>
-        <button onclick="toggleChat()" class="text-white hover:text-gray-200 font-bold px-2">✕</button>
-    </div>
-
-    <!-- Khung chat -->
-    <div id="chat-messages" class="flex-1 p-3 overflow-y-auto text-sm space-y-3 bg-slate-50">
-        <div class="bg-blue-100 text-blue-900 p-2.5 rounded-lg max-w-[85%] text-xs leading-relaxed">
-            Xin chào! Tôi là Trợ lý AI Đoàn trường. Mọi dữ liệu của tôi được cập nhật trực tiếp từ file PDF quy định thi đua mới nhất do Ban Chấp hành ban hành. Bạn cần hỏi gì?
-        </div>
-    </div>
-
-    <!-- Ô nhập câu hỏi -->
-    <div class="p-2 bg-white border-t border-gray-200 flex gap-2">
-        <input type="text" id="chat-input" onkeypress="if(event.key==='Enter') sendMessage()" placeholder="Nhập câu hỏi..." class="flex-1 border rounded-lg px-3 py-2 text-xs focus:outline-none focus:ring-2 focus:ring-blue-500">
-        <button onclick="sendMessage()" class="bg-blue-600 hover:bg-blue-700 text-white px-3 py-2 rounded-lg text-xs font-semibold transition">Gửi</button>
-    </div>
-</div>
-
-<script>
-    // 1. DÁN GEMINI API KEY CỦA BẠN VÀO ĐÂY (Lấy tại aistudio.google.com)
-    const GEMINI_API_KEY = "DÁN_API_KEY_CỦA_BẠN_VÀO_ĐÂY";
-    
-    // Biến lưu trữ nội dung PDF lấy từ Sheet về
-    let pdfRuleContent = "Chưa có nội dung văn bản.";
-
-    function toggleChat() {
-        document.getElementById('chat-window').classList.toggle('hidden');
-    }
-
-    // Hàm nhận dữ liệu PDF khi load trang (Gợi ý: Gọi trong hàm loadData sẵn có của bạn)
-    // Ví dụ trong loadData(): if(result.config.pdfContent) pdfRuleContent = result.config.pdfContent;
-
-    async function sendMessage() {
-        const input = document.getElementById('chat-input');
-        const question = input.value.trim();
-        if (!question) return;
-
-        const messagesContainer = document.getElementById('chat-messages');
-
-        // Hiển thị câu hỏi của Đoàn viên
-        messagesContainer.innerHTML += `
-            <div class="flex justify-end">
-                <div class="bg-blue-600 text-white p-2.5 rounded-lg max-w-[85%] text-xs leading-relaxed">
-                    ${escapeHtml(question)}
-                </div>
-            </div>
-        `;
-        input.value = '';
-        messagesContainer.scrollTop = messagesContainer.scrollHeight;
-
-        // Trạng thái chờ
-        const loadingId = 'loading-' + Date.now();
-        messagesContainer.innerHTML += `
-            <div id="${loadingId}" class="bg-gray-200 text-gray-600 p-2.5 rounded-lg max-w-[85%] text-xs italic">
-                Đang tra cứu từ file văn bản PDF...
-            </div>
-        `;
-        messagesContainer.scrollTop = messagesContainer.scrollHeight;
-
-        try {
-            const prompt = `
-            Bạn là Trợ lý AI hỗ trợ giải đáp quy định thi đua Đoàn viên.
-            Dưới đây là TOÀN BỘ NỘI DUNG VĂN BẢN PDF CỦA BAN CHẤP HÀNH ĐOÀN TRƯỜNG:
-            ---
-            ${pdfRuleContent}
-            ---
-            CÂU HỎI CỦA ĐOÀN VIÊN: "${question}"
-
-            YÊU CẦU TRẢ LỜI:
-            1. Trả lời CHÍNH XÁC dựa vào nội dung file PDF trên.
-            2. Trả lời rõ ràng, dễ hiểu, dùng gạch đầu dòng nếu có nhiều ý.
-            3. Nếu trong file PDF không có thông tin, hãy báo: "Rất tiếc, thông tin này không có trong văn bản quy định hiện tại của Đoàn trường."
-            `;
-
-            const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${GEMINI_API_KEY}`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ contents: [{ parts: [{ text: prompt }] }] })
-            });
-
-            const data = await response.json();
-            const reply = data.candidates?.[0]?.content?.parts?.[0]?.text || "Không thể tải câu trả lời.";
-
-            document.getElementById(loadingId).remove();
-            messagesContainer.innerHTML += `
-                <div class="bg-white border border-gray-200 text-gray-800 p-2.5 rounded-lg max-w-[85%] text-xs leading-relaxed shadow-sm">
-                    ${formatResponse(reply)}
-                </div>
-            `;
-        } catch (error) {
-            console.error(error);
-            document.getElementById(loadingId).remove();
-            messagesContainer.innerHTML += `
-                <div class="bg-red-100 text-red-700 p-2.5 rounded-lg max-w-[85%] text-xs">
-                    Lỗi kết nối máy chủ AI. Vui lòng thử lại!
-                </div>
-            `;
-        }
-        messagesContainer.scrollTop = messagesContainer.scrollHeight;
-    }
-
-    function escapeHtml(str) {
-        return str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
-    }
-
-    function formatResponse(text) {
-        return text.replace(/\n/g, '<br>').replace(/\*\*(.*?)\*\*/g, '<b>$1</b>');
-    }
-</script>
                 </body>
                 </html>
             `);
@@ -446,6 +359,7 @@
             printWindow.print();
         }
 
+        // --- FORM UPLOAD MINH CHỨNG ---
         const fileToBase64 = file => new Promise((resolve, reject) => {
             const reader = new FileReader();
             reader.readAsDataURL(file);
@@ -500,6 +414,95 @@
             }
         });
 
+        // --- XỬ LÝ AI CHATBOT (GEMINI) ---
+        function toggleChat() {
+            document.getElementById('chat-window').classList.toggle('hidden');
+        }
+
+        async function sendMessage() {
+            const input = document.getElementById('chat-input');
+            const question = input.value.trim();
+            if (!question) return;
+
+            const messagesContainer = document.getElementById('chat-messages');
+
+            messagesContainer.innerHTML += `
+                <div class="flex justify-end">
+                    <div class="bg-blue-600 text-white p-2.5 rounded-lg max-w-[85%] text-xs leading-relaxed">
+                        ${escapeHtml(question)}
+                    </div>
+                </div>
+            `;
+            input.value = '';
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+
+            const loadingId = 'loading-' + Date.now();
+            messagesContainer.innerHTML += `
+                <div id="${loadingId}" class="bg-gray-200 text-gray-600 p-2.5 rounded-lg max-w-[85%] text-xs italic">
+                    Đang tra cứu từ file văn bản PDF...
+                </div>
+            `;
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+
+            try {
+                const prompt = `
+                Bạn là Trợ lý AI hỗ trợ giải đáp quy định thi đua Đoàn viên.
+                Dưới đây là TOÀN BỘ NỘI DUNG VĂN BẢN PDF CỦA BAN CHẤP HÀNH ĐOÀN TRƯỜNG:
+                ---
+                ${pdfRuleContent}
+                ---
+                CÂU HỎI CỦA ĐOÀN VIÊN: "${question}"
+
+                YÊU CẦU TRẢ LỜI:
+                1. Trả lời CHÍNH XÁC dựa vào nội dung file PDF trên.
+                2. Trả lời rõ ràng, ngắn gọn, dùng gạch đầu dòng nếu có nhiều ý.
+                3. Nếu trong file PDF không đề cập, hãy báo: "Rất tiếc, thông tin này không có trong văn bản quy định hiện tại của Đoàn trường."
+                `;
+
+               // ✅ ĐOẠN CODE CHUẨN ĐÃ SỬA:
+const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${GEMINI_API_KEY}`, {
+    method: "POST",
+    headers: {
+        "Content-Type": "application/json"
+    },
+    body: JSON.stringify({
+        contents: [{
+            parts: [{
+                text: `Dựa vào tài liệu sau đây để trả lời câu hỏi: \n${pdfContent}\n\nCâu hỏi: ${userQuestion}`
+            }]
+        }]
+    })
+});
+                const data = await response.json();
+                const reply = data.candidates?.[0]?.content?.parts?.[0]?.text || "Không thể tải câu trả lời.";
+
+                document.getElementById(loadingId).remove();
+                messagesContainer.innerHTML += `
+                    <div class="bg-white border border-gray-200 text-gray-800 p-2.5 rounded-lg max-w-[85%] text-xs leading-relaxed shadow-sm">
+                        ${formatResponse(reply)}
+                    </div>
+                `;
+            } catch (error) {
+                console.error(error);
+                document.getElementById(loadingId).remove();
+                messagesContainer.innerHTML += `
+                    <div class="bg-red-100 text-red-700 p-2.5 rounded-lg max-w-[85%] text-xs">
+                        Có lỗi xảy ra khi kết nối máy chủ AI!
+                    </div>
+                `;
+            }
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
+        }
+
+        function escapeHtml(str) {
+            return str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+        }
+
+        function formatResponse(text) {
+            return text.replace(/\n/g, '<br>').replace(/\*\*(.*?)\*\*/g, '<b>$1</b>');
+        }
+
+        // Tải dữ liệu ban đầu
         loadData();
     </script>
 </body>
