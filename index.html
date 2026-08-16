@@ -123,35 +123,6 @@
     <footer class="text-center py-4 text-xs text-slate-500 border-t border-slate-200 max-w-5xl mx-auto w-full">
         <p id="uiFooterInfo">Hệ thống Quản lý Thi đua Đoàn viên</p>
     </footer>
-
-<!-- ==================== WIDGET CHATBOT AI ==================== -->
-<div id="chat-bubble" onclick="toggleChat()" class="fixed bottom-5 right-5 bg-blue-600 hover:bg-blue-700 text-white rounded-full p-4 shadow-xl cursor-pointer flex items-center z-50">
-  💬 <span class="ml-2 font-bold text-sm hidden sm:inline">Hỏi đáp Tiêu chí Đoàn</span>
-</div>
-
-<div id="chat-window" class="hidden fixed bottom-20 right-5 w-80 sm:w-96 h-[480px] bg-white rounded-2xl shadow-2xl border border-gray-200 flex flex-col overflow-hidden z-50">
-  <!-- Header Chatbot -->
-  <div class="bg-blue-800 text-white p-3 font-bold flex justify-between items-center text-sm">
-    <div class="flex items-center space-x-2">
-      <span>🤖</span>
-      <span>Trợ lý AI Quy định Đoàn</span>
-    </div>
-    <button onclick="toggleChat()" class="text-white hover:text-gray-200 font-bold px-2">✕</button>
-  </div>
-
-  <!-- Nội dung tin nhắn -->
-  <div id="chatMessages" class="flex-1 p-3 overflow-y-auto text-sm space-y-3 bg-slate-50">
-    <div class="bg-blue-100 text-blue-900 p-2.5 rounded-lg max-w-[85%] text-xs leading-relaxed">
-      Xin chào! Mọi dữ liệu của tôi được cập nhật trực tiếp từ file văn bản PDF do Ban Chấp hành ban hành. Bạn cần hỏi gì về quy định hay tiêu chí thi đua?
-    </div>
-  </div>
-
-  <!-- Khung nhập & Nút Gửi -->
-  <div class="p-2 bg-white border-t border-gray-200 flex gap-2">
-    <input type="text" id="chatInput" onkeypress="if(event.key === 'Enter') sendChatMessage()" placeholder="Nhập câu hỏi..." class="flex-1 border rounded-lg px-3 py-1.5 text-xs focus:outline-none focus:border-blue-500">
-    <button id="sendBtn" onclick="sendChatMessage()" class="bg-blue-600 hover:bg-blue-700 text-white px-3 py-2 rounded-lg text-xs font-semibold transition">Gửi</button>
-  </div>
-</div>
     
     <!-- ================= TOÀN BỘ CODE JAVASCRIPT ================= -->
     <script>
@@ -542,5 +513,23 @@ async function sendChatMessage() {
     }
 </script>
 </body>
+    <script src="https://sf-cdn.coze.com/obj/unpkg-va/flow-platform/chat-app-sdk/1.2.0-beta.6/libs/oversea/index.js"></script>
+<script>
+  new CozeWebSDK.WebChatClient({
+    config: {
+      bot_id: '7674513972959199285',
+    },
+    componentProps: {
+      title: 'Coze',
+    },
+    auth: {
+      type: 'token',
+      token: 'pat_********',
+      onRefreshToken: function () {
+        return 'pat_********'
+      }
+    }
+  });
+</script>
 </body>
 </html>
