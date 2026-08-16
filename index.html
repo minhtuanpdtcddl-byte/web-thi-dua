@@ -123,22 +123,22 @@
     <footer class="text-center py-4 text-xs text-slate-500 border-t border-slate-200 max-w-5xl mx-auto w-full">
         <p id="uiFooterInfo">Hệ thống Quản lý Thi đua Đoàn viên</p>
     </footer>
-    
-    <!-- ================= TOÀN BỘ CODE JAVASCRIPT ================= -->
+
+    <!-- ================= JAVASCRIPT XỬ LÝ DỮ LIỆU & BỘ LỌC ================= -->
     <script>
-        // 1. THAY BẰNG LINK APPS SCRIPT VÀ GEMINI API KEY CỦA BẠN
-        const API_URL = "https://script.google.com/macros/s/AKfycbwWX8xIXsZqE0eTdAhtWh2jaBAzhZWUSW20SEsrak6VxMAumTYPCCI928wCIbFMV_wg/exec";
+        // URL WEB APP APPS SCRIPT
+        const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbwWX8xIXsZqE0eTdAhtWh2jaBAzhZWUSW20SEsrak6VxMAumTYPCCI928wCIbFMV_wg/exec";
 
         let globalData = [];
         let currentFilteredData = [];
-        let pdfRuleContent = "Chưa có nội dung văn bản PDF.";
 
-        // --- HÀM TẢI DỮ LIỆU TỪ SHEET ---
+        // --- HÀM TẢI DỮ LIỆU TỪ GOOGLE SHEETS ---
         async function loadData() {
             try {
-                const res = await fetch(API_URL);
+                const res = await fetch(WEB_APP_URL);
                 const result = await res.json();
                 
+                // 1. Cấu hình giao diện (Logo, Thông báo, Tên trường)
                 if(result.config) {
                     document.getElementById('uiSchoolName').innerText = result.config.schoolName || "HỆ THỐNG THI ĐƯA";
                     
@@ -156,32 +156,53 @@
                     if(result.config.footerInfo) {
                         document.getElementById('uiFooterInfo').innerHTML = result.config.footerInfo;
                     }
-
-                    // Nhận văn bản PDF từ Sheet Config gửi về cho AI Chatbot
-                    if(result.config.pdfContent) {
-                        pdfRuleContent = result.config.pdfContent;
-                    }
-
-                    const facultySelect = document.getElementById('facultyId');
-                    facultySelect.innerHTML = '<option value="">-- Chọn Liên Chi Đoàn --</option>';
-                    (result.config.faculties || []).forEach(f => facultySelect.innerHTML += `<option value="${f}">${f}</option>`);
-
-                    const classSelect = document.getElementById('classId');
-                    classSelect.innerHTML = '<option value="">-- Chọn Chi đoàn / Lớp --</option>';
-                    (result.config.classes || []).forEach(c => classSelect.innerHTML += `<option value="${c}">${c}</option>`);
-
-                    const actSelect = document.getElementById('activityName');
-                    actSelect.innerHTML = '<option value="">-- Chọn Hoạt động (Nếu có) --</option>';
-                    (result.config.activities || []).forEach(a => actSelect.innerHTML += `<option value="${a}">${a}</option>`);
                 }
 
+                // 2. Nhận dữ liệu bảng Thi đua
                 globalData = result.data || [];
                 currentFilteredData = globalData;
+                
+                // 3. Đổ dữ liệu vào các ô Select (Liên chi đoàn, Chi đoàn, Hoạt động)
+                populateDropdowns(globalData);
+
+                // 4. Vẽ bảng dữ liệu
                 renderTable(globalData);
-            } catch (err) { console.error(err); }
+            } catch (err) { 
+                console.error("Lỗi khi kết nối dữ liệu:", err); 
+            }
         }
 
-        // --- HÀM VẼ BẢNG KÈM MÀU TRẠNG THÁI NỔI BẬT ---
+        // --- HÀM TỰ ĐỘNG LỌC VÀ ĐỔ DỮ LIỆU VÀO CÁC Ô SELECT ---
+        function populateDropdowns(data) {
+            const facultySelect = document.getElementById('facultyId');
+            const classSelect = document.getElementById('classId');
+            const actSelect = document.getElementById('activityName');
+
+            const setFaculty = new Set();
+            const setClass = new Set();
+            const setActivity = new Set();
+
+            data.forEach(row => {
+                // row[2] = Chi đoàn/Lớp, row[3] = Liên chi đoàn/Khoa, row[4] = Hoạt động
+                if (row[2] && String(row[2]).trim() !== '') setClass.add(String(row[2]).trim());
+                if (row[3] && String(row[3]).trim() !== '') setFaculty.add(String(row[3]).trim());
+                if (row[4] && String(row[4]).trim() !== '') setActivity.add(String(row[4]).trim());
+            });
+
+            // Nạp Liên Chi Đoàn
+            facultySelect.innerHTML = '<option value="">-- Chọn Liên Chi Đoàn --</option>';
+            setFaculty.forEach(f => facultySelect.innerHTML += `<option value="${f}">${f}</option>`);
+
+            // Nạp Chi đoàn / Lớp
+            classSelect.innerHTML = '<option value="">-- Chọn Chi đoàn / Lớp --</option>';
+            setClass.forEach(c => classSelect.innerHTML += `<option value="${c}">${c}</option>`);
+
+            // Nạp Hoạt động
+            actSelect.innerHTML = '<option value="">-- Chọn Hoạt động (Nếu có) --</option>';
+            setActivity.forEach(a => actSelect.innerHTML += `<option value="${a}">${a}</option>`);
+        }
+
+        // --- HÀM VẼ BẢNG DỮ LIỆU ---
         function renderTable(dataRows) {
             const container = document.getElementById('listContainer');
             container.innerHTML = '';
@@ -194,14 +215,13 @@
             dataRows.forEach(row => {
                 const [studentId, name, classId, facultyId, actName, achName, fileUrlStr, status] = row;
                 
-                // Phân biệt màu sắc Trạng thái
-                let statusColor = "bg-amber-100 text-amber-800 border border-amber-300"; // Vàng (Chờ duyệt)
+                let statusColor = "bg-amber-100 text-amber-800 border border-amber-300";
                 let statusText = status || 'Chờ duyệt';
 
                 if (status === "Đã duyệt" || status === "Duyệt") {
-                    statusColor = "bg-emerald-100 text-emerald-800 border border-emerald-300 font-bold"; // Xanh lá
+                    statusColor = "bg-emerald-100 text-emerald-800 border border-emerald-300 font-bold";
                 } else if (status === "Từ chối" || status === "Không duyệt" || status === "Không Duyệt") {
-                    statusColor = "bg-rose-100 text-rose-800 border border-rose-300 font-bold"; // Đỏ
+                    statusColor = "bg-rose-100 text-rose-800 border border-rose-300 font-bold";
                 }
 
                 let linksHtml = "Không";
@@ -229,7 +249,7 @@
             });
         }
 
-        // --- CHỨC NĂNG TRA CỨU & BÁO CÁO ---
+        // --- TRA CỨU & BÁO CÁO ---
         function searchData() {
             const keyword = document.getElementById('searchKeyword').value.trim().toLowerCase();
             const countDiv = document.getElementById('searchResultCount');
@@ -332,7 +352,7 @@
             printWindow.print();
         }
 
-        // --- FORM UPLOAD MINH CHỨNG ---
+        // --- NỘP MINH CHỨNG FORM ---
         const fileToBase64 = file => new Promise((resolve, reject) => {
             const reader = new FileReader();
             reader.readAsDataURL(file);
@@ -375,7 +395,7 @@
                     files: preparedFiles
                 };
 
-                await fetch(API_URL, { method: 'POST', body: JSON.stringify(payload) });
+                await fetch(WEB_APP_URL, { method: 'POST', body: JSON.stringify(payload) });
 
                 alert("Nộp minh chứng thành công!");
                 this.reset();
@@ -387,149 +407,28 @@
             }
         });
 
-        // --- XỬ LÝ AI CHATBOT (GEMINI) ---
-        function toggleChat() {
-            document.getElementById('chat-window').classList.toggle('hidden');
-        }
-
-      // ✅ HÀM MỚI CHUẨN (ĐÃ CHUYỂN GỌI SANG APPS SCRIPT, KHÔNG CẦN API KEY Ở ĐÂY):
-async function sendChatMessage() {
-    const input = document.getElementById('chatInput');
-    const question = input.value.trim();
-    if (!question) return;
-
-    // 1. Hiển thị tin nhắn người dùng hỏi lên ô chat
-    appendMessage('user', question);
-    input.value = '';
-
-    // 2. Tạo hiệu ứng đang tra cứu
-    const loadingId = appendMessage('ai', 'Đang suy nghĩ và tra cứu văn bản...');
-
-    try {
-        // 3. Gửi câu hỏi đến Google Apps Script
-        const response = await fetch(`${WEB_APP_URL}?action=askAI&q=${encodeURIComponent(question)}`);
-        const data = await response.json();
-
-        // 4. Xóa dòng "Đang suy nghĩ" và hiển thị câu trả lời từ AI
-        removeMessage(loadingId);
-        appendMessage('ai', data.answer);
-    } catch (error) {
-        removeMessage(loadingId);
-        appendMessage('ai', 'Có lỗi xảy ra khi kết nối máy chủ AI!');
-    }
-}
-
-        function escapeHtml(str) {
-            return str.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
-        }
-
-        function formatResponse(text) {
-            return text.replace(/\n/g, '<br>').replace(/\*\*(.*?)\*\*/g, '<b>$1</b>');
-        }
-
         // Tải dữ liệu ban đầu
-        loadData();
+        document.addEventListener('DOMContentLoaded', loadData);
     </script>
-<!-- BẮT BUỘC PHẢI CÓ THẺ <script> NÀY BÊN NGOÀI CODE -->
-<script>
-    // 1. Khai báo URL Apps Script
-    const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbw8sj1kVgg5lfNYTO_xR7tOCEOaWMDzNHGIByW5XlYgREZMWAJRtplm4J0ZljE-upz/exec";
 
-    // 2. Hàm ẩn/mở khung chat
-    function toggleChat() {
-        const chatWin = document.getElementById('chat-window');
-        if (chatWin) {
-            chatWin.classList.toggle('hidden');
-        }
-    }
-
-    // 3. Hàm gửi tin nhắn AI
-    async function sendChatMessage() {
-        const input = document.getElementById('chatInput');
-        if (!input) return;
-
-        const question = input.value.trim();
-        if (!question) return;
-
-        appendMessage('user', question);
-        input.value = '';
-
-        const loadingId = appendMessage('ai', 'Đang suy nghĩ và tra cứu văn bản...');
-
-        try {
-            const response = await fetch(`${WEB_APP_URL}?action=askAI&q=${encodeURIComponent(question)}`);
-            const data = await response.json();
-
-            removeMessage(loadingId);
-            if (data && data.answer) {
-                appendMessage('ai', data.answer);
-            } else {
-                appendMessage('ai', 'Không nhận được câu trả lời từ máy chủ AI.');
-            }
-        } catch (error) {
-            console.error("Lỗi Chatbot:", error);
-            removeMessage(loadingId);
-            appendMessage('ai', 'Có lỗi xảy ra khi kết nối máy chủ AI!');
-        }
-    }
-
-    // 4. Hàm hiển thị tin nhắn lên màn hình
-    function appendMessage(sender, text) {
-        const chatBody = document.getElementById('chatMessages');
-        if (!chatBody) return null;
-
-        const msgDiv = document.createElement('div');
-        const msgId = 'msg-' + Date.now();
-        msgDiv.id = msgId;
-
-        if (sender === 'user') {
-            msgDiv.className = 'flex justify-end mb-3';
-            msgDiv.innerHTML = `<div class="bg-blue-600 text-white rounded-lg p-2.5 max-w-[85%] text-xs">${escapeHtml(text)}</div>`;
-        } else {
-            msgDiv.className = 'flex justify-start mb-3';
-            msgDiv.innerHTML = `<div class="bg-blue-100 text-blue-900 rounded-lg p-2.5 max-w-[85%] text-xs leading-relaxed">${escapeHtml(text)}</div>`;
-        }
-
-        chatBody.appendChild(msgDiv);
-        chatBody.scrollTop = chatBody.scrollHeight;
-        return msgId;
-    }
-
-    // 5. Hàm xóa tin nhắn chờ
-    function removeMessage(msgId) {
-        const el = document.getElementById(msgId);
-        if (el) el.remove();
-    }
-
-    // 6. Hàm chống lỗi hiển thị ký tự đặc biệt
-    function escapeHtml(text) {
-        if (!text) return '';
-        return String(text)
-            .replace(/&/g, "&amp;")
-            .replace(/</g, "&lt;")
-            .replace(/>/g, "&gt;")
-            .replace(/"/g, "&quot;")
-            .replace(/'/g, "&#039;");
-    }
-</script>
-</body>
+    <!-- COZE CHATBOT SDK -->
     <script src="https://sf-cdn.coze.com/obj/unpkg-va/flow-platform/chat-app-sdk/1.2.0-beta.6/libs/oversea/index.js"></script>
-<script>
-  new CozeWebSDK.WebChatClient({
-    config: {
-      bot_id: '7674513972959199285',
-    },
-    componentProps: {
-      title: 'Coze',
-    },
-    auth: {
-      type: 'token',
-      token: 'pat_********',
-      onRefreshToken: function () {
-        return 'pat_********'
-      }
-    }
-  });
-</script>
+    <script>
+      new CozeWebSDK.WebChatClient({
+        config: {
+          bot_id: '7674513972959199285',
+        },
+        componentProps: {
+          title: 'Coze',
+        },
+        auth: {
+          type: 'token',
+          token: 'pat_********',
+          onRefreshToken: function () {
+            return 'pat_********'
+          }
+        }
+      });
+    </script>
 </body>
 </html>
