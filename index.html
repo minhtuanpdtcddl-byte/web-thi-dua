@@ -304,73 +304,120 @@
         renderTable(globalData);
     }
 
-    // --- 6. XUẤT BÁO CÁO ---
+    // --- 6. XUẤT BÁO CÁO (CHỈ LẤY NỘI DUNG ĐÃ DUYỆT & DỄ TÙY CHỈNH MẪU) ---
     function exportReport(type) {
         const keyword = document.getElementById('searchKeyword').value.trim();
         if (!keyword) {
             alert("Vui lòng nhập tên Sinh viên, Chi đoàn hoặc Khoa vào ô Tìm kiếm trước khi xuất báo cáo!");
             return;
         }
-        if (currentFilteredData.length === 0) {
-            alert("Không có dữ liệu để xuất báo cáo!");
+
+        // 1. LỌC CHỈ LẤY CÁC DỮ LIỆU ĐÃ ĐƯỢC DUYỆT
+        const approvedData = currentFilteredData.filter(row => {
+            const status = String(row[7] || '').trim().toLowerCase();
+            return status === "đã duyệt" || status === "duyệt";
+        });
+
+        if (approvedData.length === 0) {
+            alert("Không tìm thấy minh chứng nào ĐÃ ĐƯỢC DUYỆT cho kết quả tìm kiếm này!");
             return;
         }
 
-        const firstRow = currentFilteredData[0];
-        let reportTitle = type === 'personal' ? 'BẢNG XÁC NHẬN THÀNH TÍCH CÁ NHÂN' : 'BÁO CÁO TỔNG HỢP THI ĐƯA TẬP THỂ';
-        let infoHeader = type === 'personal' 
-            ? `<p><b>Họ và tên Đoàn viên:</b> ${firstRow[1]}</p><p><b>Chi đoàn / Lớp:</b> ${firstRow[2]} &nbsp;&nbsp;&nbsp;&nbsp; <b>Khoa:</b> ${firstRow[3]}</p>`
-            : `<p><b>Đơn vị / Tập thể:</b> "${keyword.toUpperCase()}"</p><p><b>Tổng số lượt nộp minh chứng:</b> ${currentFilteredData.length}</p>`;
+        const firstRow = approvedData[0];
 
+        // 2. CẤU HÌNH CÁC MẪU BÁO CÁO (DỄ DÀNG ĐIỀU CHỈNH THEO YÊU CẦU ĐOÀN TRƯỜNG)
+        const templateConfig = {
+            unitHeader: "ĐOÀN TỈNH ĐẮK LẮK<br><b>BCH TRƯỜNG CAO ĐẲNG ĐẮK LẮK</b>",
+            nationalHeader: "CỘNG HÒA XÃ HỘI CHỦ NGHĨA VIỆT NAM<br><b>Độc lập - Tự do - Hạnh phúc</b>",
+            locationDate: "Đắk Lắk, ngày ..... tháng ..... năm 2026",
+            personalTitle: "BẢNG XÁC NHẬN THÀNH TÍCH RÈN LUYỆN ĐOÀN VIÊN",
+            groupTitle: "BÁO CÁO TỔNG HỢP THI ĐƯA TẬP THỂ DÂN CHỦ",
+            signerLeft: "<b>XÁC NHẬN CỦA CHI ĐOÀN</b>",
+            signerRight: "<b>TM. BAN CHẤP HÀNH ĐOÀN TRƯỜNG</b><br><i>(Ký, ghi rõ họ tên và đóng dấu)</i>"
+        };
+
+        // 3. TẠO TIÊU ĐỀ VÀ THÔNG TIN ĐẦU TRANG
+        let reportTitle = type === 'personal' ? templateConfig.personalTitle : templateConfig.groupTitle;
+        let infoHeader = type === 'personal' 
+            ? `<div style="margin-bottom: 15px;">
+                <p><b>Họ và tên Đoàn viên:</b> ${firstRow[1]} &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <b>Mã SV:</b> ${firstRow[0] || '...'}</p>
+                <p><b>Chi đoàn / Lớp:</b> ${firstRow[2]} &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <b>Khoa / L CĐ:</b> ${firstRow[3]}</p>
+               </div>`
+            : `<div style="margin-bottom: 15px;">
+                <p><b>Đơn vị / Tập thể:</b> "${keyword.toUpperCase()}"</p>
+                <p><b>Tổng số thành tích đã ghi nhận duyệt:</b> ${approvedData.length}</p>
+               </div>`;
+
+        // 4. DỰNG BẢNG DỮ LIỆU THÀNH TÍCH ĐÃ DUYỆT
         let tableRows = "";
-        currentFilteredData.forEach((item, index) => {
+        approvedData.forEach((item, index) => {
             tableRows += `
                 <tr>
                     <td style="border: 1px solid #000; padding: 6px; text-align: center;">${index + 1}</td>
-                    ${type === 'group' ? `<td style="border: 1px solid #000; padding: 6px;">${item[1]} (${item[2]})</td>` : ''}
-                    <td style="border: 1px solid #000; padding: 6px;">${item[4]}</td>
-                    <td style="border: 1px solid #000; padding: 6px;">${item[5]}</td>
-                    <td style="border: 1px solid #000; padding: 6px; text-align: center;">${item[7]}</td>
+                    ${type === 'group' ? `<td style="border: 1px solid #000; padding: 6px;">${item[1]}<br><small>(${item[2]})</small></td>` : ''}
+                    <td style="border: 1px solid #000; padding: 6px;">${item[4] || '-'}</td>
+                    <td style="border: 1px solid #000; padding: 6px;">${item[5] || '-'}</td>
+                    <td style="border: 1px solid #000; padding: 6px; text-align: center; font-weight: bold; color: green;">Đã duyệt</td>
                 </tr>
             `;
         });
 
+        // 5. XUẤT CỬA SỔ IN (MẪU CHUẨN VĂN BẢN ĐOÀN)
         const printWindow = window.open('', '', 'width=850,height=650');
         printWindow.document.write(`
             <html>
             <head>
                 <title>${reportTitle}</title>
                 <style>
-                    body { font-family: "Times New Roman", Times, serif; font-size: 13pt; padding: 20px; }
-                    .header { display: flex; justify-content: space-between; text-align: center; font-weight: bold; }
-                    .title { text-align: center; font-size: 15pt; font-weight: bold; margin: 20px 0; }
-                    table { width: 100%; border-collapse: collapse; margin-top: 10px; }
-                    .footer { margin-top: 40px; display: flex; justify-content: space-between; text-align: center; }
+                    body { font-family: "Times New Roman", Times, serif; font-size: 13pt; line-height: 1.3; padding: 20px; }
+                    .header-table { width: 100%; border-collapse: collapse; margin-bottom: 20px; }
+                    .header-table td { vertical-align: top; text-align: center; }
+                    .title { text-align: center; font-size: 14pt; font-weight: bold; text-transform: uppercase; margin: 15px 0; }
+                    table.data-table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+                    table.data-table th, table.data-table td { border: 1px solid #000; padding: 6px 8px; }
+                    table.data-table th { background-color: #f2f2f2; text-align: center; font-weight: bold; }
+                    .footer-table { width: 100%; border-collapse: collapse; margin-top: 30px; }
+                    .footer-table td { text-align: center; vertical-align: top; width: 50%; }
                 </style>
             </head>
             <body>
-                <div class="header">
-                    <div>ĐOÀN TỈNH ĐẮK LẮK<br><b>BCH TRƯỜNG CAO ĐẲNG ĐẮK LẮK</b></div>
-                    <div>CỘNG HÒA XÃ HỘI CHỦ NGHĨA VIỆT NAM<br>Độc lập - Tự do - Hạnh phúc</div>
-                </div>
+                <!-- QUỐC HIỆU & TIÊU NGỮ -->
+                <table class="header-table">
+                    <tr>
+                        <td style="width: 45%;">${templateConfig.unitHeader}</td>
+                        <td style="width: 55%;">${templateConfig.nationalHeader}</td>
+                    </tr>
+                </table>
+
                 <div class="title">${reportTitle}</div>
+                
                 ${infoHeader}
-                <table>
+
+                <!-- BẢNG CHI TIẾT THÀNH TÍCH -->
+                <table class="data-table">
                     <thead>
-                        <tr style="background-color: #f2f2f2;">
-                            <th style="border: 1px solid #000; padding: 6px; width: 40px;">STT</th>
-                            ${type === 'group' ? `<th style="border: 1px solid #000; padding: 6px;">Họ tên (Lớp)</th>` : ''}
-                            <th style="border: 1px solid #000; padding: 6px;">Tên Hoạt động</th>
-                            <th style="border: 1px solid #000; padding: 6px;">Tên Thành tích</th>
-                            <th style="border: 1px solid #000; padding: 6px; width: 100px;">Trạng thái</th>
+                        <tr>
+                            <th style="width: 40px;">STT</th>
+                            ${type === 'group' ? `<th>Họ tên (Lớp)</th>` : ''}
+                            <th>Tên Hoạt động Đoàn</th>
+                            <th>Thành tích / Bằng khen / Chứng nhận</th>
+                            <th style="width: 90px;">Trạng thái</th>
                         </tr>
                     </thead>
                     <tbody>${tableRows}</tbody>
                 </table>
-                <div class="footer">
-                    <div><b>XÁC NHẬN CỦA CHI ĐOÀN</b><br><br><br><br></div>
-                    <div><i>Đắk Lắk, Ngày ..... tháng ..... năm 2026</i><br><b>TM. BAN CHẤP HÀNH ĐOÀN TRƯỜNG</b><br><br><br><br></div>
-                </div>
+
+                <!-- CHỮ KÝ XÁC NHẬN -->
+                <table class="footer-table">
+                    <tr>
+                        <td></td>
+                        <td><i>${templateConfig.locationDate}</i></td>
+                    </tr>
+                    <tr>
+                        <td style="padding-top: 10px;">${templateConfig.signerLeft}<br><br><br><br></td>
+                        <td style="padding-top: 10px;">${templateConfig.signerRight}<br><br><br><br></td>
+                    </tr>
+                </table>
             </body>
             </html>
         `);
