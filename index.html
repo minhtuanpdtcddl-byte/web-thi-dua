@@ -123,16 +123,17 @@
 
     <!-- ================= JAVASCRIPT XỬ LÝ DỮ LIỆU & BỘ LỌC ================= -->
     <script>
-    const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbxjK8t3jjmDWeb0ibEQKYPnFITSv70i600cDgPGv8xYu-ejzKOlNynMtSOx9WiD_ZYm/exec"; // Thay URL Web App Google Apps Script vào đây
+    const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbzdXOyzmXDzy6zoFtf_JPSQjoNawsOopE9K_W0Jp6zc-1nW2eKuVFtXxyr78RLXcpXo/exec"; // Thay URL Web App Google Apps Script vào đây
 
     let globalData = [];
     let currentFilteredData = [];
     let departmentStructure = {};
 
-    // --- 1. TẢI DỮ LIỆU BAN ĐẦU ---
+// --- 1. TẢI DỮ LIỆU BAN ĐẦU & CẬP NHẬT HOẠT ĐỘNG TỪ CONFIG ---
     async function loadData() {
         try {
-            const res = await fetch(WEB_APP_URL);
+            // Thêm ?t=... để ép trình duyệt luôn lấy dữ liệu mới nhất (chống cache)
+            const res = await fetch(WEB_APP_URL + "?t=" + new Date().getTime());
             const result = await res.json();
             
             if(result.config) {
@@ -157,18 +158,37 @@
                     departmentStructure = result.config.structure;
                     initFacultyDropdown();
                 }
+
+                // 🌟 ĐỔ DANH SÁCH HOẠT ĐỘNG TỪ SHEET CONFIG VÀO DROPDOWN
+                if (result.config.activities && result.config.activities.length > 0) {
+                    populateActivitiesFromConfig(result.config.activities);
+                } else {
+                    // Tự lọc từ dữ liệu nộp nếu Config trống
+                    populateActivities(result.data || []);
+                }
             }
 
             globalData = result.data || [];
             currentFilteredData = globalData;
             
-            populateActivities(globalData);
             renderTable(globalData);
         } catch (err) { 
             console.error("Lỗi kết nối dữ liệu:", err); 
         }
     }
 
+        // --- HÀM ĐỔ DANH SÁCH HOẠT ĐỘNG TỪ CONFIG VÀO FORM ---
+    function populateActivitiesFromConfig(actList) {
+        const actSelect = document.getElementById('activityName');
+        actSelect.innerHTML = '<option value="">-- Chọn Hoạt động (Nếu có) --</option>';
+        
+        // Loại bỏ trùng lặp nếu có
+        const uniqueActivities = [...new Set(actList)];
+        
+        uniqueActivities.forEach(act => {
+            actSelect.innerHTML += `<option value="${act}">${act}</option>`;
+        });
+    }
     // --- 2. KHỞI TẠO KHU VỰC KHOA / CHI ĐOÀN ---
     function initFacultyDropdown() {
         const facultySelect = document.getElementById('facultyId');
