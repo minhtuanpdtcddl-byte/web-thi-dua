@@ -97,26 +97,25 @@
             <div id="searchResultCount" class="text-xs text-slate-600 mt-2 font-medium"></div>
         </div>
 
-        <!-- 5. BẢNG DỮ LIỆU -->
+        <!-- 5. BẢNG DỮ LIỆU (ĐÃ TINH GỌN 6 CỘT) -->
         <div class="overflow-x-auto border rounded-lg">
             <table class="w-full border-collapse text-left text-xs md:text-sm">
                 <thead>
                     <tr class="bg-slate-200 text-slate-700 font-bold border-b">
                         <th class="p-3 whitespace-nowrap">Mã SV</th>
-                        <th class="p-3 min-w-[130px]">Họ và Tên</th>
+                        <th class="p-3 min-w-[140px]">Họ và Tên</th>
                         <th class="p-3 min-w-[100px]">Chi đoàn</th>
-                        <th class="p-3 min-w-[180px] w-1/4">Liên Chi Đoàn / Khoa</th>
-                        <th class="p-3 min-w-[150px]">Hoạt động</th>
-                        <th class="p-3 whitespace-nowrap">Trạng thái</th>
+                        <th class="p-3 min-w-[180px]">Liên Chi Đoàn / Khoa</th>
+                        <th class="p-3 min-w-[160px]">Hoạt động</th>
+                        <th class="p-3 whitespace-nowrap">Kết quả</th>
                     </tr>
                 </thead>
                 <tbody id="listContainer" class="divide-y">
-                    <tr><td colspan="8" class="p-4 text-center text-gray-500">Đang tải dữ liệu...</td></tr>
+                    <tr><td colspan="6" class="p-4 text-center text-gray-500">Đang tải dữ liệu...</td></tr>
                 </tbody>
             </table>
         </div>
-    </div>
-
+        
     <!-- FOOTER -->
     <footer class="text-center py-4 text-xs text-slate-500 border-t border-slate-200 max-w-5xl mx-auto w-full">
         <p id="uiFooterInfo">Hệ thống Quản lý Thi đua Đoàn viên</p>
@@ -225,32 +224,36 @@
         });
     }
 
-    // --- 4. HÀM VẼ BẢNG DỮ LIỆU ---
+// --- 4. HÀM VẼ BẢNG DỮ LIỆU (CHỈ HIỂN THỊ 6 CỘT CẦN THIẾT) ---
     function renderTable(dataRows) {
         const container = document.getElementById('listContainer');
         container.innerHTML = '';
         
         if(!dataRows || dataRows.length === 0) {
-            container.innerHTML = `<tr><td colspan="8" class="p-4 text-center text-gray-500">Không tìm thấy dữ liệu.</td></tr>`;
+            container.innerHTML = `<tr><td colspan="6" class="p-4 text-center text-gray-500">Không tìm thấy dữ liệu.</td></tr>`;
             return;
         }
 
         dataRows.forEach(row => {
+            // Lấy dữ liệu từ Sheet
             const [studentId, name, classId, facultyId, actName, achName, fileUrlStr, status] = row;
             
+            // Xử lý hiển thị Tên hoạt động (nếu trống hoạt động thì hiển thị tên thành tích/bằng khen)
+            const displayActivity = actName || achName || '-';
+
+            // Thiết lập màu sắc trạng thái (Duyệt / Chờ duyệt / Từ chối)
             let statusColor = "bg-amber-100 text-amber-800 border border-amber-300";
             let statusText = status || 'Chờ duyệt';
 
-            if (status === "Đã duyệt" || status === "Duyệt") {
+            const statusLower = String(statusText).trim().toLowerCase();
+            if (statusLower === "đã duyệt" || statusLower === "duyệt") {
                 statusColor = "bg-emerald-100 text-emerald-800 border border-emerald-300 font-bold";
-            } else if (status === "Từ chối" || status === "Không duyệt" || status === "Không Duyệt") {
+                statusText = "Đã duyệt";
+            } else if (statusLower === "từ chối" || statusLower === "không duyệt") {
                 statusColor = "bg-rose-100 text-rose-800 border border-rose-300 font-bold";
-            }
-
-            let linksHtml = "Không";
-            if (fileUrlStr) {
-                const links = fileUrlStr.split('\n');
-                linksHtml = links.map((url, idx) => `<a href="${url}" target="_blank" class="text-blue-600 hover:underline block text-xs">📄 File ${idx+1}</a>`).join('');
+                statusText = "Từ chối";
+            } else {
+                statusText = "Chờ duyệt";
             }
 
             container.innerHTML += `
@@ -259,9 +262,7 @@
                     <td class="p-3 font-medium text-slate-800">${name || ''}</td>
                     <td class="p-3 text-gray-600">${classId || ''}</td>
                     <td class="p-3 text-gray-800 font-semibold">${facultyId || ''}</td>
-                    <td class="p-3 text-slate-700">${actName || '-'}</td>
-                    <td class="p-3 text-slate-700 break-words">${achName || '-'}</td>
-                    <td class="p-3">${linksHtml}</td>
+                    <td class="p-3 text-slate-700">${displayActivity}</td>
                     <td class="p-3 whitespace-nowrap">
                         <span class="${statusColor} px-2.5 py-1 rounded-full text-xs shadow-sm inline-block">
                             ${statusText}
