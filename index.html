@@ -46,15 +46,15 @@
                 </div>
 
                 <div>
-                    <label class="block text-xs font-semibold text-gray-700 uppercase mb-1">Chi đoàn / Lớp (*)</label>
-                    <select id="classId" required class="w-full p-2.5 border rounded-md outline-none bg-white text-sm">
-                        <option value="">-- Chọn Chi đoàn / Lớp --</option>
-                    </select>
-                </div>
-                <div>
                     <label class="block text-xs font-semibold text-gray-700 uppercase mb-1">Liên Chi Đoàn / Khoa (*)</label>
                     <select id="facultyId" required class="w-full p-2.5 border rounded-md outline-none bg-white text-sm">
                         <option value="">-- Chọn Liên Chi Đoàn --</option>
+                    </select>
+                </div>
+                <div>
+                    <label class="block text-xs font-semibold text-gray-700 uppercase mb-1">Chi đoàn / Lớp (*)</label>
+                    <select id="classId" required class="w-full p-2.5 border rounded-md outline-none bg-white text-sm">
+                        <option value="">-- Chọn Chi đoàn / Lớp --</option>
                     </select>
                 </div>
 
@@ -126,13 +126,13 @@
 
     <!-- ================= JAVASCRIPT XỬ LÝ DỮ LIỆU & BỘ LỌC ================= -->
     <script>
-    const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbzQGwCGRPhIkVERM5p5bi8KKc6UzFuBNYgtWNHOVCadTkcV1JuBJ_UT8IyWYrdA5do/exec";
+    const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbzQGwCGRPhIkVERM5p5bi8KKc6UzFuBNYgtWNHOVCadTkcV1JuBJ_UT8IyWYrdA5do/exec"; // Thay URL Web App Google Apps Script vào đây
 
     let globalData = [];
     let currentFilteredData = [];
-    let departmentStructure = {}; // Lưu danh sách phân cấp Khoa -> Lớp
+    let departmentStructure = {};
 
-    // --- HÀM TẢI DỮ LIỆU ---
+    // --- 1. TẢI DỮ LIỆU BAN ĐẦU ---
     async function loadData() {
         try {
             const res = await fetch(WEB_APP_URL);
@@ -156,7 +156,6 @@
                     document.getElementById('uiFooterInfo').innerHTML = result.config.footerInfo;
                 }
 
-                // Lưu cấu hình phân cấp Khoa - Lớp từ Apps Script
                 if(result.config.structure) {
                     departmentStructure = result.config.structure;
                     initFacultyDropdown();
@@ -165,32 +164,32 @@
 
             globalData = result.data || [];
             currentFilteredData = globalData;
+            
+            populateActivities(globalData);
             renderTable(globalData);
         } catch (err) { 
             console.error("Lỗi kết nối dữ liệu:", err); 
         }
     }
 
-    // --- 1. KHỞI TẠO DANH SÁCH LIÊN CHI ĐOÀN / KHOA ---
+    // --- 2. KHỞI TẠO KHU VỰC KHOA / CHI ĐOÀN ---
     function initFacultyDropdown() {
         const facultySelect = document.getElementById('facultyId');
         const classSelect = document.getElementById('classId');
 
         facultySelect.innerHTML = '<option value="">-- Chọn Liên Chi Đoàn / Khoa --</option>';
         classSelect.innerHTML = '<option value="">-- Vui lòng chọn Liên Chi Đoàn trước --</option>';
-        classSelect.disabled = true; // Khóa ô Lớp khi chưa chọn Khoa
+        classSelect.disabled = true;
 
         Object.keys(departmentStructure).forEach(faculty => {
             facultySelect.innerHTML += `<option value="${faculty}">${faculty}</option>`;
         });
 
-        // Bắt sự kiện khi người dùng thay đổi Liên chi đoàn / Khoa
         facultySelect.onchange = function() {
             onFacultyChange(this.value);
         };
     }
 
-    // --- 2. CẬP NHẬT CHI ĐOÀN / LỚP TƯƠNG ỨNG THEO KHOA ĐÃ CHỌN ---
     function onFacultyChange(selectedFaculty) {
         const classSelect = document.getElementById('classId');
         
@@ -207,10 +206,28 @@
             classSelect.innerHTML += `<option value="${c}">${c}</option>`;
         });
 
-        classSelect.disabled = false; // Mở khóa ô chọn Lớp
+        classSelect.disabled = false;
+        classSelect.required = true;
     }
 
-    // --- HÀM VẼ BẢNG DỮ LIỆU ---
+    // --- 3. ĐỔ DỮ LIỆU HOẠT ĐỘNG TỪ BẢNG DỮ LIỆU ---
+    function populateActivities(data) {
+        const actSelect = document.getElementById('activityName');
+        const setActivity = new Set();
+
+        data.forEach(row => {
+            if (row[4] && String(row[4]).trim() !== '') {
+                setActivity.add(String(row[4]).trim());
+            }
+        });
+
+        actSelect.innerHTML = '<option value="">-- Chọn Hoạt động (Nếu có) --</option>';
+        setActivity.forEach(a => {
+            actSelect.innerHTML += `<option value="${a}">${a}</option>`;
+        });
+    }
+
+    // --- 4. HÀM VẼ BẢNG DỮ LIỆU ---
     function renderTable(dataRows) {
         const container = document.getElementById('listContainer');
         container.innerHTML = '';
@@ -257,7 +274,7 @@
         });
     }
 
-    // --- TRA CỨU DỮ LIỆU ---
+    // --- 5. TRA CỨU DỮ LIỆU ---
     function searchData() {
         const keyword = document.getElementById('searchKeyword').value.trim().toLowerCase();
         const countDiv = document.getElementById('searchResultCount');
@@ -287,246 +304,137 @@
         renderTable(globalData);
     }
 
+    // --- 6. XUẤT BÁO CÁO ---
+    function exportReport(type) {
+        const keyword = document.getElementById('searchKeyword').value.trim();
+        if (!keyword) {
+            alert("Vui lòng nhập tên Sinh viên, Chi đoàn hoặc Khoa vào ô Tìm kiếm trước khi xuất báo cáo!");
+            return;
+        }
+        if (currentFilteredData.length === 0) {
+            alert("Không có dữ liệu để xuất báo cáo!");
+            return;
+        }
+
+        const firstRow = currentFilteredData[0];
+        let reportTitle = type === 'personal' ? 'BẢNG XÁC NHẬN THÀNH TÍCH CÁ NHÂN' : 'BÁO CÁO TỔNG HỢP THI ĐƯA TẬP THỂ';
+        let infoHeader = type === 'personal' 
+            ? `<p><b>Họ và tên Đoàn viên:</b> ${firstRow[1]}</p><p><b>Chi đoàn / Lớp:</b> ${firstRow[2]} &nbsp;&nbsp;&nbsp;&nbsp; <b>Khoa:</b> ${firstRow[3]}</p>`
+            : `<p><b>Đơn vị / Tập thể:</b> "${keyword.toUpperCase()}"</p><p><b>Tổng số lượt nộp minh chứng:</b> ${currentFilteredData.length}</p>`;
+
+        let tableRows = "";
+        currentFilteredData.forEach((item, index) => {
+            tableRows += `
+                <tr>
+                    <td style="border: 1px solid #000; padding: 6px; text-align: center;">${index + 1}</td>
+                    ${type === 'group' ? `<td style="border: 1px solid #000; padding: 6px;">${item[1]} (${item[2]})</td>` : ''}
+                    <td style="border: 1px solid #000; padding: 6px;">${item[4]}</td>
+                    <td style="border: 1px solid #000; padding: 6px;">${item[5]}</td>
+                    <td style="border: 1px solid #000; padding: 6px; text-align: center;">${item[7]}</td>
+                </tr>
+            `;
+        });
+
+        const printWindow = window.open('', '', 'width=850,height=650');
+        printWindow.document.write(`
+            <html>
+            <head>
+                <title>${reportTitle}</title>
+                <style>
+                    body { font-family: "Times New Roman", Times, serif; font-size: 13pt; padding: 20px; }
+                    .header { display: flex; justify-content: space-between; text-align: center; font-weight: bold; }
+                    .title { text-align: center; font-size: 15pt; font-weight: bold; margin: 20px 0; }
+                    table { width: 100%; border-collapse: collapse; margin-top: 10px; }
+                    .footer { margin-top: 40px; display: flex; justify-content: space-between; text-align: center; }
+                </style>
+            </head>
+            <body>
+                <div class="header">
+                    <div>ĐOÀN TỈNH ĐẮK LẮK<br><b>BCH TRƯỜNG CAO ĐẲNG ĐẮK LẮK</b></div>
+                    <div>CỘNG HÒA XÃ HỘI CHỦ NGHĨA VIỆT NAM<br>Độc lập - Tự do - Hạnh phúc</div>
+                </div>
+                <div class="title">${reportTitle}</div>
+                ${infoHeader}
+                <table>
+                    <thead>
+                        <tr style="background-color: #f2f2f2;">
+                            <th style="border: 1px solid #000; padding: 6px; width: 40px;">STT</th>
+                            ${type === 'group' ? `<th style="border: 1px solid #000; padding: 6px;">Họ tên (Lớp)</th>` : ''}
+                            <th style="border: 1px solid #000; padding: 6px;">Tên Hoạt động</th>
+                            <th style="border: 1px solid #000; padding: 6px;">Tên Thành tích</th>
+                            <th style="border: 1px solid #000; padding: 6px; width: 100px;">Trạng thái</th>
+                        </tr>
+                    </thead>
+                    <tbody>${tableRows}</tbody>
+                </table>
+                <div class="footer">
+                    <div><b>XÁC NHẬN CỦA CHI ĐOÀN</b><br><br><br><br></div>
+                    <div><i>Đắk Lắk, Ngày ..... tháng ..... năm 2026</i><br><b>TM. BAN CHẤP HÀNH ĐOÀN TRƯỜNG</b><br><br><br><br></div>
+                </div>
+            </body>
+            </html>
+        `);
+        printWindow.document.close();
+        printWindow.print();
+    }
+
+    // --- 7. NỘP MINH CHỨNG ---
+    const fileToBase64 = file => new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.readAsDataURL(file);
+        reader.onload = () => resolve({ name: file.name, type: file.type, data: reader.result });
+        reader.onerror = error => reject(error);
+    });
+
+    document.getElementById('uploadForm').addEventListener('submit', async function(e) {
+        e.preventDefault();
+        
+        const actVal = document.getElementById('activityName').value;
+        const achVal = document.getElementById('achievementName').value.trim();
+
+        if (!actVal && !achVal) {
+            alert("⚠️ Vui lòng CHỌN TÊN HOẠT ĐỘNG hoặc NHẬP TÊN THÀNH TÍCH (có thể chọn/điền cả hai)!");
+            return;
+        }
+
+        const fileFiles = Array.from(document.getElementById('evidenceFiles').files);
+        const docFiles = fileFiles.filter(f => f.type.includes('pdf') || f.type.includes('word') || f.name.endsWith('.doc') || f.name.endsWith('.docx'));
+        const imgFiles = fileFiles.filter(f => f.type.includes('image'));
+
+        if (docFiles.length > 1) { alert("⚠️ Chỉ được tải tối đa 01 file tài liệu PDF/Word!"); return; }
+        if (imgFiles.length > 3) { alert("⚠️ Chỉ được tải tối đa 03 file ảnh!"); return; }
+
+        const submitBtn = document.getElementById('submitBtn');
+        submitBtn.disabled = true;
+        submitBtn.innerText = "⏳ Đang gửi dữ liệu...";
+
+        try {
+            const preparedFiles = await Promise.all(fileFiles.map(f => fileToBase64(f)));
+
+            const payload = {
+                studentId: document.getElementById('studentId').value,
+                studentName: document.getElementById('studentName').value,
+                classId: document.getElementById('classId').value,
+                facultyId: document.getElementById('facultyId').value,
+                activityName: actVal,
+                achievementName: achVal,
+                files: preparedFiles
+            };
+
+            await fetch(WEB_APP_URL, { method: 'POST', body: JSON.stringify(payload) });
+
+            alert("Nộp minh chứng thành công!");
+            this.reset();
+            loadData();
+        } catch (err) { alert("Lỗi gửi dữ liệu!"); } 
+        finally {
+            submitBtn.disabled = false;
+            submitBtn.innerText = "GỬI DUYỆT MINH CHỨNG";
+        }
+    });
+
     // Tải dữ liệu ban đầu
     document.addEventListener('DOMContentLoaded', loadData);
-</script>
-        // --- HÀM TỰ ĐỘNG LỌC VÀ ĐỔ DỮ LIỆU VÀO CÁC Ô SELECT ---
-        function populateDropdowns(data) {
-            const facultySelect = document.getElementById('facultyId');
-            const classSelect = document.getElementById('classId');
-            const actSelect = document.getElementById('activityName');
-
-            const setFaculty = new Set();
-            const setClass = new Set();
-            const setActivity = new Set();
-
-            data.forEach(row => {
-                // row[2] = Chi đoàn/Lớp, row[3] = Liên chi đoàn/Khoa, row[4] = Hoạt động
-                if (row[2] && String(row[2]).trim() !== '') setClass.add(String(row[2]).trim());
-                if (row[3] && String(row[3]).trim() !== '') setFaculty.add(String(row[3]).trim());
-                if (row[4] && String(row[4]).trim() !== '') setActivity.add(String(row[4]).trim());
-            });
-
-            // Nạp Liên Chi Đoàn
-            facultySelect.innerHTML = '<option value="">-- Chọn Liên Chi Đoàn --</option>';
-            setFaculty.forEach(f => facultySelect.innerHTML += `<option value="${f}">${f}</option>`);
-
-            // Nạp Chi đoàn / Lớp
-            classSelect.innerHTML = '<option value="">-- Chọn Chi đoàn / Lớp --</option>';
-            setClass.forEach(c => classSelect.innerHTML += `<option value="${c}">${c}</option>`);
-
-            // Nạp Hoạt động
-            actSelect.innerHTML = '<option value="">-- Chọn Hoạt động (Nếu có) --</option>';
-            setActivity.forEach(a => actSelect.innerHTML += `<option value="${a}">${a}</option>`);
-        }
-
-        // --- HÀM VẼ BẢNG DỮ LIỆU ---
-        function renderTable(dataRows) {
-            const container = document.getElementById('listContainer');
-            container.innerHTML = '';
-            
-            if(!dataRows || dataRows.length === 0) {
-                container.innerHTML = `<tr><td colspan="8" class="p-4 text-center text-gray-500">Không tìm thấy dữ liệu.</td></tr>`;
-                return;
-            }
-
-            dataRows.forEach(row => {
-                const [studentId, name, classId, facultyId, actName, achName, fileUrlStr, status] = row;
-                
-                let statusColor = "bg-amber-100 text-amber-800 border border-amber-300";
-                let statusText = status || 'Chờ duyệt';
-
-                if (status === "Đã duyệt" || status === "Duyệt") {
-                    statusColor = "bg-emerald-100 text-emerald-800 border border-emerald-300 font-bold";
-                } else if (status === "Từ chối" || status === "Không duyệt" || status === "Không Duyệt") {
-                    statusColor = "bg-rose-100 text-rose-800 border border-rose-300 font-bold";
-                }
-
-                let linksHtml = "Không";
-                if (fileUrlStr) {
-                    const links = fileUrlStr.split('\n');
-                    linksHtml = links.map((url, idx) => `<a href="${url}" target="_blank" class="text-blue-600 hover:underline block text-xs">📄 File ${idx+1}</a>`).join('');
-                }
-
-                container.innerHTML += `
-                    <tr class="hover:bg-slate-50 transition">
-                        <td class="p-3 font-semibold text-blue-900 whitespace-nowrap">${studentId || 'Chưa có'}</td>
-                        <td class="p-3 font-medium text-slate-800">${name || ''}</td>
-                        <td class="p-3 text-gray-600">${classId || ''}</td>
-                        <td class="p-3 text-gray-800 font-semibold">${facultyId || ''}</td>
-                        <td class="p-3 text-slate-700">${actName || '-'}</td>
-                        <td class="p-3 text-slate-700 break-words">${achName || '-'}</td>
-                        <td class="p-3">${linksHtml}</td>
-                        <td class="p-3 whitespace-nowrap">
-                            <span class="${statusColor} px-2.5 py-1 rounded-full text-xs shadow-sm inline-block">
-                                ${statusText}
-                            </span>
-                        </td>
-                    </tr>
-                `;
-            });
-        }
-
-        // --- TRA CỨU & BÁO CÁO ---
-        function searchData() {
-            const keyword = document.getElementById('searchKeyword').value.trim().toLowerCase();
-            const countDiv = document.getElementById('searchResultCount');
-
-            if (!keyword) {
-                currentFilteredData = globalData;
-                renderTable(globalData);
-                countDiv.innerText = "";
-                return;
-            }
-
-            currentFilteredData = globalData.filter(row => {
-                return String(row[0]||'').toLowerCase().includes(keyword) ||
-                       String(row[1]||'').toLowerCase().includes(keyword) ||
-                       String(row[2]||'').toLowerCase().includes(keyword) ||
-                       String(row[3]||'').toLowerCase().includes(keyword);
-            });
-
-            renderTable(currentFilteredData);
-            countDiv.innerHTML = `✅ Tìm thấy <b class="text-blue-700">${currentFilteredData.length}</b> kết quả phù hợp.`;
-        }
-
-        function resetSearch() {
-            document.getElementById('searchKeyword').value = '';
-            document.getElementById('searchResultCount').innerText = '';
-            currentFilteredData = globalData;
-            renderTable(globalData);
-        }
-
-        function exportReport(type) {
-            const keyword = document.getElementById('searchKeyword').value.trim();
-            if (!keyword) {
-                alert("Vui lòng nhập tên Sinh viên, Chi đoàn hoặc Khoa vào ô Tìm kiếm trước khi xuất báo cáo!");
-                return;
-            }
-            if (currentFilteredData.length === 0) {
-                alert("Không có dữ liệu để xuất báo cáo!");
-                return;
-            }
-
-            const firstRow = currentFilteredData[0];
-            let reportTitle = type === 'personal' ? 'BẢNG XÁC NHẬN THÀNH TÍCH CÁ NHÂN' : 'BÁO CÁO TỔNG HỢP THI ĐƯA TẬP THỂ';
-            let infoHeader = type === 'personal' 
-                ? `<p><b>Họ và tên Đoàn viên:</b> ${firstRow[1]}</p><p><b>Chi đoàn / Lớp:</b> ${firstRow[2]} &nbsp;&nbsp;&nbsp;&nbsp; <b>Khoa:</b> ${firstRow[3]}</p>`
-                : `<p><b>Đơn vị / Tập thể:</b> "${keyword.toUpperCase()}"</p><p><b>Tổng số lượt nộp minh chứng:</b> ${currentFilteredData.length}</p>`;
-
-            let tableRows = "";
-            currentFilteredData.forEach((item, index) => {
-                tableRows += `
-                    <tr>
-                        <td style="border: 1px solid #000; padding: 6px; text-align: center;">${index + 1}</td>
-                        ${type === 'group' ? `<td style="border: 1px solid #000; padding: 6px;">${item[1]} (${item[2]})</td>` : ''}
-                        <td style="border: 1px solid #000; padding: 6px;">${item[4]}</td>
-                        <td style="border: 1px solid #000; padding: 6px;">${item[5]}</td>
-                        <td style="border: 1px solid #000; padding: 6px; text-align: center;">${item[7]}</td>
-                    </tr>
-                `;
-            });
-
-            const printWindow = window.open('', '', 'width=850,height=650');
-            printWindow.document.write(`
-                <html>
-                <head>
-                    <title>${reportTitle}</title>
-                    <style>
-                        body { font-family: "Times New Roman", Times, serif; font-size: 13pt; padding: 20px; }
-                        .header { display: flex; justify-content: space-between; text-align: center; font-weight: bold; }
-                        .title { text-align: center; font-size: 15pt; font-weight: bold; margin: 20px 0; }
-                        table { width: 100%; border-collapse: collapse; margin-top: 10px; }
-                        .footer { margin-top: 40px; display: flex; justify-content: space-between; text-align: center; }
-                    </style>
-                </head>
-                <body>
-                    <div class="header">
-                        <div>ĐOÀN TỈNH ĐẮK LẮK<br><b>BCH TRƯỜNG CAO ĐẲNG ĐẮK LẮK</b></div>
-                        <div>CỘNG HÒA XÃ HỘI CHỦ NGHĨA VIỆT NAM<br>Độc lập - Tự do - Hạnh phúc</div>
-                    </div>
-                    <div class="title">${reportTitle}</div>
-                    ${infoHeader}
-                    <table>
-                        <thead>
-                            <tr style="background-color: #f2f2f2;">
-                                <th style="border: 1px solid #000; padding: 6px; width: 40px;">STT</th>
-                                ${type === 'group' ? `<th style="border: 1px solid #000; padding: 6px;">Họ tên (Lớp)</th>` : ''}
-                                <th style="border: 1px solid #000; padding: 6px;">Tên Hoạt động</th>
-                                <th style="border: 1px solid #000; padding: 6px;">Tên Thành tích</th>
-                                <th style="border: 1px solid #000; padding: 6px; width: 100px;">Trạng thái</th>
-                            </tr>
-                        </thead>
-                        <tbody>${tableRows}</tbody>
-                    </table>
-                    <div class="footer">
-                        <div><b>XÁC NHẬN CỦA CHI ĐOÀN</b><br><br><br><br></div>
-                        <div><i>Đắk Lắk, Ngày ..... tháng ..... năm 2026</i><br><b>TM. BAN CHẤP HÀNH ĐOÀN TRƯỜNG</b><br><br><br><br></div>
-                    </div>
-                </body>
-                </html>
-            `);
-            printWindow.document.close();
-            printWindow.print();
-        }
-
-        // --- NỘP MINH CHỨNG FORM ---
-        const fileToBase64 = file => new Promise((resolve, reject) => {
-            const reader = new FileReader();
-            reader.readAsDataURL(file);
-            reader.onload = () => resolve({ name: file.name, type: file.type, data: reader.result });
-            reader.onerror = error => reject(error);
-        });
-
-        document.getElementById('uploadForm').addEventListener('submit', async function(e) {
-            e.preventDefault();
-            
-            const actVal = document.getElementById('activityName').value;
-            const achVal = document.getElementById('achievementName').value.trim();
-
-            if (!actVal && !achVal) {
-                alert("⚠️ Vui lòng CHỌN TÊN HOẠT ĐỘNG hoặc NHẬP TÊN THÀNH TÍCH (có thể chọn/điền cả hai)!");
-                return;
-            }
-
-            const fileFiles = Array.from(document.getElementById('evidenceFiles').files);
-            const docFiles = fileFiles.filter(f => f.type.includes('pdf') || f.type.includes('word') || f.name.endsWith('.doc') || f.name.endsWith('.docx'));
-            const imgFiles = fileFiles.filter(f => f.type.includes('image'));
-
-            if (docFiles.length > 1) { alert("⚠️ Chỉ được tải tối đa 01 file tài liệu PDF/Word!"); return; }
-            if (imgFiles.length > 3) { alert("⚠️ Chỉ được tải tối đa 03 file ảnh!"); return; }
-
-            const submitBtn = document.getElementById('submitBtn');
-            submitBtn.disabled = true;
-            submitBtn.innerText = "⏳ Đang gửi dữ liệu...";
-
-            try {
-                const preparedFiles = await Promise.all(fileFiles.map(f => fileToBase64(f)));
-
-                const payload = {
-                    studentId: document.getElementById('studentId').value,
-                    studentName: document.getElementById('studentName').value,
-                    classId: document.getElementById('classId').value,
-                    facultyId: document.getElementById('facultyId').value,
-                    activityName: actVal,
-                    achievementName: achVal,
-                    files: preparedFiles
-                };
-
-                await fetch(WEB_APP_URL, { method: 'POST', body: JSON.stringify(payload) });
-
-                alert("Nộp minh chứng thành công!");
-                this.reset();
-                loadData();
-            } catch (err) { alert("Lỗi gửi dữ liệu!"); } 
-            finally {
-                submitBtn.disabled = false;
-                submitBtn.innerText = "GỬI DUYỆT MINH CHỨNG";
-            }
-        });
-
-        // Tải dữ liệu ban đầu
-        document.addEventListener('DOMContentLoaded', loadData);
     </script>
 
     <!-- COZE CHATBOT SDK -->
