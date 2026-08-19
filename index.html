@@ -30,7 +30,25 @@
             <p id="uiAnnouncement" class="text-base md:text-lg font-bold text-orange-950 mt-1 pl-7 leading-relaxed"></p>
         </div>
 
-        <!-- 3. FORM NỘP MINH CHỨNG -->
+        <!-- 3. BẢNG TIN THI ĐƯA - KHEN THƯỞNG -->
+        <div id="uiNewsBox" class="hidden mb-8 bg-white border border-slate-200 rounded-xl p-5 shadow-sm">
+            <div class="flex items-center gap-2 font-bold text-blue-900 text-base md:text-lg border-b pb-2 mb-4">
+                <span>📰</span> BẢNG TIN THI ĐƯA - KHEN THƯỞNG
+            </div>
+            <div class="flex flex-col md:flex-row gap-6 items-start">
+                <!-- Vùng ảnh tin tức -->
+                <div id="uiNewsImgContainer" class="w-full md:w-1/3 hidden">
+                    <img id="uiNewsImage" src="" alt="Hình ảnh tin tức" class="w-full h-auto max-h-60 object-cover rounded-lg border shadow-sm">
+                </div>
+                <!-- Vùng nội dung tin tức -->
+                <div class="w-full flex-1">
+                    <h3 id="uiNewsTitle" class="font-bold text-slate-800 text-lg mb-2 text-blue-800"></h3>
+                    <p id="uiNewsContent" class="text-slate-600 text-sm md:text-base leading-relaxed whitespace-pre-line"></p>
+                </div>
+            </div>
+        </div>
+
+        <!-- 4. FORM NỘP MINH CHỨNG -->
         <div class="bg-blue-50/70 p-5 rounded-lg border border-blue-200 mb-8">
             <h2 class="text-md font-bold text-blue-900 mb-4 flex items-center gap-2">
                 📝 NỘP MINH CHỨNG THÀNH TÍCH / HOẠT ĐỘNG
@@ -85,7 +103,7 @@
             </form>
         </div>
 
-        <!-- 4. TRA CỨU BÁO CÁO -->
+        <!-- 5. TRA CỨU BÁO CÁO -->
         <div class="bg-slate-50 p-4 rounded-lg border border-slate-200 mb-6">
             <h2 class="text-sm font-bold text-slate-800 uppercase mb-2">🔍 TRA CỨU & XUẤT BÁO CÁO KẾT QUẢ</h2>
             <div class="flex flex-col md:flex-row gap-2">
@@ -97,7 +115,7 @@
             <div id="searchResultCount" class="text-xs text-slate-600 mt-2 font-medium"></div>
         </div>
 
-        <!-- 5. BẢNG DỮ LIỆU (ĐÃ TINH GỌN 6 CỘT) -->
+        <!-- 6. BẢNG DỮ LIỆU -->
         <div class="overflow-x-auto border rounded-lg">
             <table class="w-full border-collapse text-left text-xs md:text-sm">
                 <thead>
@@ -115,24 +133,24 @@
                 </tbody>
             </table>
         </div>
-        
+    </div>
+
     <!-- FOOTER -->
     <footer class="text-center py-4 text-xs text-slate-500 border-t border-slate-200 max-w-5xl mx-auto w-full">
         <p id="uiFooterInfo">Hệ thống Quản lý Thi đua Đoàn viên</p>
     </footer>
 
-    <!-- ================= JAVASCRIPT XỬ LÝ DỮ LIỆU & BỘ LỌC ================= -->
+    <!-- JAVASCRIPT XỬ LÝ DỮ LIỆU & BỘ LỌC -->
     <script>
-    const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbxLkbjKlZ3j_iSkB3DICbv4nnxdvcvqRFWo8ZYCZhxT7_flUBP5Jud-D4EpAxCefhsF/exec"; // Thay URL Web App Google Apps Script vào đây
+    const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbyS4-8S5RBaybKodlKh73H0WVoFM-K4OzLgTs9kOAqbhhn-H5SWmaf8-e1HsmJGx-Yh/exec"; // Thay URL Web App Google Apps Script vào đây
 
     let globalData = [];
     let currentFilteredData = [];
     let departmentStructure = {};
 
-// --- 1. TẢI DỮ LIỆU BAN ĐẦU & CẬP NHẬT HOẠT ĐỘNG TỪ CONFIG ---
+    // --- 1. TẢI DỮ LIỆU BAN ĐẦU & CẬP NHẬT HOẠT ĐỘNG, BẢNG TIN TỪ CONFIG ---
     async function loadData() {
         try {
-            // Thêm ?t=... để ép trình duyệt luôn lấy dữ liệu mới nhất (chống cache)
             const res = await fetch(WEB_APP_URL + "?t=" + new Date().getTime());
             const result = await res.json();
             
@@ -150,6 +168,24 @@
                     document.getElementById('uiAnnouncementBox').classList.remove('hidden');
                 }
 
+                // XỬ LÝ DỮ LIỆU BẢNG TIN THI ĐƯA - KHEN THƯỞNG
+                if(result.config.newsTitle || result.config.newsContent) {
+                    document.getElementById('uiNewsTitle').innerText = result.config.newsTitle || '';
+                    document.getElementById('uiNewsContent').innerText = result.config.newsContent || '';
+
+                    if(result.config.newsImageUrl) {
+                        const newsImg = document.getElementById('uiNewsImage');
+                        newsImg.src = result.config.newsImageUrl;
+                        document.getElementById('uiNewsImgContainer').classList.remove('hidden');
+                    } else {
+                        document.getElementById('uiNewsImgContainer').classList.add('hidden');
+                    }
+
+                    document.getElementById('uiNewsBox').classList.remove('hidden');
+                } else {
+                    document.getElementById('uiNewsBox').classList.add('hidden');
+                }
+
                 if(result.config.footerInfo) {
                     document.getElementById('uiFooterInfo').innerHTML = result.config.footerInfo;
                 }
@@ -159,11 +195,9 @@
                     initFacultyDropdown();
                 }
 
-                // 🌟 ĐỔ DANH SÁCH HOẠT ĐỘNG TỪ SHEET CONFIG VÀO DROPDOWN
                 if (result.config.activities && result.config.activities.length > 0) {
                     populateActivitiesFromConfig(result.config.activities);
                 } else {
-                    // Tự lọc từ dữ liệu nộp nếu Config trống
                     populateActivities(result.data || []);
                 }
             }
@@ -177,19 +211,16 @@
         }
     }
 
-        // --- HÀM ĐỔ DANH SÁCH HOẠT ĐỘNG TỪ CONFIG VÀO FORM ---
     function populateActivitiesFromConfig(actList) {
         const actSelect = document.getElementById('activityName');
         actSelect.innerHTML = '<option value="">-- Chọn Hoạt động (Nếu có) --</option>';
         
-        // Loại bỏ trùng lặp nếu có
         const uniqueActivities = [...new Set(actList)];
-        
         uniqueActivities.forEach(act => {
             actSelect.innerHTML += `<option value="${act}">${act}</option>`;
         });
     }
-    // --- 2. KHỞI TẠO KHU VỰC KHOA / CHI ĐOÀN ---
+
     function initFacultyDropdown() {
         const facultySelect = document.getElementById('facultyId');
         const classSelect = document.getElementById('classId');
@@ -227,7 +258,6 @@
         classSelect.required = true;
     }
 
-    // --- 3. ĐỔ DỮ LIỆU HOẠT ĐỘNG TỪ BẢNG DỮ LIỆU ---
     function populateActivities(data) {
         const actSelect = document.getElementById('activityName');
         const setActivity = new Set();
@@ -244,7 +274,6 @@
         });
     }
 
-// --- 4. HÀM VẼ BẢNG DỮ LIỆU (CHỈ HIỂN THỊ 6 CỘT CẦN THIẾT) ---
     function renderTable(dataRows) {
         const container = document.getElementById('listContainer');
         container.innerHTML = '';
@@ -255,13 +284,9 @@
         }
 
         dataRows.forEach(row => {
-            // Lấy dữ liệu từ Sheet
             const [studentId, name, classId, facultyId, actName, achName, fileUrlStr, status] = row;
-            
-            // Xử lý hiển thị Tên hoạt động (nếu trống hoạt động thì hiển thị tên thành tích/bằng khen)
             const displayActivity = actName || achName || '-';
 
-            // Thiết lập màu sắc trạng thái (Duyệt / Chờ duyệt / Từ chối)
             let statusColor = "bg-amber-100 text-amber-800 border border-amber-300";
             let statusText = status || 'Chờ duyệt';
 
@@ -293,7 +318,6 @@
         });
     }
 
-    // --- 5. TRA CỨU DỮ LIỆU ---
     function searchData() {
         const keyword = document.getElementById('searchKeyword').value.trim().toLowerCase();
         const countDiv = document.getElementById('searchResultCount');
@@ -323,7 +347,6 @@
         renderTable(globalData);
     }
 
-    // --- 6. XUẤT BÁO CÁO (CHỈ LẤY NỘI DUNG ĐÃ DUYỆT & DỄ TÙY CHỈNH MẪU) ---
     function exportReport(type) {
         const keyword = document.getElementById('searchKeyword').value.trim();
         if (!keyword) {
@@ -331,7 +354,6 @@
             return;
         }
 
-        // 1. LỌC CHỈ LẤY CÁC DỮ LIỆU ĐÃ ĐƯỢC DUYỆT
         const approvedData = currentFilteredData.filter(row => {
             const status = String(row[7] || '').trim().toLowerCase();
             return status === "đã duyệt" || status === "duyệt";
@@ -344,7 +366,6 @@
 
         const firstRow = approvedData[0];
 
-        // 2. CẤU HÌNH CÁC MẪU BÁO CÁO (DỄ DÀNG ĐIỀU CHỈNH THEO YÊU CẦU ĐOÀN TRƯỜNG)
         const templateConfig = {
             unitHeader: "ĐOÀN TỈNH ĐẮK LẮK<br><b>BCH TRƯỜNG CAO ĐẲNG ĐẮK LẮK</b>",
             nationalHeader: "CỘNG HÒA XÃ HỘI CHỦ NGHĨA VIỆT NAM<br><b>Độc lập - Tự do - Hạnh phúc</b>",
@@ -355,7 +376,6 @@
             signerRight: "<b>TM. BAN CHẤP HÀNH ĐOÀN TRƯỜNG</b><br><i>(Ký, ghi rõ họ tên và đóng dấu)</i>"
         };
 
-        // 3. TẠO TIÊU ĐỀ VÀ THÔNG TIN ĐẦU TRANG
         let reportTitle = type === 'personal' ? templateConfig.personalTitle : templateConfig.groupTitle;
         let infoHeader = type === 'personal' 
             ? `<div style="margin-bottom: 15px;">
@@ -367,7 +387,6 @@
                 <p><b>Tổng số thành tích đã ghi nhận duyệt:</b> ${approvedData.length}</p>
                </div>`;
 
-        // 4. DỰNG BẢNG DỮ LIỆU THÀNH TÍCH ĐÃ DUYỆT
         let tableRows = "";
         approvedData.forEach((item, index) => {
             tableRows += `
@@ -381,7 +400,6 @@
             `;
         });
 
-        // 5. XUẤT CỬA SỔ IN (MẪU CHUẨN VĂN BẢN ĐOÀN)
         const printWindow = window.open('', '', 'width=850,height=650');
         printWindow.document.write(`
             <html>
@@ -400,7 +418,6 @@
                 </style>
             </head>
             <body>
-                <!-- QUỐC HIỆU & TIÊU NGỮ -->
                 <table class="header-table">
                     <tr>
                         <td style="width: 45%;">${templateConfig.unitHeader}</td>
@@ -409,10 +426,8 @@
                 </table>
 
                 <div class="title">${reportTitle}</div>
-                
                 ${infoHeader}
 
-                <!-- BẢNG CHI TIẾT THÀNH TÍCH -->
                 <table class="data-table">
                     <thead>
                         <tr>
@@ -426,7 +441,6 @@
                     <tbody>${tableRows}</tbody>
                 </table>
 
-                <!-- CHỮ KÝ XÁC NHẬN -->
                 <table class="footer-table">
                     <tr>
                         <td></td>
@@ -444,7 +458,6 @@
         printWindow.print();
     }
 
-   // --- 7. NỘP MINH CHỨNG (DÙNG MODE NO-CORS CỰC KỲ ĐỔI MỚI) ---
     const fileToBase64 = file => new Promise((resolve, reject) => {
         const reader = new FileReader();
         reader.readAsDataURL(file);
@@ -462,7 +475,6 @@
         try {
             const fileFiles = Array.from(document.getElementById('evidenceFiles').files);
             
-            // Kiểm tra tổng dung lượng file (khuyên dùng dưới 5MB)
             const totalSize = fileFiles.reduce((acc, f) => acc + f.size, 0);
             if (totalSize > 8 * 1024 * 1024) {
                 alert("⚠️ Tổng dung lượng file vượt quá 8MB! Vui lòng nén file hoặc dùng file ảnh/PDF nhỏ hơn.");
@@ -483,7 +495,6 @@
                 files: preparedFiles
             };
 
-            // Gửi dữ liệu theo chế độ mode: 'no-cors'
             await fetch(WEB_APP_URL, {
                 method: 'POST',
                 mode: 'no-cors',
@@ -495,7 +506,7 @@
 
             alert("🎉 Nộp minh chứng thành công!");
             this.reset();
-            setTimeout(loadData, 2000); // Đợi 2s để GAS xử lý xong rồi tải lại bảng
+            setTimeout(loadData, 2000);
 
         } catch (err) { 
             console.error(err);
@@ -506,7 +517,6 @@
         }
     });
 
-    // Tải dữ liệu ban đầu
     document.addEventListener('DOMContentLoaded', loadData);
     </script>
 
