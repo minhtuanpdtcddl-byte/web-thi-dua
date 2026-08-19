@@ -126,52 +126,170 @@
 
     <!-- ================= JAVASCRIPT XỬ LÝ DỮ LIỆU & BỘ LỌC ================= -->
     <script>
-        // URL WEB APP APPS SCRIPT
-        const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbzQGwCGRPhIkVERM5p5bi8KKc6UzFuBNYgtWNHOVCadTkcV1JuBJ_UT8IyWYrdA5do/exec";
+    const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbw8sj1kVgg5lfNYTO_xR7tOCEOaWMDzNHGIByW5XlYgREZMWAJRtplm4J0ZljE-upz/exec";
 
-        let globalData = [];
-        let currentFilteredData = [];
+    let globalData = [];
+    let currentFilteredData = [];
+    let departmentStructure = {}; // Lưu danh sách phân cấp Khoa -> Lớp
 
-        // --- HÀM TẢI DỮ LIỆU TỪ GOOGLE SHEETS ---
-        async function loadData() {
-            try {
-                const res = await fetch(WEB_APP_URL);
-                const result = await res.json();
+    // --- HÀM TẢI DỮ LIỆU ---
+    async function loadData() {
+        try {
+            const res = await fetch(WEB_APP_URL);
+            const result = await res.json();
+            
+            if(result.config) {
+                document.getElementById('uiSchoolName').innerText = result.config.schoolName || "HỆ THỐNG THI ĐƯA";
                 
-                // 1. Cấu hình giao diện (Logo, Thông báo, Tên trường)
-                if(result.config) {
-                    document.getElementById('uiSchoolName').innerText = result.config.schoolName || "HỆ THỐNG THI ĐƯA";
-                    
-                    if(result.config.logoUrl) {
-                        const logoImg = document.getElementById('uiLogo');
-                        logoImg.src = result.config.logoUrl;
-                        logoImg.classList.remove('hidden');
-                    }
-
-                    if(result.config.announcement) {
-                        document.getElementById('uiAnnouncement').innerText = result.config.announcement;
-                        document.getElementById('uiAnnouncementBox').classList.remove('hidden');
-                    }
-
-                    if(result.config.footerInfo) {
-                        document.getElementById('uiFooterInfo').innerHTML = result.config.footerInfo;
-                    }
+                if(result.config.logoUrl) {
+                    const logoImg = document.getElementById('uiLogo');
+                    logoImg.src = result.config.logoUrl;
+                    logoImg.classList.remove('hidden');
                 }
 
-                // 2. Nhận dữ liệu bảng Thi đua
-                globalData = result.data || [];
-                currentFilteredData = globalData;
-                
-                // 3. Đổ dữ liệu vào các ô Select (Liên chi đoàn, Chi đoàn, Hoạt động)
-                populateDropdowns(globalData);
+                if(result.config.announcement) {
+                    document.getElementById('uiAnnouncement').innerText = result.config.announcement;
+                    document.getElementById('uiAnnouncementBox').classList.remove('hidden');
+                }
 
-                // 4. Vẽ bảng dữ liệu
-                renderTable(globalData);
-            } catch (err) { 
-                console.error("Lỗi khi kết nối dữ liệu:", err); 
+                if(result.config.footerInfo) {
+                    document.getElementById('uiFooterInfo').innerHTML = result.config.footerInfo;
+                }
+
+                // Lưu cấu hình phân cấp Khoa - Lớp từ Apps Script
+                if(result.config.structure) {
+                    departmentStructure = result.config.structure;
+                    initFacultyDropdown();
+                }
             }
+
+            globalData = result.data || [];
+            currentFilteredData = globalData;
+            renderTable(globalData);
+        } catch (err) { 
+            console.error("Lỗi kết nối dữ liệu:", err); 
+        }
+    }
+
+    // --- 1. KHỞI TẠO DANH SÁCH LIÊN CHI ĐOÀN / KHOA ---
+    function initFacultyDropdown() {
+        const facultySelect = document.getElementById('facultyId');
+        const classSelect = document.getElementById('classId');
+
+        facultySelect.innerHTML = '<option value="">-- Chọn Liên Chi Đoàn / Khoa --</option>';
+        classSelect.innerHTML = '<option value="">-- Vui lòng chọn Liên Chi Đoàn trước --</option>';
+        classSelect.disabled = true; // Khóa ô Lớp khi chưa chọn Khoa
+
+        Object.keys(departmentStructure).forEach(faculty => {
+            facultySelect.innerHTML += `<option value="${faculty}">${faculty}</option>`;
+        });
+
+        // Bắt sự kiện khi người dùng thay đổi Liên chi đoàn / Khoa
+        facultySelect.onchange = function() {
+            onFacultyChange(this.value);
+        };
+    }
+
+    // --- 2. CẬP NHẬT CHI ĐOÀN / LỚP TƯƠNG ỨNG THEO KHOA ĐÃ CHỌN ---
+    function onFacultyChange(selectedFaculty) {
+        const classSelect = document.getElementById('classId');
+        
+        if (!selectedFaculty || !departmentStructure[selectedFaculty]) {
+            classSelect.innerHTML = '<option value="">-- Vui lòng chọn Liên Chi Đoàn trước --</option>';
+            classSelect.disabled = true;
+            return;
         }
 
+        const classes = departmentStructure[selectedFaculty];
+        classSelect.innerHTML = '<option value="">-- Chọn Chi đoàn / Lớp --</option>';
+        
+        classes.forEach(c => {
+            classSelect.innerHTML += `<option value="${c}">${c}</option>`;
+        });
+
+        classSelect.disabled = false; // Mở khóa ô chọn Lớp
+    }
+
+    // --- HÀM VẼ BẢNG DỮ LIỆU ---
+    function renderTable(dataRows) {
+        const container = document.getElementById('listContainer');
+        container.innerHTML = '';
+        
+        if(!dataRows || dataRows.length === 0) {
+            container.innerHTML = `<tr><td colspan="8" class="p-4 text-center text-gray-500">Không tìm thấy dữ liệu.</td></tr>`;
+            return;
+        }
+
+        dataRows.forEach(row => {
+            const [studentId, name, classId, facultyId, actName, achName, fileUrlStr, status] = row;
+            
+            let statusColor = "bg-amber-100 text-amber-800 border border-amber-300";
+            let statusText = status || 'Chờ duyệt';
+
+            if (status === "Đã duyệt" || status === "Duyệt") {
+                statusColor = "bg-emerald-100 text-emerald-800 border border-emerald-300 font-bold";
+            } else if (status === "Từ chối" || status === "Không duyệt" || status === "Không Duyệt") {
+                statusColor = "bg-rose-100 text-rose-800 border border-rose-300 font-bold";
+            }
+
+            let linksHtml = "Không";
+            if (fileUrlStr) {
+                const links = fileUrlStr.split('\n');
+                linksHtml = links.map((url, idx) => `<a href="${url}" target="_blank" class="text-blue-600 hover:underline block text-xs">📄 File ${idx+1}</a>`).join('');
+            }
+
+            container.innerHTML += `
+                <tr class="hover:bg-slate-50 transition">
+                    <td class="p-3 font-semibold text-blue-900 whitespace-nowrap">${studentId || 'Chưa có'}</td>
+                    <td class="p-3 font-medium text-slate-800">${name || ''}</td>
+                    <td class="p-3 text-gray-600">${classId || ''}</td>
+                    <td class="p-3 text-gray-800 font-semibold">${facultyId || ''}</td>
+                    <td class="p-3 text-slate-700">${actName || '-'}</td>
+                    <td class="p-3 text-slate-700 break-words">${achName || '-'}</td>
+                    <td class="p-3">${linksHtml}</td>
+                    <td class="p-3 whitespace-nowrap">
+                        <span class="${statusColor} px-2.5 py-1 rounded-full text-xs shadow-sm inline-block">
+                            ${statusText}
+                        </span>
+                    </td>
+                </tr>
+            `;
+        });
+    }
+
+    // --- TRA CỨU DỮ LIỆU ---
+    function searchData() {
+        const keyword = document.getElementById('searchKeyword').value.trim().toLowerCase();
+        const countDiv = document.getElementById('searchResultCount');
+
+        if (!keyword) {
+            currentFilteredData = globalData;
+            renderTable(globalData);
+            countDiv.innerText = "";
+            return;
+        }
+
+        currentFilteredData = globalData.filter(row => {
+            return String(row[0]||'').toLowerCase().includes(keyword) ||
+                   String(row[1]||'').toLowerCase().includes(keyword) ||
+                   String(row[2]||'').toLowerCase().includes(keyword) ||
+                   String(row[3]||'').toLowerCase().includes(keyword);
+        });
+
+        renderTable(currentFilteredData);
+        countDiv.innerHTML = `✅ Tìm thấy <b class="text-blue-700">${currentFilteredData.length}</b> kết quả phù hợp.`;
+    }
+
+    function resetSearch() {
+        document.getElementById('searchKeyword').value = '';
+        document.getElementById('searchResultCount').innerText = '';
+        currentFilteredData = globalData;
+        renderTable(globalData);
+    }
+
+    // Tải dữ liệu ban đầu
+    document.addEventListener('DOMContentLoaded', loadData);
+</script>
         // --- HÀM TỰ ĐỘNG LỌC VÀ ĐỔ DỮ LIỆU VÀO CÁC Ô SELECT ---
         function populateDropdowns(data) {
             const facultySelect = document.getElementById('facultyId');
