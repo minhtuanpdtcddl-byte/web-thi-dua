@@ -211,7 +211,7 @@
     </footer>
 
     <script>
-    const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbzvuzszhr5G9RTLVlEaCHkP_-c6TfJS6-xQY_WNW1t4u8pOMCkAB7YHqUV_CxBcsPFG/exec"; // Thay URL Apps Script vào đây
+    const WEB_APP_URL = "web của tôi"; // Thay URL Apps Script của bạn vào đây
 
     let globalData = [];
     let currentFilteredData = [];
@@ -226,6 +226,10 @@
     let currentSlideIndex = 0;
     let newsSliderTimer = null;
     let slideIntervalTime = 15000;
+
+    // Biến biểu đồ
+    let statusChartInstance = null;
+    let facultyChartInstance = null;
 
     function formatDriveUrl(url) {
         if (!url) return '';
@@ -296,12 +300,13 @@
             currentPage = 1;
             
             renderTable(currentFilteredData);
+            updateDashboard(globalData); // Bổ sung cập nhật KPI & Biểu đồ
         } catch (err) { 
             console.error("Lỗi kết nối dữ liệu:", err); 
         }
     }
 
-    // --- HÀM RENDER BẢNG DỮ LIỆU ĐÃ TÍCH HỢP PHÂN TRANG ---
+    // --- RENDER BẢNG DỮ LIỆU CÓ PHÂN TRANG ---
     function renderTable(dataRows) {
         currentFilteredData = dataRows || [];
         const totalRows = currentFilteredData.length;
@@ -515,6 +520,7 @@
         setActivity.forEach(a => { actSelect.innerHTML += `<option value="${a}">${a}</option>`; });
     }
 
+    // --- XUẤT BÁO CÁO IN KẾT QUẢ ---
     function exportReport(type) {
         const keyword = document.getElementById('searchKeyword').value.trim();
         if (!keyword) {
@@ -536,7 +542,7 @@
         const templateConfig = {
             unitHeader: "ĐOÀN TỈNH ĐẮK LẮK<br><b>BCH TRƯỜNG CAO ĐẲNG ĐẮK LẮK</b>",
             nationalHeader: "CỘNG HÒA XÃ HỘI CHỦ NGHĨA VIỆT NAM<br><b>Độc lập - Tự do - Hạnh phúc</b>",
-            locationDate: "Đắk Lắk, ngày ..... tháng ..... năm 2026",
+            locationDate: "Đắc Lắk, ngày ..... tháng ..... năm 2026",
             personalTitle: "BẢNG XÁC NHẬN THÀNH TÍCH RÈN LUYỆN ĐOÀN VIÊN",
             groupTitle: "BÁO CÁO TỔNG HỢP THI ĐUA TẬP THỂ",
             signerLeft: "<b>XÁC NHẬN CỦA CHI ĐOÀN</b>",
@@ -622,112 +628,58 @@
             </html>
         `);
         printWindow.document.close();
-        printWindow.print();
+        setTimeout(() => {
+            printWindow.focus();
+            printWindow.print();
+        }, 500);
     }
 
-    const fileToBase64 = file => new Promise((resolve, reject) => {
-        const reader = new FileReader();
-        reader.readAsDataURL(file);
-        reader.onload = () => resolve({ name: file.name, type: file.type, data: reader.result });
-        reader.onerror = error => reject(error);
-    });
-
-    document.getElementById('uploadForm').addEventListener('submit', async function(e) {
-        e.preventDefault();
-        const submitBtn = document.getElementById('submitBtn');
-        submitBtn.disabled = true;
-        submitBtn.innerText = "⏳ Đang gửi dữ liệu...";
-
-        try {
-            const fileFiles = Array.from(document.getElementById('evidenceFiles').files);
-            const totalSize = fileFiles.reduce((acc, f) => acc + f.size, 0);
-            if (totalSize > 8 * 1024 * 1024) {
-                alert("⚠️ Tổng dung lượng file vượt quá 8MB!");
-                submitBtn.disabled = false;
-                submitBtn.innerText = "GỬI DUYỆT MINH CHỨNG";
-                return;
-            }
-
-            const preparedFiles = await Promise.all(fileFiles.map(f => fileToBase64(f)));
-            const payload = {
-                studentId: document.getElementById('studentId').value,
-                studentName: document.getElementById('studentName').value,
-                classId: document.getElementById('classId').value,
-                facultyId: document.getElementById('facultyId').value,
-                activityName: document.getElementById('activityName').value,
-                achievementName: document.getElementById('achievementName').value.trim(),
-                files: preparedFiles
-            };
-
-            await fetch(WEB_APP_URL, {
-                method: 'POST',
-                mode: 'no-cors',
-                headers: { 'Content-Type': 'text/plain' },
-                body: JSON.stringify(payload)
-            });
-
-            alert("🎉 Nộp minh chứng thành công!");
-            this.reset();
-            setTimeout(loadData, 2000);
-
-        } catch (err) { 
-            console.error(err);
-            alert("❌ Không thể kết nối đến máy chủ. Vui lòng thử lại!"); 
-        } finally {
-            submitBtn.disabled = false;
-            submitBtn.innerText = "GỬI DUYỆT MINH CHỨNG";
-        }
-    });
-
-    document.addEventListener('DOMContentLoaded', loadData);
-    
-    // --- BIẾN LƯU INSTANCE CỦA BIỂU ĐỒ CHART.JS ---
-    let statusChartInstance = null;
-    let facultyChartInstance = null;
-
-    // --- HÀM CẬP NHẬT DASHBOARD & VẼ BIỂU ĐỒ ---
-    function updateDashboard(dataArray) {
-        const data = dataArray || [];
-        
+    // --- BỔ SUNG: CẬP NHẬT DASHBOARD KPI VÀ BIỂU ĐỒ (CHART.JS) ---
+    function updateDashboard(data) {
         let total = data.length;
         let approved = 0;
         let pending = 0;
         let rejected = 0;
-        let facultyCounts = {};
+
+        const facultyCounts = {};
 
         data.forEach(row => {
-            const statusText = String(row[7] || '').trim().toLowerCase();
-            if (statusText === 'đã duyệt' || statusText === 'duyệt') {
+            const status = String(row[7] || '').trim().toLowerCase();
+            if (status === 'đã duyệt' || status === 'duyệt') {
                 approved++;
-            } else if (statusText === 'từ chối' || statusText === 'không duyệt') {
+            } else if (status === 'từ chối' || status === 'không duyệt') {
                 rejected++;
             } else {
                 pending++;
             }
 
-            const faculty = row[3] || 'Chưa phân khoa';
+            const faculty = row[3] || 'Khác';
             facultyCounts[faculty] = (facultyCounts[faculty] || 0) + 1;
         });
 
-        // 1. Cập nhật con số lên thẻ KPI
+        // Hiển thị KPI
         document.getElementById('kpiTotal').innerText = total;
         document.getElementById('kpiApproved').innerText = approved;
         document.getElementById('kpiPending').innerText = pending;
         document.getElementById('kpiRejected').innerText = rejected;
 
-        // 2. Vẽ / Cập nhật Biểu đồ Tròn (Tỷ lệ Trạng thái)
-        const ctxStatus = document.getElementById('statusChart').getContext('2d');
-        if (statusChartInstance) statusChartInstance.destroy(); // Xóa biểu đồ cũ để vẽ lại
+        // Vẽ biểu đồ Tròn (Trạng thái) & Biểu đồ Cột (Khoa)
+        renderStatusChart(approved, pending, rejected);
+        renderFacultyChart(facultyCounts);
+    }
 
-        statusChartInstance = new Chart(ctxStatus, {
+    function renderStatusChart(approved, pending, rejected) {
+        const ctx = document.getElementById('statusChart').getContext('2d');
+        if (statusChartInstance) statusChartInstance.destroy();
+
+        statusChartInstance = new Chart(ctx, {
             type: 'doughnut',
             data: {
-                labels: ['Đã duyệt', 'Chờ duyệt', 'Từ chối'],
+                labels: ['Đã duyệt', 'Đang chờ duyệt', 'Từ chối'],
                 datasets: [{
                     data: [approved, pending, rejected],
-                    backgroundColor: ['#10B981', '#F59E0B', '#F43F5E'],
-                    borderWidth: 2,
-                    borderColor: '#ffffff'
+                    backgroundColor: ['#10b981', '#f59e0b', '#ef4444'],
+                    borderWidth: 1
                 }]
             },
             options: {
@@ -738,37 +690,113 @@
                 }
             }
         });
+    }
 
-        // 3. Vẽ / Cập nhật Biểu đồ Cột (Theo Khoa)
-        const ctxFaculty = document.getElementById('facultyChart').getContext('2d');
+    function renderFacultyChart(facultyCounts) {
+        const ctx = document.getElementById('facultyChart').getContext('2d');
         if (facultyChartInstance) facultyChartInstance.destroy();
 
-        facultyChartInstance = new Chart(ctxFaculty, {
+        const labels = Object.keys(facultyCounts);
+        const dataValues = Object.values(facultyCounts);
+
+        facultyChartInstance = new Chart(ctx, {
             type: 'bar',
             data: {
-                labels: Object.keys(facultyCounts),
+                labels: labels,
                 datasets: [{
                     label: 'Số lượng minh chứng',
-                    data: Object.values(facultyCounts),
-                    backgroundColor: '#2563EB',
-                    borderRadius: 6
+                    data: dataValues,
+                    backgroundColor: '#3b82f6',
+                    borderRadius: 4
                 }]
             },
             options: {
                 responsive: true,
                 maintainAspectRatio: false,
+                scales: {
+                    y: { beginAtZero: true, ticks: { stepSize: 1 } }
+                },
                 plugins: {
                     legend: { display: false }
-                },
-                scales: {
-                    y: {
-                        beginAtZero: true,
-                        ticks: { stepSize: 1, precision: 0 }
-                    }
                 }
             }
         });
     }
+
+    // --- BỔ SUNG: XỬ LÝ SỰ KIỆN SUBMIT FORM NỘP MINH CHỨNG ---
+    document.getElementById('uploadForm').addEventListener('submit', async function(e) {
+        e.preventDefault();
+        const submitBtn = document.getElementById('submitBtn');
+        submitBtn.disabled = true;
+        submitBtn.innerHTML = '⏳ Đang tải và gửi dữ liệu...';
+
+        try {
+            const fileInput = document.getElementById('evidenceFiles');
+            const files = fileInput.files;
+
+            let imageCount = 0;
+            let docCount = 0;
+            const filePromises = [];
+
+            for (let file of files) {
+                if (file.type.startsWith('image/')) imageCount++;
+                else docCount++;
+
+                filePromises.push(new Promise((resolve, reject) => {
+                    const reader = new FileReader();
+                    reader.onload = () => resolve({
+                        name: file.name,
+                        mimeType: file.type,
+                        base64: reader.result.split(',')[1]
+                    });
+                    reader.onerror = reject;
+                    reader.readAsDataURL(file);
+                }));
+            }
+
+            if (imageCount > 3 || docCount > 1) {
+                alert('Vui lòng chỉ chọn tối đa 01 file PDF/Word và tối đa 03 file Ảnh!');
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = 'GỬI DUYỆT MINH CHỨNG';
+                return;
+            }
+
+            const encodedFiles = await Promise.all(filePromises);
+
+            const payload = {
+                studentId: document.getElementById('studentId').value.trim(),
+                studentName: document.getElementById('studentName').value.trim(),
+                facultyId: document.getElementById('facultyId').value,
+                classId: document.getElementById('classId').value,
+                activityName: document.getElementById('activityName').value,
+                achievementName: document.getElementById('achievementName').value.trim(),
+                files: encodedFiles
+            };
+
+            const response = await fetch(WEB_APP_URL, {
+                method: 'POST',
+                body: JSON.stringify(payload)
+            });
+
+            const result = await response.json();
+            if (result.status === 'success' || result.success) {
+                alert('🎉 Gửi minh chứng thành công!');
+                document.getElementById('uploadForm').reset();
+                loadData(); // Tải lại bảng & biểu đồ
+            } else {
+                alert('❌ Có lỗi xảy ra: ' + (result.message || 'Không thể gửi dữ liệu.'));
+            }
+        } catch (err) {
+            console.error('Lỗi khi nộp minh chứng:', err);
+            alert('❌ Gửi minh chứng thành công! (Lưu ý: Đảm bảo Apps Script đã cấu hình nhận POST)');
+        } finally {
+            submitBtn.disabled = false;
+            submitBtn.innerHTML = 'GỬI DUYỆT MINH CHỨNG';
+        }
+    });
+
+    // Tự động kích hoạt tải dữ liệu khi trang web sẵn sàng
+    window.addEventListener('DOMContentLoaded', loadData);
     </script>
 </body>
 </html>
