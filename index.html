@@ -30,23 +30,33 @@
             <p id="uiAnnouncement" class="text-base md:text-lg font-bold text-orange-950 mt-1 pl-7 leading-relaxed"></p>
         </div>
 
-        <!-- 3. BẢNG TIN CÁC HOẠT ĐỘNG -->
-        <div id="uiNewsBox" class="hidden mb-8 bg-white border border-slate-200 rounded-xl p-5 shadow-sm">
-            <div class="flex items-center gap-2 font-bold text-blue-900 text-base md:text-lg border-b pb-2 mb-4">
-                <span>📰</span> BẢNG TIN CÁC HOẠT ĐỘNG TRONG THÁNG 9/2026
-            </div>
-            <div class="flex flex-col md:flex-row gap-6 items-start">
-                <!-- Vùng ảnh tin tức -->
-                <div id="uiNewsImgContainer" class="w-full md:w-1/3 hidden">
-                    <img id="uiNewsImage" src="" alt="Hình ảnh tin tức" class="w-full h-auto max-h-60 object-cover rounded-lg border shadow-sm">
-                </div>
-                <!-- Vùng nội dung tin tức -->
-                <div class="w-full flex-1">
-                    <h3 id="uiNewsTitle" class="font-bold text-slate-800 text-lg mb-2 text-blue-800"></h3>
-                    <p id="uiNewsContent" class="text-slate-600 text-sm md:text-base leading-relaxed whitespace-pre-line"></p>
-                </div>
-            </div>
+<!-- 3. BẢNG TIN THÔNG TIN (SLIDER TRÌNH CHIẾU TỰ ĐỘNG) -->
+<div id="uiNewsBox" class="hidden mb-8 bg-white border border-blue-200 rounded-xl overflow-hidden shadow-md">
+    <div class="bg-blue-900 text-white p-4 font-bold text-base md:text-lg flex items-center justify-between">
+        <div class="flex items-center gap-2">
+            <span>📰</span> BẢNG TIN CÁC HOẠT ĐỘNG THÁNG 09/2026
         </div>
+        <span id="slideCounter" class="text-xs bg-blue-800 px-2.5 py-1 rounded-full text-blue-200 font-normal"></span>
+    </div>
+    
+    <!-- Khung Carousel chứa nội dung -->
+    <div class="relative group" onmouseenter="pauseNewsSlider()" onmouseleave="startNewsSlider()">
+        <div id="newsSliderContainer" class="p-5 min-h-[300px]">
+            <!-- Nội dung slide sẽ được Javascript render tự động tại đây -->
+        </div>
+
+        <!-- Nút Chuyển Slide Trái / Phải -->
+        <button onclick="prevNewsSlide()" class="absolute left-2 top-1/2 -translate-y-1/2 bg-black/40 hover:bg-black/70 text-white p-2 rounded-full opacity-0 group-hover:opacity-100 transition duration-300">
+            ❮
+        </button>
+        <button onclick="nextNewsSlide()" class="absolute right-2 top-1/2 -translate-y-1/2 bg-black/40 hover:bg-black/70 text-white p-2 rounded-full opacity-0 group-hover:opacity-100 transition duration-300">
+            ❯
+        </button>
+
+        <!-- Chấm chỉ số Slide (Dots) -->
+        <div id="newsDotsContainer" class="flex justify-center gap-2 pb-4"></div>
+    </div>
+</div>
 
         <!-- 4. FORM NỘP MINH CHỨNG -->
         <div class="bg-blue-50/70 p-5 rounded-lg border border-blue-200 mb-8">
@@ -538,6 +548,133 @@
           }
         }
       });
+    </script>
+    <script>
+        // 1. Khai báo các biến toàn cục cho Slider (Dán vào đầu thẻ script)
+        let newsDataList = [];
+        let currentSlideIndex = 0;
+        let newsSliderTimer = null;
+        let slideIntervalTime = 15000; // Mặc định 15 giây
+
+        // 2. Hàm hỗ trợ đổi link Drive
+        function formatDriveUrl(url) {
+            if (!url) return '';
+            if (url.includes('drive.google.com') || url.includes('lh3.googleusercontent.com')) {
+                const match = url.match(/\/d\/([a-zA-Z0-9_-]+)/) || url.match(/id=([a-zA-Z0-9_-]+)/);
+                if (match && match[1]) {
+                    return `https://lh3.googleusercontent.com/d/${match[1]}`;
+                }
+            }
+            return url;
+        }
+
+        // 3. Trong hàm loadData() (hoặc hàm gọi API từ Google Apps Script của bạn):
+        function loadData() {
+            // ... đoạn code fetch API của bạn ...
+            fetch(WEB_APP_URL)
+                .then(res => res.json())
+                .then(result => {
+                    
+                    // --- THÊM ĐOẠN XỬ LÝ BẢNG TIN VÀO ĐÂY ---
+                    if (result.config) {
+                        if (result.config.slideInterval) {
+                            slideIntervalTime = parseInt(result.config.slideInterval) * 1000;
+                        }
+
+                        if (result.config.newsList && result.config.newsList.length > 0) {
+                            newsDataList = result.config.newsList;
+                        } else if (result.config.newsTitle || result.config.newsContent) {
+                            newsDataList = [{
+                                title: result.config.newsTitle || '',
+                                content: result.config.newsContent || '',
+                                imageUrl: result.config.newsImageUrl || ''
+                            }];
+                        }
+
+                        if (newsDataList.length > 0) {
+                            currentSlideIndex = 0;
+                            renderNewsSlide(currentSlideIndex);
+                            startNewsSlider();
+                            document.getElementById('uiNewsBox').classList.remove('hidden');
+                        } else {
+                            document.getElementById('uiNewsBox').classList.add('hidden');
+                        }
+                    }
+                    // ----------------------------------------
+
+                });
+        }
+
+        // 4. Các hàm điều khiển Slider (Dán thêm vào phía dưới thẻ script)
+        function renderNewsSlide(index) {
+            const container = document.getElementById('newsSliderContainer');
+            const dotsContainer = document.getElementById('newsDotsContainer');
+            const counter = document.getElementById('slideCounter');
+            
+            const item = newsDataList[index];
+            const imgUrl = formatDriveUrl(item.imageUrl);
+
+            counter.innerText = `${index + 1} / ${newsDataList.length}`;
+
+            container.innerHTML = `
+                <div class="flex flex-col gap-5 transition-opacity duration-500 ease-in-out">
+                    ${imgUrl ? `
+                    <div class="w-full overflow-hidden rounded-lg border border-slate-200 shadow-sm">
+                        <img src="${imgUrl}" alt="Hình ảnh tin tức" class="w-full h-auto max-h-[450px] object-cover object-center hover:scale-105 transition-transform duration-300">
+                    </div>` : ''}
+                    <div class="w-full">
+                        <h3 class="font-extrabold text-blue-900 text-xl md:text-2xl mb-2 leading-snug">${item.title || ''}</h3>
+                        <p class="text-slate-700 text-sm md:text-base leading-relaxed whitespace-pre-line">${item.content || ''}</p>
+                    </div>
+                </div>
+            `;
+
+            dotsContainer.innerHTML = '';
+            if (newsDataList.length > 1) {
+                newsDataList.forEach((_, i) => {
+                    const activeClass = i === index ? 'bg-blue-600 w-6' : 'bg-slate-300 w-2.5';
+                    dotsContainer.innerHTML += `
+                        <button onclick="goToNewsSlide(${i})" class="h-2.5 rounded-full transition-all duration-300 ${activeClass}"></button>
+                    `;
+                });
+            }
+        }
+
+        function nextNewsSlide() {
+            if (newsDataList.length <= 1) return;
+            currentSlideIndex = (currentSlideIndex + 1) % newsDataList.length;
+            renderNewsSlide(currentSlideIndex);
+        }
+
+        function prevNewsSlide() {
+            if (newsDataList.length <= 1) return;
+            currentSlideIndex = (currentSlideIndex - 1 + newsDataList.length) % newsDataList.length;
+            renderNewsSlide(currentSlideIndex);
+        }
+
+        function goToNewsSlide(index) {
+            currentSlideIndex = index;
+            renderNewsSlide(currentSlideIndex);
+            startNewsSlider();
+        }
+
+        function startNewsSlider() {
+            stopNewsSlider();
+            if (newsDataList.length > 1) {
+                newsSliderTimer = setInterval(nextNewsSlide, slideIntervalTime);
+            }
+        }
+
+        function pauseNewsSlider() {
+            stopNewsSlider();
+        }
+
+        function stopNewsSlider() {
+            if (newsSliderTimer) clearInterval(newsSliderTimer);
+        }
+
+        // Gọi hàm loadData() khi trang tải xong
+        window.onload = loadData;
     </script>
 </body>
 </html>
