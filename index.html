@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Hệ thống Quản lý Thi đua Đoàn viên</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
 <body class="bg-slate-100 p-3 md:p-8 font-sans min-h-screen flex flex-col justify-between">
@@ -103,7 +104,52 @@
                 </div>
             </form>
         </div>
+<!-- ================= MỤC DASHBOARD BÁO CÁO TRỰC QUAN ================= -->
+        <div class="mb-8">
+            <h2 class="text-base font-bold text-slate-800 uppercase mb-4 flex items-center gap-2">
+                📊 BÁO CÁO THỐNG KÊ TỔNG QUAN
+            </h2>
 
+            <!-- 1. CÁC THẺ CHỈ SỐ KPI -->
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+                <div class="bg-blue-50 border-l-4 border-blue-600 p-4 rounded-r-lg shadow-sm">
+                    <p class="text-xs font-semibold text-blue-700 uppercase">Tổng số minh chứng</p>
+                    <p id="kpiTotal" class="text-2xl md:text-3xl font-extrabold text-blue-900 mt-1">0</p>
+                </div>
+                <div class="bg-emerald-50 border-l-4 border-emerald-500 p-4 rounded-r-lg shadow-sm">
+                    <p class="text-xs font-semibold text-emerald-700 uppercase">Đã phê duyệt</p>
+                    <p id="kpiApproved" class="text-2xl md:text-3xl font-extrabold text-emerald-800 mt-1">0</p>
+                </div>
+                <div class="bg-amber-50 border-l-4 border-amber-500 p-4 rounded-r-lg shadow-sm">
+                    <p class="text-xs font-semibold text-amber-700 uppercase">Đang chờ duyệt</p>
+                    <p id="kpiPending" class="text-2xl md:text-3xl font-extrabold text-amber-800 mt-1">0</p>
+                </div>
+                <div class="bg-rose-50 border-l-4 border-rose-500 p-4 rounded-r-lg shadow-sm">
+                    <p class="text-xs font-semibold text-rose-700 uppercase">Từ chối / Nhắc nhở</p>
+                    <p id="kpiRejected" class="text-2xl md:text-3xl font-extrabold text-rose-800 mt-1">0</p>
+                </div>
+            </div>
+
+            <!-- 2. KHUNG HIỂN THỊ BIỂU ĐỒ -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <!-- Biểu đồ Tròn: Trạng thái -->
+                <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm flex flex-col items-center">
+                    <h3 class="text-xs font-bold text-slate-600 uppercase mb-3">Tỷ lệ Trạng thái Duyệt</h3>
+                    <div class="w-full h-56 relative flex items-center justify-center">
+                        <canvas id="statusChart"></canvas>
+                    </div>
+                </div>
+
+                <!-- Biểu đồ Cột: Theo Khoa / Liên Chi Đoàn -->
+                <div class="md:col-span-2 bg-white p-4 rounded-xl border border-slate-200 shadow-sm flex flex-col items-center">
+                    <h3 class="text-xs font-bold text-slate-600 uppercase mb-3">Số lượng Minh chứng theo Liên Chi Đoàn / Khoa</h3>
+                    <div class="w-full h-56 relative">
+                        <canvas id="facultyChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- ==================================================================== -->
         <!-- 5. TRA CỨU BÁO CÁO -->
         <div class="bg-slate-50 p-4 rounded-lg border border-slate-200 mb-6">
             <h2 class="text-sm font-bold text-slate-800 uppercase mb-2">🔍 TRA CỨU & XUẤT BÁO CÁO KẾT QUẢ</h2>
@@ -634,6 +680,95 @@
     });
 
     document.addEventListener('DOMContentLoaded', loadData);
+    
+    // --- BIẾN LƯU INSTANCE CỦA BIỂU ĐỒ CHART.JS ---
+    let statusChartInstance = null;
+    let facultyChartInstance = null;
+
+    // --- HÀM CẬP NHẬT DASHBOARD & VẼ BIỂU ĐỒ ---
+    function updateDashboard(dataArray) {
+        const data = dataArray || [];
+        
+        let total = data.length;
+        let approved = 0;
+        let pending = 0;
+        let rejected = 0;
+        let facultyCounts = {};
+
+        data.forEach(row => {
+            const statusText = String(row[7] || '').trim().toLowerCase();
+            if (statusText === 'đã duyệt' || statusText === 'duyệt') {
+                approved++;
+            } else if (statusText === 'từ chối' || statusText === 'không duyệt') {
+                rejected++;
+            } else {
+                pending++;
+            }
+
+            const faculty = row[3] || 'Chưa phân khoa';
+            facultyCounts[faculty] = (facultyCounts[faculty] || 0) + 1;
+        });
+
+        // 1. Cập nhật con số lên thẻ KPI
+        document.getElementById('kpiTotal').innerText = total;
+        document.getElementById('kpiApproved').innerText = approved;
+        document.getElementById('kpiPending').innerText = pending;
+        document.getElementById('kpiRejected').innerText = rejected;
+
+        // 2. Vẽ / Cập nhật Biểu đồ Tròn (Tỷ lệ Trạng thái)
+        const ctxStatus = document.getElementById('statusChart').getContext('2d');
+        if (statusChartInstance) statusChartInstance.destroy(); // Xóa biểu đồ cũ để vẽ lại
+
+        statusChartInstance = new Chart(ctxStatus, {
+            type: 'doughnut',
+            data: {
+                labels: ['Đã duyệt', 'Chờ duyệt', 'Từ chối'],
+                datasets: [{
+                    data: [approved, pending, rejected],
+                    backgroundColor: ['#10B981', '#F59E0B', '#F43F5E'],
+                    borderWidth: 2,
+                    borderColor: '#ffffff'
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { position: 'bottom' }
+                }
+            }
+        });
+
+        // 3. Vẽ / Cập nhật Biểu đồ Cột (Theo Khoa)
+        const ctxFaculty = document.getElementById('facultyChart').getContext('2d');
+        if (facultyChartInstance) facultyChartInstance.destroy();
+
+        facultyChartInstance = new Chart(ctxFaculty, {
+            type: 'bar',
+            data: {
+                labels: Object.keys(facultyCounts),
+                datasets: [{
+                    label: 'Số lượng minh chứng',
+                    data: Object.values(facultyCounts),
+                    backgroundColor: '#2563EB',
+                    borderRadius: 6
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: { display: false }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        ticks: { stepSize: 1, precision: 0 }
+                    }
+                }
+            }
+        });
+    }
     </script>
 </body>
 </html>
