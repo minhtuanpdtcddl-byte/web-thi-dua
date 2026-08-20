@@ -801,20 +801,19 @@
     <!-- SDK Chatbot Coze -->
 <script src="https://sf-cdn.coze.com/obj/unpkg-va/flow-platform/chat-app-sdk/1.1.0-single/1.1.0/index.js"></script>
 
-<script>
-  new CozeWebSDK.WebChatClient({
-    config: {
-      bot_id: '7674513972959199285', // Ví dụ: '7312345678901234567'
-    },
-    componentProps: {
-      title: 'Trợ lý AI Đoàn Trường',
-      icon: 'https://lh3.googleusercontent.com/d/1fxq42o8YxSt-ZSKmSduB_FYwrnab4OkU',
-      lang: 'vi',
-    },
-    // Rất quan trọng: Nếu dùng Coze Quốc tế (coze.com) thì điền https://api.coze.com
-    // Nếu dùng Coze Trung Quốc (coze.cn) thì đổi thành https://api.coze.cn
-    baseUrl: 'https://api.coze.com', 
-  });
-</script>
+<!-- Đặt ngay trên thẻ </body> ở cuối file HTML của bạn -->
+    <script src="https://sf-cdn.coze.com/obj/unpkg-va/flow-platform/chat-app-sdk/1.1.0-single/1.1.0/index.js"></script>
+    <script>
+      new CozeWebSDK.WebChatClient({
+        config: {
+          bot_id: '7674513972959199285', // Thay bằng dãy số thật của bạn (không bỏ dấu nháy đơn)
+        },
+        componentProps: {
+          title: 'Trợ lý AI Đoàn Trường',
+          lang: 'vi',
+        },
+        baseUrl: 'https://api.coze.com',
+      });
+    </script>
 </body>
 </html>
