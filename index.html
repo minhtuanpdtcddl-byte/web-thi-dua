@@ -34,26 +34,17 @@
         <div id="uiNewsBox" class="hidden mb-8 bg-white border border-blue-200 rounded-xl overflow-hidden shadow-md">
             <div class="bg-blue-900 text-white p-4 font-bold text-base md:text-lg flex items-center justify-between">
                 <div class="flex items-center gap-2">
-                    <span>📰</span> BẢNG TIN CÁC HOẠT ĐỘNG THÁNG 09/2026
+                    <span>📰</span> BẢNG TIN CÁC HOẠT ĐỘNG
                 </div>
                 <span id="slideCounter" class="text-xs bg-blue-800 px-2.5 py-1 rounded-full text-blue-200 font-normal"></span>
             </div>
             
-            <!-- Khung Carousel chứa nội dung -->
             <div class="relative group" onmouseenter="pauseNewsSlider()" onmouseleave="startNewsSlider()">
-                <div id="newsSliderContainer" class="p-5 min-h-[300px]">
-                    <!-- Nội dung slide sẽ được Javascript render tự động tại đây -->
-                </div>
+                <div id="newsSliderContainer" class="p-5 min-h-[300px]"></div>
 
-                <!-- Nút Chuyển Slide Trái / Phải -->
-                <button onclick="prevNewsSlide()" class="absolute left-2 top-1/2 -translate-y-1/2 bg-black/40 hover:bg-black/70 text-white p-2 rounded-full opacity-0 group-hover:opacity-100 transition duration-300">
-                    ❮
-                </button>
-                <button onclick="nextNewsSlide()" class="absolute right-2 top-1/2 -translate-y-1/2 bg-black/40 hover:bg-black/70 text-white p-2 rounded-full opacity-0 group-hover:opacity-100 transition duration-300">
-                    ❯
-                </button>
+                <button onclick="prevNewsSlide()" class="absolute left-2 top-1/2 -translate-y-1/2 bg-black/40 hover:bg-black/70 text-white p-2 rounded-full opacity-0 group-hover:opacity-100 transition duration-300">❮</button>
+                <button onclick="nextNewsSlide()" class="absolute right-2 top-1/2 -translate-y-1/2 bg-black/40 hover:bg-black/70 text-white p-2 rounded-full opacity-0 group-hover:opacity-100 transition duration-300">❯</button>
 
-                <!-- Chấm chỉ số Slide (Dots) -->
                 <div id="newsDotsContainer" class="flex justify-center gap-2 pb-4"></div>
             </div>
         </div>
@@ -125,7 +116,7 @@
             <div id="searchResultCount" class="text-xs text-slate-600 mt-2 font-medium"></div>
         </div>
 
-        <!-- 6. BẢNG DỮ LIỆU -->
+        <!-- 6. BẢNG DỮ LIỆU & PHÂN TRANG -->
         <div class="overflow-x-auto border rounded-lg">
             <table class="w-full border-collapse text-left text-xs md:text-sm">
                 <thead>
@@ -143,47 +134,128 @@
                 </tbody>
             </table>
         </div>
-        <!-- CỤM ĐIỀU KHIỂN PHÂN TRANG -->
-<div class="flex flex-col sm:flex-row justify-between items-center gap-4 mt-4 px-2 text-sm text-slate-600">
-  <!-- Chọn số hàng / trang -->
-  <div class="flex items-center gap-2">
-    <span>Hiển thị:</span>
-    <select id="rowsPerPageSelect" onchange="changeRowsPerPage(this.value)" class="border border-slate-300 rounded px-2 py-1 bg-white focus:outline-none focus:ring-1 focus:ring-blue-500">
-      <option value="5">5 hàng</option>
-      <option value="10" selected>10 hàng</option>
-      <option value="20">20 hàng</option>
-    </select>
-    <span>hàng/trang</span>
-  </div>
 
-  <!-- Nút chuyển trang -->
-  <div class="flex items-center gap-2">
-    <button id="btnPrevPage" onclick="changePage(-1)" class="px-3 py-1 border border-slate-300 rounded bg-white hover:bg-slate-100 disabled:opacity-40 disabled:cursor-not-allowed transition-colors">
-      Trước
-    </button>
-    <span id="pageInfoText" class="font-medium text-slate-700">Trang 1 / 1</span>
-    <button id="btnNextPage" onclick="changePage(1)" class="px-3 py-1 border border-slate-300 rounded bg-white hover:bg-slate-100 disabled:opacity-40 disabled:cursor-not-allowed transition-colors">
-      Sau
-    </button>
-  </div>
-</div>
+        <!-- CỤM ĐIỀU KHIỂN PHÂN TRANG -->
+        <div class="flex flex-col sm:flex-row justify-between items-center gap-4 mt-4 px-2 text-sm text-slate-600">
+            <div class="flex items-center gap-2">
+                <span>Hiển thị:</span>
+                <select id="rowsPerPageSelect" onchange="changeRowsPerPage(this.value)" class="border border-slate-300 rounded px-2 py-1 bg-white focus:outline-none focus:ring-1 focus:ring-blue-500">
+                    <option value="5">5 hàng</option>
+                    <option value="10" selected>10 hàng</option>
+                    <option value="20">20 hàng</option>
+                </select>
+                <span>hàng/trang</span>
+            </div>
+
+            <div class="flex items-center gap-2">
+                <button id="btnPrevPage" onclick="changePage(-1)" class="px-3 py-1 border border-slate-300 rounded bg-white hover:bg-slate-100 disabled:opacity-40 disabled:cursor-not-allowed transition-colors">
+                    Trước
+                </button>
+                <span id="pageInfoText" class="font-medium text-slate-700">Trang 1 / 1</span>
+                <button id="btnNextPage" onclick="changePage(1)" class="px-3 py-1 border border-slate-300 rounded bg-white hover:bg-slate-100 disabled:opacity-40 disabled:cursor-not-allowed transition-colors">
+                    Sau
+                </button>
+            </div>
+        </div>
+
     </div>
 
-    <!-- FOOTER -->
     <footer class="text-center py-4 text-xs text-slate-500 border-t border-slate-200 max-w-5xl mx-auto w-full">
         <p id="uiFooterInfo">Hệ thống Quản lý Thi đua Đoàn viên</p>
     </footer>
 
-    <!-- JAVASCRIPT XỬ LÝ DỮ LIỆU, SLIDER & BỘ LỌC -->
     <script>
-    const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbzvuzszhr5G9RTLVlEaCHkP_-c6TfJS6-xQY_WNW1t4u8pOMCkAB7YHqUV_CxBcsPFG/exec"; // Thay URL Web App Google Apps Script vào đây
+    const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbzvuzszhr5G9RTLVlEaCHkP_-c6TfJS6-xQY_WNW1t4u8pOMCkAB7YHqUV_CxBcsPFG/exec"; // Thay URL Apps Script vào đây
 
-    // --- PHÂN TRANG VÀ QUẢN LÝ BẢNG DỮ LIỆU ---
     let globalData = [];
     let currentFilteredData = [];
-    let currentPage = 1;
-    let rowsPerPage = 10; // Mặc định 10 hàng/trang
+    let departmentStructure = {};
 
+    // Biến phân trang
+    let currentPage = 1;
+    let rowsPerPage = 10;
+
+    // Biến slider
+    let newsDataList = [];
+    let currentSlideIndex = 0;
+    let newsSliderTimer = null;
+    let slideIntervalTime = 15000;
+
+    function formatDriveUrl(url) {
+        if (!url) return '';
+        if (url.includes('drive.google.com') || url.includes('lh3.googleusercontent.com')) {
+            const match = url.match(/\/d\/([a-zA-Z0-9_-]+)/) || url.match(/id=([a-zA-Z0-9_-]+)/);
+            if (match && match[1]) {
+                return `https://lh3.googleusercontent.com/d/${match[1]}`;
+            }
+        }
+        return url;
+    }
+
+    async function loadData() {
+        try {
+            const res = await fetch(WEB_APP_URL + "?t=" + new Date().getTime());
+            const result = await res.json();
+            
+            if (result.config) {
+                if (result.config.schoolName) {
+                    document.getElementById('uiSchoolName').innerText = result.config.schoolName;
+                }
+                if (result.config.logoUrl) {
+                    const logoImg = document.getElementById('uiLogo');
+                    logoImg.src = result.config.logoUrl;
+                    logoImg.classList.remove('hidden');
+                }
+                if (result.config.announcement) {
+                    document.getElementById('uiAnnouncement').innerText = result.config.announcement;
+                    document.getElementById('uiAnnouncementBox').classList.remove('hidden');
+                }
+                if (result.config.footerInfo) {
+                    document.getElementById('uiFooterInfo').innerHTML = result.config.footerInfo;
+                }
+                if (result.config.structure) {
+                    departmentStructure = result.config.structure;
+                    initFacultyDropdown();
+                }
+                if (result.config.activities && result.config.activities.length > 0) {
+                    populateActivitiesFromConfig(result.config.activities);
+                } else {
+                    populateActivities(result.data || []);
+                }
+                if (result.config.slideInterval) {
+                    slideIntervalTime = parseInt(result.config.slideInterval) * 1000;
+                }
+                if (result.config.newsList && result.config.newsList.length > 0) {
+                    newsDataList = result.config.newsList;
+                } else if (result.config.newsTitle || result.config.newsContent) {
+                    newsDataList = [{
+                        title: result.config.newsTitle || '',
+                        content: result.config.newsContent || '',
+                        imageUrl: result.config.newsImageUrl || ''
+                    }];
+                }
+
+                if (newsDataList.length > 0) {
+                    currentSlideIndex = 0;
+                    renderNewsSlide(currentSlideIndex);
+                    startNewsSlider();
+                    document.getElementById('uiNewsBox').classList.remove('hidden');
+                } else {
+                    document.getElementById('uiNewsBox').classList.add('hidden');
+                }
+            }
+
+            globalData = result.data || [];
+            currentFilteredData = globalData;
+            currentPage = 1;
+            
+            renderTable(currentFilteredData);
+        } catch (err) { 
+            console.error("Lỗi kết nối dữ liệu:", err); 
+        }
+    }
+
+    // --- HÀM RENDER BẢNG DỮ LIỆU ĐÃ TÍCH HỢP PHÂN TRANG ---
     function renderTable(dataRows) {
         currentFilteredData = dataRows || [];
         const totalRows = currentFilteredData.length;
@@ -235,7 +307,6 @@
             });
         }
 
-        // Cập nhật giao diện số trang
         const pageInfo = document.getElementById('pageInfoText');
         const btnPrev = document.getElementById('btnPrevPage');
         const btnNext = document.getElementById('btnNextPage');
@@ -279,101 +350,14 @@
         if (countDiv) countDiv.innerHTML = `✅ Tìm thấy <b class="text-blue-700">${filtered.length}</b> kết quả phù hợp.`;
     }
 
-    // Khai báo biến toàn cục cho Slider
-    let newsDataList = [];
-    let currentSlideIndex = 0;
-    let newsSliderTimer = null;
-    let slideIntervalTime = 15000; // Mặc định 15 giây
-
-    // Hỗ trợ chuyển đổi URL Google Drive
-    function formatDriveUrl(url) {
-        if (!url) return '';
-        if (url.includes('drive.google.com') || url.includes('lh3.googleusercontent.com')) {
-            const match = url.match(/\/d\/([a-zA-Z0-9_-]+)/) || url.match(/id=([a-zA-Z0-9_-]+)/);
-            if (match && match[1]) {
-                return `https://lh3.googleusercontent.com/d/${match[1]}`;
-            }
-        }
-        return url;
+    function resetSearch() {
+        document.getElementById('searchKeyword').value = '';
+        document.getElementById('searchResultCount').innerText = '';
+        currentPage = 1;
+        renderTable(globalData);
     }
 
-    // --- TẢI DỮ LIỆU BAN ĐẦU DÙNG CHUNG ---
-    async function loadData() {
-        try {
-            const res = await fetch(WEB_APP_URL + "?t=" + new Date().getTime());
-            const result = await res.json();
-            
-            if (result.config) {
-                // Tên trường & Logo
-                if (result.config.schoolName) {
-                    document.getElementById('uiSchoolName').innerText = result.config.schoolName;
-                }
-                
-                if (result.config.logoUrl) {
-                    const logoImg = document.getElementById('uiLogo');
-                    logoImg.src = result.config.logoUrl;
-                    logoImg.classList.remove('hidden');
-                }
-
-                // Thông báo
-                if (result.config.announcement) {
-                    document.getElementById('uiAnnouncement').innerText = result.config.announcement;
-                    document.getElementById('uiAnnouncementBox').classList.remove('hidden');
-                }
-
-                // Footer
-                if (result.config.footerInfo) {
-                    document.getElementById('uiFooterInfo').innerHTML = result.config.footerInfo;
-                }
-
-                // Cấu trúc Khoa / Chi đoàn
-                if (result.config.structure) {
-                    departmentStructure = result.config.structure;
-                    initFacultyDropdown();
-                }
-
-                // Danh sách hoạt động form nộp
-                if (result.config.activities && result.config.activities.length > 0) {
-                    populateActivitiesFromConfig(result.config.activities);
-                } else {
-                    populateActivities(result.data || []);
-                }
-
-                // Xử lý Bảng tin / Slider
-                if (result.config.slideInterval) {
-                    slideIntervalTime = parseInt(result.config.slideInterval) * 1000;
-                }
-
-                if (result.config.newsList && result.config.newsList.length > 0) {
-                    newsDataList = result.config.newsList;
-                } else if (result.config.newsTitle || result.config.newsContent) {
-                    newsDataList = [{
-                        title: result.config.newsTitle || '',
-                        content: result.config.newsContent || '',
-                        imageUrl: result.config.newsImageUrl || ''
-                    }];
-                }
-
-                if (newsDataList.length > 0) {
-                    currentSlideIndex = 0;
-                    renderNewsSlide(currentSlideIndex);
-                    startNewsSlider();
-                    document.getElementById('uiNewsBox').classList.remove('hidden');
-                } else {
-                    document.getElementById('uiNewsBox').classList.add('hidden');
-                }
-            }
-
-            globalData = result.data || [];
-            currentFilteredData = globalData;
-            
-            renderTable(globalData);
-        } catch (err) { 
-            console.error("Lỗi kết nối dữ liệu:", err); 
-        }
-    }
-
-    // --- QUẢN LÝ SLIDER BẢNG TIN ---
+    // --- CÁC HÀM SLIDER BẢNG TIN ---
     function renderNewsSlide(index) {
         const container = document.getElementById('newsSliderContainer');
         const dotsContainer = document.getElementById('newsDotsContainer');
@@ -390,8 +374,8 @@
             <div class="flex flex-col gap-5 transition-opacity duration-500 ease-in-out">
                 ${imgUrl ? `
                 <div class="w-full overflow-hidden rounded-lg border border-slate-200 shadow-sm bg-slate-900/5 flex justify-center items-center p-2 min-h-[250px]">
-    <img src="${imgUrl}" alt="Hình ảnh tin tức" class="w-auto h-auto max-h-[450px] max-w-full object-contain hover:scale-105 transition-transform duration-300 mx-auto rounded">
-</div>` : ''}
+                    <img src="${imgUrl}" alt="Hình ảnh tin tức" class="w-auto h-auto max-h-[450px] max-w-full object-contain hover:scale-105 transition-transform duration-300 mx-auto rounded">
+                </div>` : ''}
                 <div class="w-full">
                     <h3 class="font-extrabold text-blue-900 text-xl md:text-2xl mb-2 leading-snug">${item.title || ''}</h3>
                     <p class="text-slate-700 text-sm md:text-base leading-relaxed whitespace-pre-line">${item.content || ''}</p>
@@ -435,21 +419,13 @@
         }
     }
 
-    function pauseNewsSlider() {
-        stopNewsSlider();
-    }
+    function pauseNewsSlider() { stopNewsSlider(); }
+    function stopNewsSlider() { if (newsSliderTimer) clearInterval(newsSliderTimer); }
 
-    function stopNewsSlider() {
-        if (newsSliderTimer) clearInterval(newsSliderTimer);
-    }
-
-    // --- QUẢN LÝ DROPDOWN VÀ BẢNG DỮ LIỆU ---
     function populateActivitiesFromConfig(actList) {
         const actSelect = document.getElementById('activityName');
         actSelect.innerHTML = '<option value="">-- Chọn Hoạt động (Nếu có) --</option>';
-        
-        const uniqueActivities = [...new Set(actList)];
-        uniqueActivities.forEach(act => {
+        [...new Set(actList)].forEach(act => {
             actSelect.innerHTML += `<option value="${act}">${act}</option>`;
         });
     }
@@ -457,7 +433,6 @@
     function initFacultyDropdown() {
         const facultySelect = document.getElementById('facultyId');
         const classSelect = document.getElementById('classId');
-
         facultySelect.innerHTML = '<option value="">-- Chọn Liên Chi Đoàn / Khoa --</option>';
         classSelect.innerHTML = '<option value="">-- Vui lòng chọn Liên Chi Đoàn trước --</option>';
         classSelect.disabled = true;
@@ -466,27 +441,20 @@
             facultySelect.innerHTML += `<option value="${faculty}">${faculty}</option>`;
         });
 
-        facultySelect.onchange = function() {
-            onFacultyChange(this.value);
-        };
+        facultySelect.onchange = function() { onFacultyChange(this.value); };
     }
 
     function onFacultyChange(selectedFaculty) {
         const classSelect = document.getElementById('classId');
-        
         if (!selectedFaculty || !departmentStructure[selectedFaculty]) {
             classSelect.innerHTML = '<option value="">-- Vui lòng chọn Liên Chi Đoàn trước --</option>';
             classSelect.disabled = true;
             return;
         }
-
-        const classes = departmentStructure[selectedFaculty];
         classSelect.innerHTML = '<option value="">-- Chọn Chi đoàn / Lớp --</option>';
-        
-        classes.forEach(c => {
+        departmentStructure[selectedFaculty].forEach(c => {
             classSelect.innerHTML += `<option value="${c}">${c}</option>`;
         });
-
         classSelect.disabled = false;
         classSelect.required = true;
     }
@@ -494,93 +462,13 @@
     function populateActivities(data) {
         const actSelect = document.getElementById('activityName');
         const setActivity = new Set();
-
         data.forEach(row => {
-            if (row[4] && String(row[4]).trim() !== '') {
-                setActivity.add(String(row[4]).trim());
-            }
+            if (row[4] && String(row[4]).trim() !== '') setActivity.add(String(row[4]).trim());
         });
-
         actSelect.innerHTML = '<option value="">-- Chọn Hoạt động (Nếu có) --</option>';
-        setActivity.forEach(a => {
-            actSelect.innerHTML += `<option value="${a}">${a}</option>`;
-        });
+        setActivity.forEach(a => { actSelect.innerHTML += `<option value="${a}">${a}</option>`; });
     }
 
-    function renderTable(dataRows) {
-        const container = document.getElementById('listContainer');
-        container.innerHTML = '';
-        
-        if(!dataRows || dataRows.length === 0) {
-            container.innerHTML = `<tr><td colspan="6" class="p-4 text-center text-gray-500">Không tìm thấy dữ liệu.</td></tr>`;
-            return;
-        }
-
-        dataRows.forEach(row => {
-            const [studentId, name, classId, facultyId, actName, achName, fileUrlStr, status] = row;
-            const displayActivity = actName || achName || '-';
-
-            let statusColor = "bg-amber-100 text-amber-800 border border-amber-300";
-            let statusText = status || 'Chờ duyệt';
-
-            const statusLower = String(statusText).trim().toLowerCase();
-            if (statusLower === "đã duyệt" || statusLower === "duyệt") {
-                statusColor = "bg-emerald-100 text-emerald-800 border border-emerald-300 font-bold";
-                statusText = "Đã duyệt";
-            } else if (statusLower === "từ chối" || statusLower === "không duyệt") {
-                statusColor = "bg-rose-100 text-rose-800 border border-rose-300 font-bold";
-                statusText = "Từ chối";
-            } else {
-                statusText = "Chờ duyệt";
-            }
-
-            container.innerHTML += `
-                <tr class="hover:bg-slate-50 transition">
-                    <td class="p-3 font-semibold text-blue-900 whitespace-nowrap">${studentId || 'Chưa có'}</td>
-                    <td class="p-3 font-medium text-slate-800">${name || ''}</td>
-                    <td class="p-3 text-gray-600">${classId || ''}</td>
-                    <td class="p-3 text-gray-800 font-semibold">${facultyId || ''}</td>
-                    <td class="p-3 text-slate-700">${displayActivity}</td>
-                    <td class="p-3 whitespace-nowrap">
-                        <span class="${statusColor} px-2.5 py-1 rounded-full text-xs shadow-sm inline-block">
-                            ${statusText}
-                        </span>
-                    </td>
-                </tr>
-            `;
-        });
-    }
-
-    function searchData() {
-        const keyword = document.getElementById('searchKeyword').value.trim().toLowerCase();
-        const countDiv = document.getElementById('searchResultCount');
-
-        if (!keyword) {
-            currentFilteredData = globalData;
-            renderTable(globalData);
-            countDiv.innerText = "";
-            return;
-        }
-
-        currentFilteredData = globalData.filter(row => {
-            return String(row[0]||'').toLowerCase().includes(keyword) ||
-                   String(row[1]||'').toLowerCase().includes(keyword) ||
-                   String(row[2]||'').toLowerCase().includes(keyword) ||
-                   String(row[3]||'').toLowerCase().includes(keyword);
-        });
-
-        renderTable(currentFilteredData);
-        countDiv.innerHTML = `✅ Tìm thấy <b class="text-blue-700">${currentFilteredData.length}</b> kết quả phù hợp.`;
-    }
-
-    function resetSearch() {
-        document.getElementById('searchKeyword').value = '';
-        document.getElementById('searchResultCount').innerText = '';
-        currentFilteredData = globalData;
-        renderTable(globalData);
-    }
-
-    // --- XUẤT BÁO CÁO IN ẤN ---
     function exportReport(type) {
         const keyword = document.getElementById('searchKeyword').value.trim();
         if (!keyword) {
@@ -599,13 +487,12 @@
         }
 
         const firstRow = approvedData[0];
-
         const templateConfig = {
             unitHeader: "ĐOÀN TỈNH ĐẮK LẮK<br><b>BCH TRƯỜNG CAO ĐẲNG ĐẮK LẮK</b>",
             nationalHeader: "CỘNG HÒA XÃ HỘI CHỦ NGHĨA VIỆT NAM<br><b>Độc lập - Tự do - Hạnh phúc</b>",
             locationDate: "Đắk Lắk, ngày ..... tháng ..... năm 2026",
-            personalTitle: "BÁO CÁO THÀNH TÍCH CÁ NHÂN",
-            groupTitle: "BÁO CÁO THÀNH TÍCH TẬP THỂ",
+            personalTitle: "BẢNG XÁC NHẬN THÀNH TÍCH RÈN LUYỆN ĐOÀN VIÊN",
+            groupTitle: "BÁO CÁO TỔNG HỢP THI ĐUA TẬP THỂ",
             signerLeft: "<b>XÁC NHẬN CỦA CHI ĐOÀN</b>",
             signerRight: "<b>TM. BAN CHẤP HÀNH ĐOÀN TRƯỜNG</b><br><i>(Ký, ghi rõ họ tên và đóng dấu)</i>"
         };
@@ -692,7 +579,6 @@
         printWindow.print();
     }
 
-    // --- FORM SUBMIT NỘP MINH CHỨNG ---
     const fileToBase64 = file => new Promise((resolve, reject) => {
         const reader = new FileReader();
         reader.readAsDataURL(file);
@@ -702,24 +588,21 @@
 
     document.getElementById('uploadForm').addEventListener('submit', async function(e) {
         e.preventDefault();
-
         const submitBtn = document.getElementById('submitBtn');
         submitBtn.disabled = true;
         submitBtn.innerText = "⏳ Đang gửi dữ liệu...";
 
         try {
             const fileFiles = Array.from(document.getElementById('evidenceFiles').files);
-            
             const totalSize = fileFiles.reduce((acc, f) => acc + f.size, 0);
             if (totalSize > 8 * 1024 * 1024) {
-                alert("⚠️ Tổng dung lượng file vượt quá 8MB! Vui lòng nén file hoặc dùng file ảnh/PDF nhỏ hơn.");
+                alert("⚠️ Tổng dung lượng file vượt quá 8MB!");
                 submitBtn.disabled = false;
                 submitBtn.innerText = "GỬI DUYỆT MINH CHỨNG";
                 return;
             }
 
             const preparedFiles = await Promise.all(fileFiles.map(f => fileToBase64(f)));
-
             const payload = {
                 studentId: document.getElementById('studentId').value,
                 studentName: document.getElementById('studentName').value,
@@ -733,9 +616,7 @@
             await fetch(WEB_APP_URL, {
                 method: 'POST',
                 mode: 'no-cors',
-                headers: {
-                    'Content-Type': 'text/plain'
-                },
+                headers: { 'Content-Type': 'text/plain' },
                 body: JSON.stringify(payload)
             });
 
@@ -752,28 +633,7 @@
         }
     });
 
-    // Tải dữ liệu khi trang sẵn sàng
     document.addEventListener('DOMContentLoaded', loadData);
-    </script>
-
-    <!-- COZE CHATBOT SDK -->
-    <script src="https://sf-cdn.coze.com/obj/unpkg-va/flow-platform/chat-app-sdk/1.2.0-beta.6/libs/oversea/index.js"></script>
-    <script>
-      new CozeWebSDK.WebChatClient({
-        config: {
-          bot_id: '7674513972959199285',
-        },
-        componentProps: {
-          title: 'Coze',
-        },
-        auth: {
-          type: 'token',
-          token: 'pat_********',
-          onRefreshToken: function () {
-            return 'pat_********'
-          }
-        }
-      });
     </script>
 </body>
 </html>
