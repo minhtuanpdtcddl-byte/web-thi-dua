@@ -143,6 +143,30 @@
                 </tbody>
             </table>
         </div>
+        <!-- CỤM ĐIỀU KHIỂN PHÂN TRANG -->
+<div class="flex flex-col sm:flex-row justify-between items-center gap-4 mt-4 px-2 text-sm text-slate-600">
+  <!-- Chọn số hàng / trang -->
+  <div class="flex items-center gap-2">
+    <span>Hiển thị:</span>
+    <select id="rowsPerPageSelect" onchange="changeRowsPerPage(this.value)" class="border border-slate-300 rounded px-2 py-1 bg-white focus:outline-none focus:ring-1 focus:ring-blue-500">
+      <option value="5">5 hàng</option>
+      <option value="10" selected>10 hàng</option>
+      <option value="20">20 hàng</option>
+    </select>
+    <span>hàng/trang</span>
+  </div>
+
+  <!-- Nút chuyển trang -->
+  <div class="flex items-center gap-2">
+    <button id="btnPrevPage" onclick="changePage(-1)" class="px-3 py-1 border border-slate-300 rounded bg-white hover:bg-slate-100 disabled:opacity-40 disabled:cursor-not-allowed transition-colors">
+      Trước
+    </button>
+    <span id="pageInfoText" class="font-medium text-slate-700">Trang 1 / 1</span>
+    <button id="btnNextPage" onclick="changePage(1)" class="px-3 py-1 border border-slate-300 rounded bg-white hover:bg-slate-100 disabled:opacity-40 disabled:cursor-not-allowed transition-colors">
+      Sau
+    </button>
+  </div>
+</div>
     </div>
 
     <!-- FOOTER -->
@@ -154,9 +178,106 @@
     <script>
     const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbzvuzszhr5G9RTLVlEaCHkP_-c6TfJS6-xQY_WNW1t4u8pOMCkAB7YHqUV_CxBcsPFG/exec"; // Thay URL Web App Google Apps Script vào đây
 
+    // --- PHÂN TRANG VÀ QUẢN LÝ BẢNG DỮ LIỆU ---
     let globalData = [];
     let currentFilteredData = [];
-    let departmentStructure = {};
+    let currentPage = 1;
+    let rowsPerPage = 10; // Mặc định 10 hàng/trang
+
+    function renderTable(dataRows) {
+        currentFilteredData = dataRows || [];
+        const totalRows = currentFilteredData.length;
+        const totalPages = Math.ceil(totalRows / rowsPerPage) || 1;
+
+        if (currentPage > totalPages) currentPage = totalPages;
+        if (currentPage < 1) currentPage = 1;
+
+        const startIndex = (currentPage - 1) * rowsPerPage;
+        const endIndex = startIndex + rowsPerPage;
+        const pageData = currentFilteredData.slice(startIndex, endIndex);
+
+        const container = document.getElementById('listContainer');
+        container.innerHTML = '';
+        
+        if (!pageData || pageData.length === 0) {
+            container.innerHTML = `<tr><td colspan="6" class="p-4 text-center text-gray-500">Không tìm thấy dữ liệu.</td></tr>`;
+        } else {
+            pageData.forEach(row => {
+                const [studentId, name, classId, facultyId, actName, achName, fileUrlStr, status] = row;
+                const displayActivity = actName || achName || '-';
+
+                let statusColor = "bg-amber-100 text-amber-800 border border-amber-300";
+                let statusText = status || 'Chờ duyệt';
+
+                const statusLower = String(statusText).trim().toLowerCase();
+                if (statusLower === "đã duyệt" || statusLower === "duyệt") {
+                    statusColor = "bg-emerald-100 text-emerald-800 border border-emerald-300 font-bold";
+                    statusText = "Đã duyệt";
+                } else if (statusLower === "từ chối" || statusLower === "không duyệt") {
+                    statusColor = "bg-rose-100 text-rose-800 border border-rose-300 font-bold";
+                    statusText = "Từ chối";
+                }
+
+                container.innerHTML += `
+                    <tr class="hover:bg-slate-50 transition">
+                        <td class="p-3 font-semibold text-blue-900 whitespace-nowrap">${studentId || 'Chưa có'}</td>
+                        <td class="p-3 font-medium text-slate-800">${name || ''}</td>
+                        <td class="p-3 text-gray-600">${classId || ''}</td>
+                        <td class="p-3 text-gray-800 font-semibold">${facultyId || ''}</td>
+                        <td class="p-3 text-slate-700">${displayActivity}</td>
+                        <td class="p-3 whitespace-nowrap">
+                            <span class="${statusColor} px-2.5 py-1 rounded-full text-xs shadow-sm inline-block">
+                                ${statusText}
+                            </span>
+                        </td>
+                    </tr>
+                `;
+            });
+        }
+
+        // Cập nhật giao diện số trang
+        const pageInfo = document.getElementById('pageInfoText');
+        const btnPrev = document.getElementById('btnPrevPage');
+        const btnNext = document.getElementById('btnNextPage');
+
+        if (pageInfo) pageInfo.innerText = `Trang ${currentPage} / ${totalPages}`;
+        if (btnPrev) btnPrev.disabled = (currentPage === 1);
+        if (btnNext) btnNext.disabled = (currentPage === totalPages || totalRows === 0);
+    }
+
+    function changePage(direction) {
+        currentPage += direction;
+        renderTable(currentFilteredData);
+    }
+
+    function changeRowsPerPage(val) {
+        rowsPerPage = parseInt(val, 10);
+        currentPage = 1;
+        renderTable(currentFilteredData);
+    }
+
+    function searchData() {
+        const keyword = document.getElementById('searchKeyword').value.trim().toLowerCase();
+        const countDiv = document.getElementById('searchResultCount');
+
+        currentPage = 1;
+
+        if (!keyword) {
+            renderTable(globalData);
+            if (countDiv) countDiv.innerText = "";
+            return;
+        }
+
+        const filtered = globalData.filter(row => {
+            return String(row[0]||'').toLowerCase().includes(keyword) ||
+                   String(row[1]||'').toLowerCase().includes(keyword) ||
+                   String(row[2]||'').toLowerCase().includes(keyword) ||
+                   String(row[3]||'').toLowerCase().includes(keyword);
+        });
+
+        renderTable(filtered);
+        if (countDiv) countDiv.innerHTML = `✅ Tìm thấy <b class="text-blue-700">${filtered.length}</b> kết quả phù hợp.`;
+    }
 
     // Khai báo biến toàn cục cho Slider
     let newsDataList = [];
