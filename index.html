@@ -774,5 +774,10 @@
         if (newsSliderTimer) clearInterval(newsSliderTimer);
     }
 </script>
+    newsDataList = result.config.newsList || [];
+if (newsDataList.length > 0) {
+    renderNewsSlide(0);
+    startNewsSlider();
+}
 </body>
 </html>
