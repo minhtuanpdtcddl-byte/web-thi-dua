@@ -801,18 +801,23 @@
    
 
 <!-- Đặt ngay trên thẻ </body> ở cuối file HTML của bạn -->
-    <script src="https://sf-cdn.coze.com/obj/unpkg-va/flow-platform/chat-app-sdk/1.1.0-single/1.1.0/index.js"></script>
-    <script>
-      new CozeWebSDK.WebChatClient({
-        config: {
-          bot_id: '7674513972959199285', // Thay bằng dãy số thật của bạn (không bỏ dấu nháy đơn)
-        },
-        componentProps: {
-          title: 'Trợ lý AI Đoàn Trường',
-          lang: 'vi',
-        },
-        baseUrl: 'https://api.coze.com',
-      });
-    </script>
+<script src="https://sf-cdn.coze.com/obj/unpkg-va/flow-platform/chat-app-sdk/1.2.0-beta.6/libs/oversea/index.js"></script>
+<script>
+  new CozeWebSDK.WebChatClient({
+    config: {
+      bot_id: '7674513972959199285',
+    },
+    componentProps: {
+      title: 'Coze',
+    },
+    auth: {
+      type: 'token',
+      token: 'pat_********',
+      onRefreshToken: function () {
+        return 'pat_********'
+      }
+    }
+  });
+</script>
 </body>
 </html>
