@@ -738,21 +738,27 @@
             let docCount = 0;
             const filePromises = [];
 
-            for (let file of files) {
-                if (file.type.startsWith('image/')) imageCount++;
-                else docCount++;
+for (let file of files) {
+    if (file.type && file.type.startsWith('image/')) imageCount++;
+    else docCount++;
 
-                filePromises.push(new Promise((resolve, reject) => {
-                    const reader = new FileReader();
-                    reader.onload = () => resolve({
-                        name: file.name,
-                        mimeType: file.type,
-                        base64: reader.result.split(',')[1]
-                    });
-                    reader.onerror = reject;
-                    reader.readAsDataURL(file);
-                }));
-            }
+    filePromises.push(new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            // Kiểm tra an toàn trước khi lấy dữ liệu Base64
+            const resultStr = (e.target && e.target.result) ? e.target.result : (reader.result || '');
+            const base64Data = resultStr.includes(',') ? resultStr.split(',')[1] : resultStr;
+            
+            resolve({
+                name: file.name,
+                mimeType: file.type || 'application/octet-stream',
+                base64: base64Data
+            });
+        };
+        reader.onerror = (err) => reject(err);
+        reader.readAsDataURL(file);
+    }));
+}
 
             if (imageCount > 3 || docCount > 1) {
                 alert('Vui lòng chỉ chọn tối đa 01 file PDF/Word và tối đa 03 file Ảnh!');
