@@ -88,8 +88,14 @@
                             <input type="text" id="cfgSchoolName" class="w-full p-2.5 border rounded-lg text-sm focus:ring-2 focus:ring-blue-500 outline-none">
                         </div>
                         <div>
-                            <label class="block text-xs font-bold uppercase mb-1">URL Logo Trường (Ô B2)</label>
-                            <input type="text" id="cfgLogoUrl" class="w-full p-2.5 border rounded-lg text-sm focus:ring-2 focus:ring-blue-500 outline-none">
+                            <label class="block text-xs font-bold uppercase mb-1">Logo Trường / Đơn vị (Ô B2)</label>
+                            <div class="flex items-center gap-3">
+                                <img id="logoPreview" class="w-12 h-12 object-contain border rounded bg-slate-50 hidden" />
+                                <div class="flex-1 space-y-1">
+                                    <input type="file" accept="image/*" onchange="handleLogoSelect(event)" class="block w-full text-xs text-slate-500 file:mr-2 file:py-1 file:px-2.5 file:rounded file:border-0 file:text-xs file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 cursor-pointer">
+                                    <input type="text" id="cfgLogoUrl" class="w-full p-2 border rounded-lg text-xs focus:ring-2 focus:ring-blue-500 outline-none" placeholder="Hoặc dán URL ảnh Logo tại đây...">
+                                </div>
+                            </div>
                         </div>
                     </div>
                     <div>
@@ -98,7 +104,7 @@
                     </div>
                 </div>
 
-                <!-- CẤU HÌNH BẢNG TIN / TIN TỨC (MỚI BỔ SUNG) -->
+                <!-- CẤU HÌNH BẢNG TIN / TIN TỨC -->
                 <div class="border-b pb-4">
                     <div class="flex justify-between items-center mb-3">
                         <h3 class="font-bold text-blue-900 text-base"><i class="fa-solid fa-newspaper mr-1"></i> Quản lý Bảng Tin / Tin Tức Trang Chủ (Hàng 6 trở đi)</h3>
@@ -107,7 +113,7 @@
                         </button>
                     </div>
                     <div id="newsItemsContainer" class="space-y-4">
-                        <!-- Danh sách bài tin sẽ sinh động tại đây -->
+                        <!-- Danh sách bài tin sẽ được khởi tạo tại đây -->
                     </div>
                 </div>
 
@@ -136,10 +142,46 @@
 
     <script>
         // ⚠️ DÁN LINK WEB APP CỦA BẠN VÀO ĐÂY
-        const WEB_APP_URL = "https://script.google.com/macros/s/AKfycby5xv6I84clXCia2hEg0wPX_a91yUKg5XMXEXBeLWGB34cRfgC2JE07goIl2-nK9y-T/exec";
+        const WEB_APP_URL = "https://script.google.com/macros/s/AKfycby9eI9t6BRdklswmNuMmUBxZqv-yEDaCOaX3ZY7tL_231cBj6IvXZp-6P5-ayG6G_Wg/exec";
 
         let currentPassword = "";
         let submissionsList = [];
+        let logoFileBase64 = null;
+
+        function readFileAsBase64(file) {
+            return new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.onload = () => resolve({
+                    name: file.name,
+                    mimeType: file.type,
+                    base64: reader.result
+                });
+                reader.onerror = error => reject(error);
+                reader.readAsDataURL(file);
+            });
+        }
+
+        async function handleLogoSelect(e) {
+            const file = e.target.files[0];
+            if (file) {
+                logoFileBase64 = await readFileAsBase64(file);
+                const preview = document.getElementById('logoPreview');
+                preview.src = logoFileBase64.base64;
+                preview.classList.remove('hidden');
+            }
+        }
+
+        async function handleNewsFileSelect(e, inputElem) {
+            const file = e.target.files[0];
+            const card = inputElem.closest('.news-card');
+            const imgPreview = card.querySelector('.news-preview');
+            if (file) {
+                const fileObj = await readFileAsBase64(file);
+                card.dataset.fileBase64 = JSON.stringify(fileObj);
+                imgPreview.src = fileObj.base64;
+                imgPreview.classList.remove('hidden');
+            }
+        }
 
         async function handleLogin(e) {
             e.preventDefault();
@@ -180,18 +222,25 @@
         function loadConfigToForm(cfg) {
             document.getElementById('cfgSchoolName').value = cfg.schoolName || '';
             document.getElementById('cfgLogoUrl').value = cfg.logoUrl || '';
+            
+            const logoPreview = document.getElementById('logoPreview');
+            if (cfg.logoUrl) {
+                logoPreview.src = cfg.logoUrl;
+                logoPreview.classList.remove('hidden');
+            }
+
             document.getElementById('cfgAnnouncement').value = cfg.announcement || '';
             if (Array.isArray(cfg.activities)) {
                 document.getElementById('cfgActivities').value = cfg.activities.join('\n');
             }
 
-            // Render Danh sách Bảng tin
+            // Render Bảng tin
             const container = document.getElementById('newsItemsContainer');
             container.innerHTML = '';
             if (Array.isArray(cfg.newsList) && cfg.newsList.length > 0) {
                 cfg.newsList.forEach(item => addNewsCard(item.title, item.content, item.imageUrl));
             } else {
-                addNewsCard(); // Thêm 1 thẻ rỗng mặc định
+                addNewsCard();
             }
         }
 
@@ -199,6 +248,9 @@
             const container = document.getElementById('newsItemsContainer');
             const card = document.createElement('div');
             card.className = "news-card bg-slate-50 border p-4 rounded-lg space-y-3 relative";
+            
+            const hasImg = imageUrl ? '' : 'hidden';
+
             card.innerHTML = `
                 <button type="button" onclick="this.parentElement.remove()" class="absolute top-2 right-2 text-red-500 hover:text-red-700 text-xs font-bold px-2 py-1">
                     <i class="fa-solid fa-trash mr-1"></i>Xóa bài
@@ -212,8 +264,14 @@
                     <textarea class="news-content w-full p-2 border rounded text-sm outline-none" rows="2" placeholder="Nhập nội dung tin tức...">${content}</textarea>
                 </div>
                 <div>
-                    <label class="block text-xs font-bold uppercase mb-1">Link Ảnh Minh Họa (Google Drive / Link Ảnh)</label>
-                    <input type="text" class="news-img w-full p-2 border rounded text-sm outline-none" value="${imageUrl}" placeholder="https://drive.google.com/...">
+                    <label class="block text-xs font-bold uppercase mb-1">Ảnh minh họa (Chọn tệp ảnh hoặc dán Link)</label>
+                    <div class="flex items-center gap-3">
+                        <img class="news-preview w-12 h-12 object-cover border rounded bg-slate-100 ${hasImg}" src="${imageUrl}" />
+                        <div class="flex-1 space-y-1">
+                            <input type="file" accept="image/*" onchange="handleNewsFileSelect(event, this)" class="news-file block w-full text-xs text-slate-500 file:mr-2 file:py-1 file:px-2.5 file:rounded file:border-0 file:text-xs file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 cursor-pointer">
+                            <input type="text" class="news-img w-full p-2 border rounded text-xs outline-none" value="${imageUrl}" placeholder="Hoặc dán Link URL ảnh tại đây...">
+                        </div>
+                    </div>
                 </div>
             `;
             container.appendChild(card);
@@ -304,7 +362,7 @@
         async function saveConfig() {
             const btn = document.getElementById('btnSave');
             btn.disabled = true;
-            btn.innerText = "⏳ Đang lưu cấu hình...";
+            btn.innerText = "⏳ Đang tải ảnh & lưu cấu hình...";
 
             const newPass = document.getElementById('cfgNewPassword').value.trim();
             const activitiesText = document.getElementById('cfgActivities').value;
@@ -313,18 +371,25 @@
             // Thu thập dữ liệu Bảng tin
             const newsCards = document.querySelectorAll('.news-card');
             const newsList = [];
-            newsCards.forEach(card => {
+            
+            for (const card of newsCards) {
                 const t = card.querySelector('.news-title').value.trim();
                 const c = card.querySelector('.news-content').value.trim();
                 const img = card.querySelector('.news-img').value.trim();
-                if (t || c || img) {
-                    newsList.push({ title: t, content: c, imageUrl: img });
+                let imageFile = null;
+                if (card.dataset.fileBase64) {
+                    imageFile = JSON.parse(card.dataset.fileBase64);
                 }
-            });
+
+                if (t || c || img || imageFile) {
+                    newsList.push({ title: t, content: c, imageUrl: img, imageFile: imageFile });
+                }
+            }
 
             const updatedConfig = {
                 schoolName: document.getElementById('cfgSchoolName').value.trim(),
                 logoUrl: document.getElementById('cfgLogoUrl').value.trim(),
+                logoFile: logoFileBase64,
                 announcement: document.getElementById('cfgAnnouncement').value.trim(),
                 activities: activitiesArray,
                 newsList: newsList
@@ -347,6 +412,7 @@
                     alert("🎉 " + data.message);
                     if (newPass !== "") currentPassword = newPass;
                     document.getElementById('cfgNewPassword').value = "";
+                    logoFileBase64 = null; // Reset bộ nhớ ảnh logo tạm
                 } else {
                     alert("❌ " + data.message);
                 }
