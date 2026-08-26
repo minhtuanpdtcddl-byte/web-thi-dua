@@ -9,86 +9,124 @@
 </head>
 <body class="bg-slate-100 text-slate-800 min-h-screen">
 
-    <!-- 1. BẢNG ĐĂNG NHẬP (LOGIN) -->
+    <!-- 1. BẢNG ĐĂNG NHẬP -->
     <div id="loginBox" class="flex justify-center items-center min-h-screen px-4">
         <div class="bg-white p-8 rounded-xl shadow-xl w-full max-w-md border border-slate-200">
             <div class="text-center mb-6">
-                <i class="fa-solid fa-user-shield text-4xl text-blue-800 mb-2"></i>
+                <i class="fa-solid fa-user-shield text-4xl text-blue-900 mb-2"></i>
                 <h2 class="text-2xl font-bold text-blue-900">ĐĂNG NHẬP QUẢN TRỊ</h2>
                 <p class="text-xs text-slate-500 mt-1">Hệ thống Cấu hình Thi đua Đoàn trường</p>
             </div>
             <form id="loginForm" onsubmit="handleLogin(event)">
                 <div class="mb-4">
                     <label class="block text-sm font-semibold mb-2">Mật khẩu Quản trị</label>
-                    <input type="password" id="adminPassword" class="w-full p-3 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none" placeholder="Nhập mật khẩu (Lưu ở ô F2 trên Sheet)" required>
+                    <input type="password" id="adminPassword" class="w-full p-3 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none" placeholder="Nhập mật khẩu (Mặc định: 123456)" required>
                 </div>
-                <button type="submit" id="btnLogin" class="w-full bg-blue-800 hover:bg-blue-900 text-white font-bold py-3 rounded-lg transition">
+                <button type="submit" id="btnLogin" class="w-full bg-blue-900 hover:bg-blue-950 text-white font-bold py-3 rounded-lg transition">
                     ĐĂNG NHẬP
                 </button>
             </form>
         </div>
     </div>
 
-    <!-- 2. BẢNG CẤU HÌNH ADMIN (ẨN MẶC ĐỊNH) -->
-    <div id="adminPanel" class="hidden container mx-auto p-4 max-w-4xl my-8">
+    <!-- 2. BẢNG QUẢN TRỊ ADMIN -->
+    <div id="adminPanel" class="hidden container mx-auto p-4 max-w-6xl my-6">
+        <!-- HEADER ADMIN -->
         <div class="bg-blue-900 text-white p-4 rounded-t-xl flex justify-between items-center shadow">
-            <h1 class="font-bold text-lg"><i class="fa-solid fa-sliders mr-2"></i> BẢNG CẤU HÌNH HỆ THỐNG</h1>
+            <h1 class="font-bold text-lg"><i class="fa-solid fa-sliders mr-2"></i> BẢNG QUẢN TRỊ HỆ THỐNG</h1>
             <button onclick="logout()" class="bg-red-600 hover:bg-red-700 px-3 py-1.5 rounded text-xs font-semibold transition">
                 <i class="fa-solid fa-right-from-bracket mr-1"></i> Đăng xuất
             </button>
         </div>
 
-        <div class="bg-white p-6 rounded-b-xl shadow-lg border-x border-b border-slate-200 space-y-6">
+        <!-- THANH CHUYỂN TAB CỐ ĐỊNH -->
+        <div class="bg-slate-200 p-2 flex gap-2 border-x border-slate-300">
+            <button id="tabBtnSubmissions" onclick="switchTab('submissions')" class="px-4 py-2 text-sm font-bold rounded-lg bg-blue-900 text-white shadow">
+                <i class="fa-solid fa-list-check mr-2"></i> Duyệt Minh Chứng Đoàn Viên
+            </button>
+            <button id="tabBtnConfig" onclick="switchTab('config')" class="px-4 py-2 text-sm font-bold rounded-lg text-slate-700 hover:bg-slate-300">
+                <i class="fa-solid fa-gear mr-2"></i> Cấu Hình Hệ Thống & Hoạt Động
+            </button>
+        </div>
+
+        <div class="bg-white p-6 rounded-b-xl shadow-lg border-x border-b border-slate-200">
             
-            <!-- THÔNG TIN ĐƠN VỊ -->
-            <div class="border-b pb-4">
-                <h3 class="font-bold text-blue-900 text-base mb-3"><i class="fa-solid fa-building mr-1"></i> Thông tin Đơn vị</h3>
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-3">
-                    <div>
-                        <label class="block text-xs font-bold uppercase mb-1">Tên Trường / Đoàn Trường (Ô B1)</label>
-                        <input type="text" id="cfgSchoolName" class="w-full p-2.5 border rounded-lg text-sm focus:ring-2 focus:ring-blue-500 outline-none">
-                    </div>
-                    <div>
-                        <label class="block text-xs font-bold uppercase mb-1">URL Logo Trường (Ô B2)</label>
-                        <input type="text" id="cfgLogoUrl" class="w-full p-2.5 border rounded-lg text-sm focus:ring-2 focus:ring-blue-500 outline-none" placeholder="Dán link ảnh tại đây">
-                    </div>
+            <!-- TAB 1: BẢNG DUYỆT MINH CHỨNG -->
+            <div id="tabSubmissions" class="space-y-4">
+                <div class="flex justify-between items-center mb-2">
+                    <h3 class="font-bold text-blue-900 text-lg"><i class="fa-solid fa-file-invoice mr-2"></i> Danh sách Minh chứng đã nộp</h3>
+                    <span id="totalSubmissions" class="text-xs bg-blue-100 text-blue-800 font-bold px-2.5 py-1 rounded-full">Tổng: 0</span>
                 </div>
-                <div>
-                    <label class="block text-xs font-bold uppercase mb-1">Thông báo chạy ở trang chủ (Ô B3)</label>
-                    <textarea id="cfgAnnouncement" rows="2" class="w-full p-2.5 border rounded-lg text-sm focus:ring-2 focus:ring-blue-500 outline-none"></textarea>
+
+                <div class="overflow-x-auto border rounded-lg">
+                    <table class="w-full text-left border-collapse text-xs md:text-sm">
+                        <thead>
+                            <tr class="bg-slate-100 border-b text-slate-700 font-bold uppercase">
+                                <th class="p-3">Đoàn viên / Lớp</th>
+                                <th class="p-3">Hoạt động & Nội dung</th>
+                                <th class="p-3">Minh chứng</th>
+                                <th class="p-3">Ngày nộp</th>
+                                <th class="p-3 text-center">Trạng thái</th>
+                                <th class="p-3 text-center">Thao tác</th>
+                            </tr>
+                        </thead>
+                        <tbody id="submissionTableBody" class="divide-y divide-slate-200">
+                            <!-- Dữ liệu minh chứng nạp tự động -->
+                        </tbody>
+                    </table>
                 </div>
             </div>
 
-            <!-- DANH SÁCH HOẠT ĐỘNG -->
-            <div class="border-b pb-4">
-                <h3 class="font-bold text-blue-900 text-base mb-2"><i class="fa-solid fa-list-check mr-1"></i> Danh sách Hoạt động Đoàn (Cột E)</h3>
-                <p class="text-xs text-slate-500 mb-2">Mỗi tên Hoạt động nằm trên **01 dòng riêng biệt**:</p>
-                <textarea id="cfgActivities" rows="5" class="w-full p-2.5 border rounded-lg text-sm font-mono focus:ring-2 focus:ring-blue-500 outline-none"></textarea>
-            </div>
+            <!-- TAB 2: CẤU HÌNH HỆ THỐNG -->
+            <div id="tabConfig" class="hidden space-y-6">
+                <!-- THÔNG TIN ĐƠN VỊ -->
+                <div class="border-b pb-4">
+                    <h3 class="font-bold text-blue-900 text-base mb-3"><i class="fa-solid fa-building mr-1"></i> Thông tin Đơn vị</h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-3">
+                        <div>
+                            <label class="block text-xs font-bold uppercase mb-1">Tên Trường / Đoàn Trường (Ô B1)</label>
+                            <input type="text" id="cfgSchoolName" class="w-full p-2.5 border rounded-lg text-sm focus:ring-2 focus:ring-blue-500 outline-none">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold uppercase mb-1">URL Logo Trường (Ô B2)</label>
+                            <input type="text" id="cfgLogoUrl" class="w-full p-2.5 border rounded-lg text-sm focus:ring-2 focus:ring-blue-500 outline-none">
+                        </div>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold uppercase mb-1">Thông báo chạy ở trang chủ (Ô B3)</label>
+                        <textarea id="cfgAnnouncement" rows="2" class="w-full p-2.5 border rounded-lg text-sm focus:ring-2 focus:ring-blue-500 outline-none"></textarea>
+                    </div>
+                </div>
 
-            <!-- BẢO MẬT -->
-            <div class="border-b pb-4">
-                <h3 class="font-bold text-blue-900 text-base mb-2"><i class="fa-solid fa-key mr-1"></i> Đổi mật khẩu Admin (Ghi vào ô F2)</h3>
-                <div>
-                    <label class="block text-xs font-bold uppercase mb-1">Mật khẩu Mới</label>
+                <!-- DANH SÁCH HOẠT ĐỘNG -->
+                <div class="border-b pb-4">
+                    <h3 class="font-bold text-blue-900 text-base mb-2"><i class="fa-solid fa-list-check mr-1"></i> Danh sách Hoạt động Đoàn (Cột E)</h3>
+                    <p class="text-xs text-slate-500 mb-2">Mỗi tên Hoạt động nằm trên **01 dòng riêng biệt**:</p>
+                    <textarea id="cfgActivities" rows="6" class="w-full p-2.5 border rounded-lg text-sm font-mono focus:ring-2 focus:ring-blue-500 outline-none" placeholder="Nhập danh sách hoạt động..."></textarea>
+                </div>
+
+                <!-- BẢO MẬT -->
+                <div class="border-b pb-4">
+                    <h3 class="font-bold text-blue-900 text-base mb-2"><i class="fa-solid fa-key mr-1"></i> Đổi mật khẩu Admin (Ghi vào ô F2)</h3>
                     <input type="password" id="cfgNewPassword" class="w-full p-2.5 border rounded-lg text-sm focus:ring-2 focus:ring-blue-500 outline-none" placeholder="Để trống nếu không muốn đổi mật khẩu">
                 </div>
+
+                <div class="pt-2">
+                    <button type="button" onclick="saveConfig()" id="btnSave" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3 rounded-lg shadow transition">
+                        <i class="fa-solid fa-floppy-disk mr-2"></i> LƯU THAY ĐỔI CẤU HÌNH
+                    </button>
+                </div>
             </div>
 
-            <!-- NÚT LƯU -->
-            <div class="pt-2">
-                <button type="button" onclick="saveConfig()" id="btnSave" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3 rounded-lg shadow transition">
-                    <i class="fa-solid fa-floppy-disk mr-2"></i> LƯU THAY ĐỔI CẤU HÌNH
-                </button>
-            </div>
         </div>
     </div>
 
     <script>
-        // ⚠️ THAY LINK WEB APP GOOGLE APPS SCRIPT CỦA BẠN VÀO ĐÂY
-        const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbwvWVoa65yJSlsyLkxDdDr9SirYRUvAC5Ciwj-jSkasSH17g7z2k0vj_V4pETeOzFhX/exec"; 
+        // ⚠️ DÁN LINK WEB APP CỦA BẠN VÀO ĐÂY
+        const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbwvWVoa65yJSlsyLkxDdDr9SirYRUvAC5Ciwj-jSkasSH17g7z2k0vj_V4pETeOzFhX/exec";
 
         let currentPassword = "";
+        let submissionsList = [];
 
         async function handleLogin(e) {
             e.preventDefault();
@@ -107,20 +145,20 @@
                 if (data.status === "success") {
                     currentPassword = pass;
                     loadConfigToForm(data.config);
-
-                    submissionsList = data.submissions || [];
-    renderSubmissionsTable(submissionsList);
-
-    // ➕ Thêm dòng này để tự chọn Tab Duyệt minh chứng khi vừa đăng nhập
-    switchTab('submissions');
                     
+                    submissionsList = data.submissions || [];
+                    renderSubmissionsTable(submissionsList);
+
                     document.getElementById('loginBox').classList.add('hidden');
                     document.getElementById('adminPanel').classList.remove('hidden');
+                    
+                    // Mặc định nhảy vào Tab Duyệt Minh Chứng
+                    switchTab('submissions');
                 } else {
                     alert("❌ " + data.message);
                 }
             } catch (err) {
-                alert("❌ Lỗi kết nối tới máy chủ: " + err);
+                alert("❌ Lỗi kết nối máy chủ: " + err);
             } finally {
                 btn.disabled = false;
                 btn.innerText = "ĐĂNG NHẬP";
@@ -131,16 +169,97 @@
             document.getElementById('cfgSchoolName').value = cfg.schoolName || '';
             document.getElementById('cfgLogoUrl').value = cfg.logoUrl || '';
             document.getElementById('cfgAnnouncement').value = cfg.announcement || '';
-            
             if (Array.isArray(cfg.activities)) {
                 document.getElementById('cfgActivities').value = cfg.activities.join('\n');
+            }
+        }
+
+        function renderSubmissionsTable(list) {
+            const tbody = document.getElementById('submissionTableBody');
+            document.getElementById('totalSubmissions').innerText = `Tổng: ${list.length}`;
+            tbody.innerHTML = '';
+
+            if (!list || list.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="6" class="p-4 text-center text-slate-400">Chưa có minh chứng nào được gửi lên.</td></tr>`;
+                return;
+            }
+
+            list.forEach(item => {
+                const tr = document.createElement('tr');
+                tr.className = "hover:bg-slate-50 transition border-b";
+
+                let filesHtml = '<span class="text-slate-400 text-xs">Không có file</span>';
+                if (item.fileUrls) {
+                    const links = item.fileUrls.split(' | ');
+                    filesHtml = links.map((link, idx) => 
+                        `<a href="${link}" target="_blank" class="inline-block bg-blue-50 text-blue-700 border border-blue-200 px-2 py-0.5 rounded text-xs hover:underline mr-1 mb-1">
+                            <i class="fa-solid fa-paperclip mr-1"></i>File ${idx + 1}
+                         </a>`
+                    ).join('');
+                }
+
+                let statusBadge = '<span class="px-2 py-1 bg-amber-100 text-amber-800 rounded font-semibold text-xs">Chờ duyệt</span>';
+                if (item.status === 'Đã duyệt') {
+                    statusBadge = '<span class="px-2 py-1 bg-emerald-100 text-emerald-800 rounded font-semibold text-xs">Đã duyệt</span>';
+                } else if (item.status === 'Từ chối') {
+                    statusBadge = '<span class="px-2 py-1 bg-rose-100 text-rose-800 rounded font-semibold text-xs">Từ chối</span>';
+                }
+
+                tr.innerHTML = `
+                    <td class="p-3">
+                        <div class="font-bold text-slate-900">${item.studentName}</div>
+                        <div class="text-xs text-slate-500">${item.studentId} - ${item.classId} (${item.facultyId})</div>
+                    </td>
+                    <td class="p-3">
+                        <div class="font-semibold text-blue-900">${item.activityName}</div>
+                        <div class="text-xs text-slate-600">${item.achievementName}</div>
+                    </td>
+                    <td class="p-3">${filesHtml}</td>
+                    <td class="p-3 text-xs text-slate-500">${item.submittedAt}</td>
+                    <td class="p-3 text-center">${statusBadge}</td>
+                    <td class="p-3 text-center whitespace-nowrap">
+                        <button onclick="updateStatus(${item.rowIndex}, 'Đã duyệt')" class="bg-emerald-600 hover:bg-emerald-700 text-white px-2.5 py-1 rounded text-xs font-semibold mr-1 transition">
+                            <i class="fa-solid fa-check mr-1"></i>Duyệt
+                        </button>
+                        <button onclick="updateStatus(${item.rowIndex}, 'Từ chối')" class="bg-rose-600 hover:bg-rose-700 text-white px-2.5 py-1 rounded text-xs font-semibold transition">
+                            <i class="fa-solid fa-xmark mr-1"></i>Từ chối
+                        </button>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        async function updateStatus(rowIndex, newStatus) {
+            if (!confirm(`Xác nhận chuyển trạng thái dòng này thành "${newStatus}"?`)) return;
+
+            try {
+                const res = await fetch(WEB_APP_URL, {
+                    method: 'POST',
+                    body: JSON.stringify({
+                        action: "updateStatus",
+                        password: currentPassword,
+                        rowIndex: rowIndex,
+                        newStatus: newStatus
+                    })
+                });
+                const data = await res.json();
+
+                if (data.status === "success") {
+                    submissionsList = data.submissions || [];
+                    renderSubmissionsTable(submissionsList);
+                } else {
+                    alert("❌ " + data.message);
+                }
+            } catch (err) {
+                alert("❌ Lỗi khi cập nhật: " + err);
             }
         }
 
         async function saveConfig() {
             const btn = document.getElementById('btnSave');
             btn.disabled = true;
-            btn.innerText = "⏳ Đang lưu cấu hình lên Google Sheet...";
+            btn.innerText = "⏳ Đang lưu cấu hình...";
 
             const newPass = document.getElementById('cfgNewPassword').value.trim();
             const activitiesText = document.getElementById('cfgActivities').value;
@@ -153,9 +272,7 @@
                 activities: activitiesArray
             };
 
-            if (newPass !== "") {
-                updatedConfig.admin_password = newPass;
-            }
+            if (newPass !== "") updatedConfig.admin_password = newPass;
 
             try {
                 const res = await fetch(WEB_APP_URL, {
@@ -176,10 +293,29 @@
                     alert("❌ " + data.message);
                 }
             } catch (err) {
-                alert("❌ Không thể lưu cấu hình: " + err);
+                alert("❌ Lỗi khi lưu cấu hình: " + err);
             } finally {
                 btn.disabled = false;
                 btn.innerHTML = '<i class="fa-solid fa-floppy-disk mr-2"></i> LƯU THAY ĐỔI CẤU HÌNH';
+            }
+        }
+
+        function switchTab(tabName) {
+            const tabSub = document.getElementById('tabSubmissions');
+            const tabCfg = document.getElementById('tabConfig');
+            const btnSub = document.getElementById('tabBtnSubmissions');
+            const btnCfg = document.getElementById('tabBtnConfig');
+
+            if (tabName === 'submissions') {
+                tabSub.classList.remove('hidden');
+                tabCfg.classList.add('hidden');
+                btnSub.className = "px-4 py-2 text-sm font-bold rounded-lg bg-blue-900 text-white shadow";
+                btnCfg.className = "px-4 py-2 text-sm font-bold rounded-lg text-slate-700 hover:bg-slate-300";
+            } else {
+                tabCfg.classList.remove('hidden');
+                tabSub.classList.add('hidden');
+                btnCfg.className = "px-4 py-2 text-sm font-bold rounded-lg bg-blue-900 text-white shadow";
+                btnSub.className = "px-4 py-2 text-sm font-bold rounded-lg text-slate-700 hover:bg-slate-300";
             }
         }
 
