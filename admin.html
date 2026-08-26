@@ -45,7 +45,7 @@
                 <i class="fa-solid fa-list-check mr-2"></i> Duyệt Minh Chứng Đoàn Viên
             </button>
             <button id="tabBtnConfig" onclick="switchTab('config')" class="px-4 py-2 text-sm font-bold rounded-lg text-slate-700 hover:bg-slate-300">
-                <i class="fa-solid fa-gear mr-2"></i> Cấu Hình Hệ Thống & Hoạt Động
+                <i class="fa-solid fa-gear mr-2"></i> Cấu Hình Hệ Thống & Bảng Tin
             </button>
         </div>
 
@@ -98,11 +98,24 @@
                     </div>
                 </div>
 
+                <!-- CẤU HÌNH BẢNG TIN / TIN TỨC (MỚI BỔ SUNG) -->
+                <div class="border-b pb-4">
+                    <div class="flex justify-between items-center mb-3">
+                        <h3 class="font-bold text-blue-900 text-base"><i class="fa-solid fa-newspaper mr-1"></i> Quản lý Bảng Tin / Tin Tức Trang Chủ (Hàng 6 trở đi)</h3>
+                        <button type="button" onclick="addNewsCard()" class="bg-blue-800 hover:bg-blue-900 text-white text-xs font-bold px-3 py-1.5 rounded-lg transition">
+                            <i class="fa-solid fa-plus mr-1"></i> Thêm Tin Tức Mới
+                        </button>
+                    </div>
+                    <div id="newsItemsContainer" class="space-y-4">
+                        <!-- Danh sách bài tin sẽ sinh động tại đây -->
+                    </div>
+                </div>
+
                 <!-- DANH SÁCH HOẠT ĐỘNG -->
                 <div class="border-b pb-4">
                     <h3 class="font-bold text-blue-900 text-base mb-2"><i class="fa-solid fa-list-check mr-1"></i> Danh sách Hoạt động Đoàn (Cột E)</h3>
                     <p class="text-xs text-slate-500 mb-2">Mỗi tên Hoạt động nằm trên **01 dòng riêng biệt**:</p>
-                    <textarea id="cfgActivities" rows="6" class="w-full p-2.5 border rounded-lg text-sm font-mono focus:ring-2 focus:ring-blue-500 outline-none" placeholder="Nhập danh sách hoạt động..."></textarea>
+                    <textarea id="cfgActivities" rows="5" class="w-full p-2.5 border rounded-lg text-sm font-mono focus:ring-2 focus:ring-blue-500 outline-none" placeholder="Nhập danh sách hoạt động..."></textarea>
                 </div>
 
                 <!-- BẢO MẬT -->
@@ -152,7 +165,6 @@
                     document.getElementById('loginBox').classList.add('hidden');
                     document.getElementById('adminPanel').classList.remove('hidden');
                     
-                    // Mặc định nhảy vào Tab Duyệt Minh Chứng
                     switchTab('submissions');
                 } else {
                     alert("❌ " + data.message);
@@ -172,6 +184,39 @@
             if (Array.isArray(cfg.activities)) {
                 document.getElementById('cfgActivities').value = cfg.activities.join('\n');
             }
+
+            // Render Danh sách Bảng tin
+            const container = document.getElementById('newsItemsContainer');
+            container.innerHTML = '';
+            if (Array.isArray(cfg.newsList) && cfg.newsList.length > 0) {
+                cfg.newsList.forEach(item => addNewsCard(item.title, item.content, item.imageUrl));
+            } else {
+                addNewsCard(); // Thêm 1 thẻ rỗng mặc định
+            }
+        }
+
+        function addNewsCard(title = '', content = '', imageUrl = '') {
+            const container = document.getElementById('newsItemsContainer');
+            const card = document.createElement('div');
+            card.className = "news-card bg-slate-50 border p-4 rounded-lg space-y-3 relative";
+            card.innerHTML = `
+                <button type="button" onclick="this.parentElement.remove()" class="absolute top-2 right-2 text-red-500 hover:text-red-700 text-xs font-bold px-2 py-1">
+                    <i class="fa-solid fa-trash mr-1"></i>Xóa bài
+                </button>
+                <div>
+                    <label class="block text-xs font-bold uppercase mb-1">Tiêu đề tin tức</label>
+                    <input type="text" class="news-title w-full p-2 border rounded text-sm outline-none" value="${title}" placeholder="Nhập tiêu đề...">
+                </div>
+                <div>
+                    <label class="block text-xs font-bold uppercase mb-1">Nội dung tóm tắt</label>
+                    <textarea class="news-content w-full p-2 border rounded text-sm outline-none" rows="2" placeholder="Nhập nội dung tin tức...">${content}</textarea>
+                </div>
+                <div>
+                    <label class="block text-xs font-bold uppercase mb-1">Link Ảnh Minh Họa (Google Drive / Link Ảnh)</label>
+                    <input type="text" class="news-img w-full p-2 border rounded text-sm outline-none" value="${imageUrl}" placeholder="https://drive.google.com/...">
+                </div>
+            `;
+            container.appendChild(card);
         }
 
         function renderSubmissionsTable(list) {
@@ -265,11 +310,24 @@
             const activitiesText = document.getElementById('cfgActivities').value;
             const activitiesArray = activitiesText.split('\n').map(a => a.trim()).filter(a => a !== '');
 
+            // Thu thập dữ liệu Bảng tin
+            const newsCards = document.querySelectorAll('.news-card');
+            const newsList = [];
+            newsCards.forEach(card => {
+                const t = card.querySelector('.news-title').value.trim();
+                const c = card.querySelector('.news-content').value.trim();
+                const img = card.querySelector('.news-img').value.trim();
+                if (t || c || img) {
+                    newsList.push({ title: t, content: c, imageUrl: img });
+                }
+            });
+
             const updatedConfig = {
                 schoolName: document.getElementById('cfgSchoolName').value.trim(),
                 logoUrl: document.getElementById('cfgLogoUrl').value.trim(),
                 announcement: document.getElementById('cfgAnnouncement').value.trim(),
-                activities: activitiesArray
+                activities: activitiesArray,
+                newsList: newsList
             };
 
             if (newPass !== "") updatedConfig.admin_password = newPass;
