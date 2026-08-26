@@ -107,6 +107,13 @@
                 if (data.status === "success") {
                     currentPassword = pass;
                     loadConfigToForm(data.config);
+
+                    submissionsList = data.submissions || [];
+    renderSubmissionsTable(submissionsList);
+
+    // ➕ Thêm dòng này để tự chọn Tab Duyệt minh chứng khi vừa đăng nhập
+    switchTab('submissions');
+                    
                     document.getElementById('loginBox').classList.add('hidden');
                     document.getElementById('adminPanel').classList.remove('hidden');
                 } else {
