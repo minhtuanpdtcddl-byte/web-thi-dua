@@ -911,6 +911,122 @@
     />
   </div>
 
-</div>    </script>
+</div>    
+// ... tất cả đoạn mã JavaScript hiện tại của bạn ...
+
+
+        // =========================================================
+        // // 1. Tự động nạp danh sách Liên Chi đoàn, Chi đoàn, Hoạt động từ dữ liệu submissionsList
+function initFilterDropdowns(data) {
+    if (!data || data.length === 0) return;
+
+    const facultySelect = document.getElementById('filterFaculty');
+    const activitySelect = document.getElementById('filterActivity');
+
+    // Lấy danh sách Liên Chi đoàn duy nhất
+    const faculties = [...new Set(data.map(item => item.facultyId).filter(Boolean))].sort();
+    if (facultySelect) {
+        facultySelect.innerHTML = '<option value="">-- Tất cả Liên Chi đoàn --</option>' + 
+            faculties.map(f => `<option value="${f}">${f}</option>`).join('');
+    }
+
+    // Lấy danh sách Hoạt động duy nhất
+    const activities = [...new Set(data.map(item => item.activityName).filter(Boolean))].sort();
+    if (activitySelect) {
+        activitySelect.innerHTML = '<option value="">-- Tất cả Hoạt động --</option>' + 
+            activities.map(a => `<option value="${a}">${a}</option>`).join('');
+    }
+
+    // Khởi tạo danh sách Chi đoàn ban đầu
+    updateClassDropdown(data);
+}
+
+// 2. Sự kiện khi thay đổi Liên Chi đoàn -> Cập nhật lại danh sách Chi đoàn thuộc Liên Chi đó
+function onFacultyChange() {
+    const selectedFaculty = document.getElementById('filterFaculty').value;
+    updateClassDropdown(submissionsList, selectedFaculty);
+    filterSubmissions(); // Gọi hàm lọc lại bảng báo cáo
+}
+
+// 3. Hàm tạo danh sách Chi đoàn phụ thuộc theo Liên Chi đoàn đã chọn
+function updateClassDropdown(data, facultyFilter = "") {
+    const classSelect = document.getElementById('filterClass');
+    if (!classSelect) return;
+
+    let filteredData = data;
+    if (facultyFilter) {
+        filteredData = data.filter(item => item.facultyId === facultyFilter);
+    }
+
+    const classes = [...new Set(filteredData.map(item => item.classId).filter(Boolean))].sort();
+    classSelect.innerHTML = '<option value="">-- Tất cả Chi đoàn --</option>' + 
+        classes.map(c => `<option value="${c}">${c}</option>`).join('');
+}
+
+// 4. Hàm nút Đặt lại (Reset tất cả các bộ lọc về mặc định)
+function resetFilters() {
+    if (document.getElementById('filterFaculty')) document.getElementById('filterFaculty').value = "";
+    if (document.getElementById('filterClass')) document.getElementById('filterClass').value = "";
+    if (document.getElementById('filterActivity')) document.getElementById('filterActivity').value = "";
+    
+    updateClassDropdown(submissionsList);
+    filterSubmissions();
+}
+        // =========================================================
+        function initFilterDropdowns(data) {
+            if (!data || data.length === 0) return;
+
+            const facultySelect = document.getElementById('filterFaculty');
+            const activitySelect = document.getElementById('filterActivity');
+
+            const faculties = [...new Set(data.map(item => item.facultyId).filter(Boolean))].sort();
+            if (facultySelect) {
+                facultySelect.innerHTML = '<option value="">-- Tất cả Liên Chi đoàn --</option>' + 
+                    faculties.map(f => `<option value="${f}">${f}</option>`).join('');
+            }
+
+            const activities = [...new Set(data.map(item => item.activityName).filter(Boolean))].sort();
+            if (activitySelect) {
+                activitySelect.innerHTML = '<option value="">-- Tất cả Hoạt động --</option>' + 
+                    activities.map(a => `<option value="${a}">${a}</option>`).join('');
+            }
+
+            updateClassDropdown(data);
+        }
+
+        function onFacultyChange() {
+            const selectedFaculty = document.getElementById('filterFaculty')?.value || '';
+            updateClassDropdown(submissionsList, selectedFaculty);
+            if (typeof filterSubmissions === 'function') filterSubmissions();
+        }
+
+        function updateClassDropdown(data, facultyFilter = "") {
+            const classSelect = document.getElementById('filterClass');
+            if (!classSelect) return;
+
+            let filteredData = data;
+            if (facultyFilter) {
+                filteredData = data.filter(item => item.facultyId === facultyFilter);
+            }
+
+            const classes = [...new Set(filteredData.map(item => item.classId).filter(Boolean))].sort();
+            classSelect.innerHTML = '<option value="">-- Tất cả Chi đoàn --</option>' + 
+                classes.map(c => `<option value="${c}">${c}</option>`).join('');
+        }
+
+        function resetFilters() {
+            if (document.getElementById('filterFaculty')) document.getElementById('filterFaculty').value = "";
+            if (document.getElementById('filterClass')) document.getElementById('filterClass').value = "";
+            if (document.getElementById('filterActivity')) document.getElementById('filterActivity').value = "";
+            
+            updateClassDropdown(submissionsList);
+            if (typeof filterSubmissions === 'function') filterSubmissions();
+        }
+        // =========================================================
+
+    </script>
+</body>
+</html>
+</script>
 </body>
 </html>
