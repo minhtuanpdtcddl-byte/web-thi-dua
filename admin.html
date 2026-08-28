@@ -212,7 +212,7 @@
 
     <!-- SCRIPT XỬ LÝ HỆ THỐNG -->
     <script>
-        // ⚠️ THAY DƯỜNG DẪN APPS SCRIPT WEB APP CỦA BẠN VÀO ĐÂY
+        // ⚠️ THAY ĐƯỜNG DẪN APPS SCRIPT WEB APP CỦA BẠN VÀO ĐÂY
         const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbzA35Ignw-I0UagjuXISjYXxOHS5eMVuMeMcYZK7ZsBIrLC-pXdC6wbEp5VeX0B3TvM/exec";
 
         let currentPassword = "";
@@ -584,6 +584,7 @@
             }
         }
 
+        // HÀM CHUYỂN TAB CẤU HÌNH / DUYỆT MINH CHỨNG
         function switchTab(tabName) {
             const tabSub = document.getElementById('tabSubmissions');
             const tabCfg = document.getElementById('tabConfig');
@@ -596,18 +597,19 @@
                 btnSub.className = "px-4 py-2 text-sm font-bold rounded-lg bg-blue-900 text-white shadow";
                 btnCfg.className = "px-4 py-2 text-sm font-bold rounded-lg text-slate-700 hover:bg-slate-300";
             } else {
-                tabCfg.classList.remove('hidden');
                 tabSub.classList.add('hidden');
+                tabCfg.classList.remove('hidden');
                 btnCfg.className = "px-4 py-2 text-sm font-bold rounded-lg bg-blue-900 text-white shadow";
                 btnSub.className = "px-4 py-2 text-sm font-bold rounded-lg text-slate-700 hover:bg-slate-300";
             }
         }
 
+        // HÀM ĐĂNG XUẤT
         function logout() {
             currentPassword = "";
+            document.getElementById('adminPassword').value = "";
             document.getElementById('adminPanel').classList.add('hidden');
             document.getElementById('loginBox').classList.remove('hidden');
-            document.getElementById('adminPassword').value = "";
         }
     </script>
 </body>
