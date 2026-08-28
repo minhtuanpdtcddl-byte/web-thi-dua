@@ -835,29 +835,31 @@
     }
   });
 </script>
-<!-- BỘ ĐẾM TRUY CẬP (ONLINE + TỔNG VÀO WEB) -->
-<div style="position: fixed; bottom: 13px; left: 13px; z-index: 9999; display: flex; align-items: center; gap: 10px; background-color: rgba(255, 255, 255, 0.95); padding: 8px 12px; border-radius: 9999px; border: 1px solid #e2e8f0; box-shadow: 0 4px 12px rgba(0,0,0,0.15); font-family: sans-serif; font-size: 12px; font-weight: 600;">
+<!-- BỘ ĐẾM TRUY CẬP NHỎ GỌN -->
+<div style="position: fixed; bottom: 12px; right: 12px; z-index: 9999; display: flex; align-items: center; gap: 8px; background-color: rgba(255, 255, 255, 0.92); padding: 4px 10px; border-radius: 6px; border: 1px solid #e2e8f0; box-shadow: 0 2px 8px rgba(0,0,0,0.08); font-family: system-ui, -apple-system, sans-serif; font-size: 11px; color: #334155;">
   
-  <!-- KHỐI 1: ĐANG ONLINE (Mã whos.amung.us bạn đã làm chạy thành công) -->
-  <div style="display: flex; align-items: center;">
-    <script type="text/javascript" src="//widgets.amung.us/classic.js"></script>
-    <script type="text/javascript">WAU_classic('_wau5gd')</script>
+  <!-- 1. SỐ NGƯỜI ĐANG ONLINE -->
+  <div style="display: flex; align-items: center; gap: 4px;">
+    <span>Số người đang online:</span>
+    <div style="display: inline-flex; align-items: center; transform: scale(0.7); transform-origin: left center; margin-right: -15px;">
+      <script type="text/javascript" src="//widgets.amung.us/classic.js"></script>
+      <script type="text/javascript">WAU_classic('_wau5gd')</script>
+    </div>
   </div>
 
-  <!-- Vạch ngăn cách giữa 2 chỉ số -->
-  <span style="height: 12px; width: 1px; background-color: #cbd5e1;"></span>
+  <!-- Vạch ngăn cách -->
+  <span style="height: 10px; width: 1px; background-color: #cbd5e1; margin: 0 2px;"></span>
 
-  <!-- KHỐI 2: TỔNG LƯỢT TRUY CẬP (Thêm mới để hiển thị tổng số người vào) -->
-  <div style="display: flex; align-items: center; gap: 4px; color: #475569;">
-    <span>Tổng:</span>
+  <!-- 2. TỔNG SỐ NGƯỜI XEM -->
+  <div style="display: flex; align-items: center; gap: 4px;">
+    <span>Tổng số người xem:</span>
     <img 
       src="https://api.visitorbadge.io/api/visitors?path=web-thi-dua-xi.vercel.app&label=&countColor=%230f172a&style=flat" 
       alt="Tổng lượt xem" 
-      style="height: 13px; vertical-align: middle;" 
+      style="height: 13px; vertical-align: middle; border-radius: 2px;" 
     />
   </div>
 
-</div>
-    </script>
+</div>    </script>
 </body>
 </html>
