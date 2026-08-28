@@ -109,7 +109,60 @@
             <h2 class="text-base font-bold text-slate-800 uppercase mb-4 flex items-center gap-2">
                 📊 BÁO CÁO THỐNG KÊ TỔNG QUAN
             </h2>
+<!-- THANH BỘ LỌC THỐNG KÊ -->
+<div style="background: #ffffff; padding: 16px; border-radius: 10px; margin-bottom: 20px; box-shadow: 0 2px 6px rgba(0,0,0,0.05); border: 1px solid #e5e7eb;">
+  <div style="display: flex; gap: 15px; flex-wrap: wrap; align-items: center;">
+    <div style="flex: 1; min-width: 220px;">
+      <label style="font-weight: 600; font-size: 13px; color: #374151; display: block; margin-bottom: 5px;">Liên Chi đoàn / Khoa:</label>
+      <select id="filterFaculty" onchange="onFacultyFilterChange()" style="width: 100%; padding: 8px 12px; border-radius: 6px; border: 1px solid #d1d5db;">
+        <option value="">-- Tất cả Liên Chi đoàn --</option>
+      </select>
+    </div>
 
+    <div style="flex: 1; min-width: 200px;">
+      <label style="font-weight: 600; font-size: 13px; color: #374151; display: block; margin-bottom: 5px;">Chi đoàn / Lớp:</label>
+      <select id="filterClass" onchange="applyReportFilter()" style="width: 100%; padding: 8px 12px; border-radius: 6px; border: 1px solid #d1d5db;">
+        <option value="">-- Tất cả Chi đoàn --</option>
+      </select>
+    </div>
+
+    <div style="flex: 1; min-width: 220px;">
+      <label style="font-weight: 600; font-size: 13px; color: #374151; display: block; margin-bottom: 5px;">Hoạt động Đoàn:</label>
+      <select id="filterActivity" onchange="applyReportFilter()" style="width: 100%; padding: 8px 12px; border-radius: 6px; border: 1px solid #d1d5db;">
+        <option value="">-- Tất cả Hoạt động --</option>
+      </select>
+    </div>
+
+    <div style="margin-top: 22px;">
+      <button onclick="resetReportFilter()" style="padding: 8px 16px; background-color: #6b7280; color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: 500;">
+        🔄 Đặt lại
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- THÊM THẺ THỐNG KÊ SỐ ĐOÀN VIÊN THỰC TẾ THAM GIA -->
+<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-bottom: 20px;">
+  <div style="background: #fff; padding: 15px; border-radius: 8px; border-left: 4px solid #2563eb; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
+    <span style="font-size: 12px; font-weight: bold; color: #2563eb; text-transform: uppercase;">TỔNG SỐ MINH CHỨNG</span>
+    <h2 id="kpiTotalSubmissions" style="margin: 5px 0 0 0; font-size: 28px; color: #1e3a8a;">0</h2>
+  </div>
+
+  <div style="background: #fff; padding: 15px; border-radius: 8px; border-left: 4px solid #7c3aed; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
+    <span style="font-size: 12px; font-weight: bold; color: #7c3aed; text-transform: uppercase;">SỐ ĐOÀN VIÊN THAM GIA</span>
+    <h2 id="kpiUniqueStudents" style="margin: 5px 0 0 0; font-size: 28px; color: #5b21b6;">0</h2>
+  </div>
+
+  <div style="background: #fff; padding: 15px; border-radius: 8px; border-left: 4px solid #059669; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
+    <span style="font-size: 12px; font-weight: bold; color: #059669; text-transform: uppercase;">ĐÃ PHÊ DUYỆT</span>
+    <h2 id="kpiApproved" style="margin: 5px 0 0 0; font-size: 28px; color: #065f46;">0</h2>
+  </div>
+
+  <div style="background: #fff; padding: 15px; border-radius: 8px; border-left: 4px solid #d97706; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
+    <span style="font-size: 12px; font-weight: bold; color: #d97706; text-transform: uppercase;">ĐANG CHỜ DUYỆT</span>
+    <h2 id="kpiPending" style="margin: 5px 0 0 0; font-size: 28px; color: #92400e;">0</h2>
+  </div>
+</div>
             <!-- 1. CÁC THẺ CHỈ SỐ KPI -->
             <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
                 <div class="bg-blue-50 border-l-4 border-blue-600 p-4 rounded-r-lg shadow-sm">
