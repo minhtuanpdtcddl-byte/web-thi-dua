@@ -4,8 +4,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Hệ thống Quản lý Thi đua Đoàn viên</title>
+    <!-- Chart.js & Tailwind CSS -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
+    <!-- FontAwesome Icon -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
 </head>
 <body class="bg-slate-100 p-3 md:p-8 font-sans min-h-screen flex flex-col justify-between">
     
@@ -13,7 +16,7 @@
         
         <!-- 1. HEADER CÓ LOGO DOÀN -->
         <div class="border-b-2 border-blue-600 pb-4 mb-5 flex flex-col items-center justify-center text-center">
-            <img id="uiLogo" src="" alt="" class="h-16 md:h-20 w-auto object-contain mb-2 hidden" onerror="this.classList.add('hidden')">
+            <img id="uiLogo" src="" alt="Logo" class="h-16 md:h-20 w-auto object-contain mb-2 hidden" onerror="this.classList.add('hidden')">
             <div>
                 <h1 id="uiSchoolName" class="text-xl md:text-2xl font-bold text-blue-900 uppercase">Đang tải thông tin...</h1>
                 <p class="text-blue-700 font-semibold text-xs md:text-sm mt-1 uppercase tracking-wide">
@@ -26,7 +29,7 @@
         <div id="uiAnnouncementBox" class="bg-gradient-to-r from-amber-50 to-orange-50 border-l-8 border-orange-500 p-4 mb-6 rounded-r-lg shadow-sm hidden">
             <div class="flex items-center gap-2">
                 <span class="text-xl">📢</span>
-                <h3 class="text-sm font-bold text-orange-900 uppercase tracking-wide">THÔNG BÁO TỪ BAN CHẤP HÀNH ĐOÀN TRƯỜNG </h3>
+                <h3 class="text-sm font-bold text-orange-900 uppercase tracking-wide">THÔNG BÁO TỪ BAN CHẤP HÀNH ĐOÀN TRƯỜNG</h3>
             </div>
             <p id="uiAnnouncement" class="text-base md:text-lg font-bold text-orange-950 mt-1 pl-7 leading-relaxed"></p>
         </div>
@@ -35,7 +38,7 @@
         <div id="uiNewsBox" class="hidden mb-8 bg-white border border-blue-200 rounded-xl overflow-hidden shadow-md">
             <div class="bg-blue-900 text-white p-4 font-bold text-base md:text-lg flex items-center justify-between">
                 <div class="flex items-center gap-2">
-                    <span>📰</span> BẢNG TIN CÁC HOẠT ĐỘNG THÁNG 09/2026
+                    <span>📰</span> BẢNG TIN HOẠT ĐỘNG
                 </div>
                 <span id="slideCounter" class="text-xs bg-blue-800 px-2.5 py-1 rounded-full text-blue-200 font-normal"></span>
             </div>
@@ -86,13 +89,13 @@
                 </div>
 
                 <div>
-                    <label class="block text-xs font-semibold text-gray-700 uppercase mb-1">Tóm tắt thành tích trong hoạt động (Nêu rõ Bằng khen/Giấy khen/Giấy Chứng nhận nếu có) </label>
+                    <label class="block text-xs font-semibold text-gray-700 uppercase mb-1">Tóm tắt thành tích trong hoạt động</label>
                     <input type="text" id="achievementName" placeholder="VD: Sinh viên 5 tốt / Giải Nhất..." class="w-full p-2.5 border rounded-md outline-none bg-white text-sm">
                 </div>
 
                 <div class="md:col-span-2 bg-white p-3.5 border rounded-md">
                     <label class="block text-xs font-semibold text-gray-700 uppercase mb-1">
-                        📎 Minh chứng (Tối đa 01 File PDF/Word + Tối đa 03 File Ảnh)
+                        📎 Minh chứng (File PDF/Word hoặc Ảnh)
                     </label>
                     <input type="file" id="evidenceFiles" multiple accept="image/*,.pdf,.doc,.docx" required class="w-full text-sm text-gray-500">
                 </div>
@@ -104,89 +107,69 @@
                 </div>
             </form>
         </div>
-<!-- ================= MỤC DASHBOARD BÁO CÁO TRỰC QUAN ================= -->
+
+        <!-- ================= MỤC DASHBOARD BÁO CÁO TRỰC QUAN ================= -->
         <div class="mb-8">
             <h2 class="text-base font-bold text-slate-800 uppercase mb-4 flex items-center gap-2">
                 📊 BÁO CÁO THỐNG KÊ TỔNG QUAN
             </h2>
-<!-- KHỐI BỘ LỌC THỐNG KÊ (Thay thế khối cũ của bạn bằng đoạn này) -->
-<div class="grid grid-cols-1 md:grid-cols-4 gap-3 w-full text-xs items-end mb-4">
-    <!-- 1. Chọn Liên Chi đoàn -->
-    <div>
-        <label class="block font-semibold mb-1 text-slate-700">Liên Chi đoàn / Khoa:</label>
-        <select id="filterFaculty" onchange="onFacultyChange()" class="w-full p-2 border rounded-lg outline-none focus:ring-2 focus:ring-blue-500 font-semibold text-slate-700">
-            <option value="">-- Tất cả Liên Chi đoàn --</option>
-        </select>
-    </div>
 
-    <!-- 2. Chọn Chi đoàn -->
-    <div>
-        <label class="block font-semibold mb-1 text-slate-700">Chi đoàn / Lớp:</label>
-        <select id="filterClass" onchange="filterSubmissions()" class="w-full p-2 border rounded-lg outline-none focus:ring-2 focus:ring-blue-500 font-semibold text-slate-700">
-            <option value="">-- Tất cả Chi đoàn --</option>
-        </select>
-    </div>
-
-    <!-- 3. Chọn Hoạt động Đoàn -->
-    <div>
-        <label class="block font-semibold mb-1 text-slate-700">Hoạt động Đoàn:</label>
-        <select id="filterActivity" onchange="filterSubmissions()" class="w-full p-2 border rounded-lg outline-none focus:ring-2 focus:ring-blue-500 font-semibold text-slate-700">
-            <option value="">-- Tất cả Hoạt động --</option>
-        </select>
-    </div>
-
-    <!-- 4. Nút Đặt lại -->
-    <div>
-        <button type="button" onclick="resetFilters()" class="w-full bg-slate-700 hover:bg-slate-800 text-white font-bold py-2 px-3 rounded-lg transition text-xs flex items-center justify-center gap-1.5 h-[38px]">
-            <i class="fa-solid fa-rotate-right"></i> Đặt lại
-        </button>
-    </div>
-</div>
-<!-- THÊM THẺ THỐNG KÊ SỐ ĐOÀN VIÊN THỰC TẾ THAM GIA -->
-<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-bottom: 20px;">
-  <div style="background: #fff; padding: 15px; border-radius: 8px; border-left: 4px solid #2563eb; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
-    <span style="font-size: 12px; font-weight: bold; color: #2563eb; text-transform: uppercase;">TỔNG SỐ MINH CHỨNG</span>
-    <h2 id="kpiTotalSubmissions" style="margin: 5px 0 0 0; font-size: 28px; color: #1e3a8a;">0</h2>
-  </div>
-
-  <div style="background: #fff; padding: 15px; border-radius: 8px; border-left: 4px solid #7c3aed; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
-    <span style="font-size: 12px; font-weight: bold; color: #7c3aed; text-transform: uppercase;">SỐ ĐOÀN VIÊN THAM GIA</span>
-    <h2 id="kpiUniqueStudents" style="margin: 5px 0 0 0; font-size: 28px; color: #5b21b6;">0</h2>
-  </div>
-
-  <div style="background: #fff; padding: 15px; border-radius: 8px; border-left: 4px solid #059669; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
-    <span style="font-size: 12px; font-weight: bold; color: #059669; text-transform: uppercase;">ĐÃ PHÊ DUYỆT</span>
-    <h2 id="kpiApproved" style="margin: 5px 0 0 0; font-size: 28px; color: #065f46;">0</h2>
-  </div>
-
-  <div style="background: #fff; padding: 15px; border-radius: 8px; border-left: 4px solid #d97706; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
-    <span style="font-size: 12px; font-weight: bold; color: #d97706; text-transform: uppercase;">ĐANG CHỜ DUYỆT</span>
-    <h2 id="kpiPending" style="margin: 5px 0 0 0; font-size: 28px; color: #92400e;">0</h2>
-  </div>
-</div>
-            <!-- 1. CÁC THẺ CHỈ SỐ KPI -->
-            <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
-                <div class="bg-blue-50 border-l-4 border-blue-600 p-4 rounded-r-lg shadow-sm">
-                    <p class="text-xs font-semibold text-blue-700 uppercase">Tổng số minh chứng</p>
-                    <p id="kpiTotal" class="text-2xl md:text-3xl font-extrabold text-blue-900 mt-1">0</p>
+            <!-- KHỐI BỘ LỌC THỐNG KÊ -->
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-3 w-full text-xs items-end mb-6 bg-slate-50 p-3 rounded-lg border border-slate-200">
+                <div>
+                    <label class="block font-semibold mb-1 text-slate-700">Liên Chi đoàn / Khoa:</label>
+                    <select id="filterFaculty" onchange="onFilterFacultyChange()" class="w-full p-2 border rounded-lg outline-none focus:ring-2 focus:ring-blue-500 font-semibold text-slate-700 bg-white">
+                        <option value="">-- Tất cả Liên Chi đoàn --</option>
+                    </select>
                 </div>
-                <div class="bg-emerald-50 border-l-4 border-emerald-500 p-4 rounded-r-lg shadow-sm">
-                    <p class="text-xs font-semibold text-emerald-700 uppercase">Đã phê duyệt</p>
-                    <p id="kpiApproved" class="text-2xl md:text-3xl font-extrabold text-emerald-800 mt-1">0</p>
+
+                <div>
+                    <label class="block font-semibold mb-1 text-slate-700">Chi đoàn / Lớp:</label>
+                    <select id="filterClass" onchange="filterSubmissions()" class="w-full p-2 border rounded-lg outline-none focus:ring-2 focus:ring-blue-500 font-semibold text-slate-700 bg-white">
+                        <option value="">-- Tất cả Chi đoàn --</option>
+                    </select>
                 </div>
-                <div class="bg-amber-50 border-l-4 border-amber-500 p-4 rounded-r-lg shadow-sm">
-                    <p class="text-xs font-semibold text-amber-700 uppercase">Đang chờ duyệt</p>
-                    <p id="kpiPending" class="text-2xl md:text-3xl font-extrabold text-amber-800 mt-1">0</p>
+
+                <div>
+                    <label class="block font-semibold mb-1 text-slate-700">Hoạt động Đoàn:</label>
+                    <select id="filterActivity" onchange="filterSubmissions()" class="w-full p-2 border rounded-lg outline-none focus:ring-2 focus:ring-blue-500 font-semibold text-slate-700 bg-white">
+                        <option value="">-- Tất cả Hoạt động --</option>
+                    </select>
                 </div>
-                <div class="bg-rose-50 border-l-4 border-rose-500 p-4 rounded-r-lg shadow-sm">
-                    <p class="text-xs font-semibold text-rose-700 uppercase">Từ chối / Nhắc nhở</p>
-                    <p id="kpiRejected" class="text-2xl md:text-3xl font-extrabold text-rose-800 mt-1">0</p>
+
+                <div>
+                    <button type="button" onclick="resetFilters()" class="w-full bg-slate-700 hover:bg-slate-800 text-white font-bold py-2 px-3 rounded-lg transition text-xs flex items-center justify-center gap-1.5 h-[38px]">
+                        <i class="fa-solid fa-rotate-right"></i> Đặt lại
+                    </button>
                 </div>
             </div>
 
-            <!-- 2. KHUNG HIỂN THỊ BIỂU ĐỒ -->
+            <!-- CÁC THẺ KPI CHỈ SỐ -->
+            <div class="grid grid-cols-2 md:grid-cols-5 gap-3 mb-6">
+                <div class="bg-blue-50 border-l-4 border-blue-600 p-3.5 rounded-r-lg shadow-sm">
+                    <p class="text-[11px] font-bold text-blue-700 uppercase">Tổng số minh chứng</p>
+                    <p id="kpiTotal" class="text-2xl font-extrabold text-blue-900 mt-1">0</p>
+                </div>
+                <div class="bg-purple-50 border-l-4 border-purple-600 p-3.5 rounded-r-lg shadow-sm">
+                    <p class="text-[11px] font-bold text-purple-700 uppercase">Số ĐV tham gia</p>
+                    <p id="kpiUniqueStudents" class="text-2xl font-extrabold text-purple-900 mt-1">0</p>
+                </div>
+                <div class="bg-emerald-50 border-l-4 border-emerald-500 p-3.5 rounded-r-lg shadow-sm">
+                    <p class="text-[11px] font-bold text-emerald-700 uppercase">Đã phê duyệt</p>
+                    <p id="kpiApproved" class="text-2xl font-extrabold text-emerald-800 mt-1">0</p>
+                </div>
+                <div class="bg-amber-50 border-l-4 border-amber-500 p-3.5 rounded-r-lg shadow-sm">
+                    <p class="text-[11px] font-bold text-amber-700 uppercase">Đang chờ duyệt</p>
+                    <p id="kpiPending" class="text-2xl font-extrabold text-amber-800 mt-1">0</p>
+                </div>
+                <div class="bg-rose-50 border-l-4 border-rose-500 p-3.5 rounded-r-lg shadow-sm col-span-2 md:col-span-1">
+                    <p class="text-[11px] font-bold text-rose-700 uppercase">Từ chối / Nhắc nhở</p>
+                    <p id="kpiRejected" class="text-2xl font-extrabold text-rose-800 mt-1">0</p>
+                </div>
+            </div>
+
+            <!-- HIỂN THỊ BIỂU ĐỒ -->
             <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                <!-- Biểu đồ Tròn: Trạng thái -->
                 <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm flex flex-col items-center">
                     <h3 class="text-xs font-bold text-slate-600 uppercase mb-3">Tỷ lệ Trạng thái Duyệt</h3>
                     <div class="w-full h-56 relative flex items-center justify-center">
@@ -194,7 +177,6 @@
                     </div>
                 </div>
 
-                <!-- Biểu đồ Cột: Theo Khoa / Liên Chi Đoàn -->
                 <div class="md:col-span-2 bg-white p-4 rounded-xl border border-slate-200 shadow-sm flex flex-col items-center">
                     <h3 class="text-xs font-bold text-slate-600 uppercase mb-3">Số lượng Minh chứng theo Liên Chi Đoàn / Khoa</h3>
                     <div class="w-full h-56 relative">
@@ -203,12 +185,12 @@
                 </div>
             </div>
         </div>
-        <!-- ==================================================================== -->
+
         <!-- 5. TRA CỨU BÁO CÁO -->
         <div class="bg-slate-50 p-4 rounded-lg border border-slate-200 mb-6">
             <h2 class="text-sm font-bold text-slate-800 uppercase mb-2">🔍 TRA CỨU & XUẤT BÁO CÁO KẾT QUẢ</h2>
             <div class="flex flex-col md:flex-row gap-2">
-                <input type="text" id="searchKeyword" oninput="searchData()" placeholder="Nhập Họ tên, Chi đoàn hoặc Khoa để tra cứu..." class="flex-1 p-2.5 border rounded-md text-sm outline-none">
+                <input type="text" id="searchKeyword" oninput="searchData()" placeholder="Nhập Họ tên, Chi đoàn hoặc Khoa để tra cứu..." class="flex-1 p-2.5 border rounded-md text-sm outline-none bg-white">
                 <button type="button" onclick="exportReport('personal')" class="bg-emerald-600 hover:bg-emerald-700 text-white text-xs md:text-sm px-3 py-2 rounded-md font-bold transition">📄 Xuất BC Cá Nhân</button>
                 <button type="button" onclick="exportReport('group')" class="bg-indigo-600 hover:bg-indigo-700 text-white text-xs md:text-sm px-3 py-2 rounded-md font-bold transition">📊 Xuất BC Tập Thể</button>
                 <button type="button" onclick="resetSearch()" class="bg-slate-500 hover:bg-slate-600 text-white text-xs md:text-sm px-3 py-2 rounded-md font-medium transition">Xóa lọc</button>
@@ -217,7 +199,7 @@
         </div>
 
         <!-- 6. BẢNG DỮ LIỆU & PHÂN TRANG -->
-        <div class="overflow-x-auto border rounded-lg">
+        <div class="overflow-x-auto border rounded-lg bg-white">
             <table class="w-full border-collapse text-left text-xs md:text-sm">
                 <thead>
                     <tr class="bg-slate-200 text-slate-700 font-bold border-b">
@@ -264,8 +246,10 @@
         <p id="uiFooterInfo">Hệ thống Quản lý Thi đua Đoàn viên</p>
     </footer>
 
+    <!-- SCRIPT XỬ LÝ HỆ THỐNG -->
     <script>
-    const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbzA35Ignw-I0UagjuXISjYXxOHS5eMVuMeMcYZK7ZsBIrLC-pXdC6wbEp5VeX0B3TvM/exec"; // Thay URL Apps Script của bạn vào đây
+    // ⚠️ THAY LINK GOOGLE APPS SCRIPT WEB APP CỦA BẠN VÀO DÒNG DƯỚI DÂY
+    const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbzA35Ignw-I0UagjuXISjYXxOHS5eMVuMeMcYZK7ZsBIrLC-pXdC6wbEp5VeX0B3TvM/exec";
 
     let globalData = [];
     let currentFilteredData = [];
@@ -284,6 +268,10 @@
     // Biến biểu đồ
     let statusChartInstance = null;
     let facultyChartInstance = null;
+
+    document.addEventListener("DOMContentLoaded", function() {
+        loadData();
+    });
 
     function formatDriveUrl(url) {
         if (!url) return '';
@@ -319,7 +307,7 @@
                 }
                 if (result.config.structure) {
                     departmentStructure = result.config.structure;
-                    initFacultyDropdown();
+                    initFormFacultyDropdown();
                 }
                 if (result.config.activities && result.config.activities.length > 0) {
                     populateActivitiesFromConfig(result.config.activities);
@@ -353,11 +341,183 @@
             currentFilteredData = globalData;
             currentPage = 1;
             
+            // Khởi tạo các ô lọc Thống kê
+            initDashboardFilters(globalData);
+            
+            // Cập nhật giao diện Bảng & Dashboard
             renderTable(currentFilteredData);
-            updateDashboard(globalData); // Bổ sung cập nhật KPI & Biểu đồ
+            updateDashboard(currentFilteredData);
+
         } catch (err) { 
             console.error("Lỗi kết nối dữ liệu:", err); 
         }
+    }
+
+    // --- CÁC HÀM XỬ LÝ KHỐI BÁO CÁO & BIỂU ĐỒ (DASHBOARD) ---
+    function updateDashboard(data) {
+        data = data || [];
+        const total = data.length;
+        
+        let approved = 0;
+        let pending = 0;
+        let rejected = 0;
+        const studentSet = new Set();
+        const facultyCounts = {};
+
+        data.forEach(row => {
+            const studentId = String(row[0] || '').trim();
+            const studentName = String(row[1] || '').trim();
+            const faculty = String(row[3] || 'Chưa xác định').trim();
+            const status = String(row[7] || '').trim().toLowerCase();
+
+            // Đếm số Đoàn viên duy nhất
+            const studentKey = studentId || studentName;
+            if (studentKey) studentSet.add(studentKey);
+
+            // Đếm trạng thái
+            if (status === "đã duyệt" || status === "duyệt") {
+                approved++;
+            } else if (status === "từ chối" || status === "không duyệt") {
+                rejected++;
+            } else {
+                pending++;
+            }
+
+            // Đếm số lượng theo Khoa
+            if (faculty) {
+                facultyCounts[faculty] = (facultyCounts[faculty] || 0) + 1;
+            }
+        });
+
+        // Gán con số KPI lên giao diện
+        if(document.getElementById('kpiTotal')) document.getElementById('kpiTotal').innerText = total;
+        if(document.getElementById('kpiUniqueStudents')) document.getElementById('kpiUniqueStudents').innerText = studentSet.size;
+        if(document.getElementById('kpiApproved')) document.getElementById('kpiApproved').innerText = approved;
+        if(document.getElementById('kpiPending')) document.getElementById('kpiPending').innerText = pending;
+        if(document.getElementById('kpiRejected')) document.getElementById('kpiRejected').innerText = rejected;
+
+        // Vẽ biểu đồ
+        renderCharts({ approved, pending, rejected }, facultyCounts);
+    }
+
+    function renderCharts(statusStats, facultyCounts) {
+        if (typeof Chart === 'undefined') return;
+
+        // 1. Biểu đồ Tròn: Trạng thái Duyệt
+        const ctxStatus = document.getElementById('statusChart');
+        if (ctxStatus) {
+            if (statusChartInstance) statusChartInstance.destroy();
+            statusChartInstance = new Chart(ctxStatus, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Đã duyệt', 'Chờ duyệt', 'Từ chối'],
+                    datasets: [{
+                        data: [statusStats.approved, statusStats.pending, statusStats.rejected],
+                        backgroundColor: ['#10b981', '#f59e0b', '#ef4444']
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { position: 'bottom' } }
+                }
+            });
+        }
+
+        // 2. Biểu đồ Cột: Theo Liên Chi Đoàn / Khoa
+        const ctxFaculty = document.getElementById('facultyChart');
+        if (ctxFaculty) {
+            if (facultyChartInstance) facultyChartInstance.destroy();
+            const labels = Object.keys(facultyCounts);
+            const values = Object.values(facultyCounts);
+
+            facultyChartInstance = new Chart(ctxFaculty, {
+                type: 'bar',
+                data: {
+                    labels: labels.length ? labels : ['Chưa có dữ liệu'],
+                    datasets: [{
+                        label: 'Số lượng minh chứng',
+                        data: values.length ? values : [0],
+                        backgroundColor: '#2563eb',
+                        borderRadius: 6
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: { y: { beginAtZero: true, ticks: { precision: 0 } } },
+                    plugins: { legend: { display: false } }
+                }
+            });
+        }
+    }
+
+    // --- BỘ LỌC DỮ LIỆU DASHBOARD ---
+    function initDashboardFilters(data) {
+        const facultySelect = document.getElementById('filterFaculty');
+        const activitySelect = document.getElementById('filterActivity');
+
+        if (!data || data.length === 0) return;
+
+        const faculties = [...new Set(data.map(r => r[3]).filter(Boolean))].sort();
+        if (facultySelect) {
+            facultySelect.innerHTML = '<option value="">-- Tất cả Liên Chi đoàn --</option>' +
+                faculties.map(f => `<option value="${f}">${f}</option>`).join('');
+        }
+
+        const activities = [...new Set(data.map(r => r[4]).filter(Boolean))].sort();
+        if (activitySelect) {
+            activitySelect.innerHTML = '<option value="">-- Tất cả Hoạt động --</option>' +
+                activities.map(a => `<option value="${a}">${a}</option>`).join('');
+        }
+
+        updateFilterClassDropdown(data);
+    }
+
+    function onFilterFacultyChange() {
+        const selectedFaculty = document.getElementById('filterFaculty').value;
+        updateFilterClassDropdown(globalData, selectedFaculty);
+        filterSubmissions();
+    }
+
+    function updateFilterClassDropdown(data, facultyFilter = "") {
+        const classSelect = document.getElementById('filterClass');
+        if (!classSelect) return;
+
+        let filtered = data;
+        if (facultyFilter) {
+            filtered = data.filter(r => r[3] === facultyFilter);
+        }
+
+        const classes = [...new Set(filtered.map(r => r[2]).filter(Boolean))].sort();
+        classSelect.innerHTML = '<option value="">-- Tất cả Chi đoàn --</option>' +
+            classes.map(c => `<option value="${c}">${c}</option>`).join('');
+    }
+
+    function filterSubmissions() {
+        const faculty = document.getElementById('filterFaculty')?.value || '';
+        const className = document.getElementById('filterClass')?.value || '';
+        const activity = document.getElementById('filterActivity')?.value || '';
+
+        currentFilteredData = globalData.filter(row => {
+            const matchFaculty = !faculty || row[3] === faculty;
+            const matchClass = !className || row[2] === className;
+            const matchActivity = !activity || row[4] === activity;
+            return matchFaculty && matchClass && matchActivity;
+        });
+
+        currentPage = 1;
+        renderTable(currentFilteredData);
+        updateDashboard(currentFilteredData);
+    }
+
+    function resetFilters() {
+        if (document.getElementById('filterFaculty')) document.getElementById('filterFaculty').value = '';
+        if (document.getElementById('filterClass')) document.getElementById('filterClass').value = '';
+        if (document.getElementById('filterActivity')) document.getElementById('filterActivity').value = '';
+
+        updateFilterClassDropdown(globalData);
+        filterSubmissions();
     }
 
     // --- RENDER BẢNG DỮ LIỆU CÓ PHÂN TRANG ---
@@ -439,30 +599,35 @@
         currentPage = 1;
 
         if (!keyword) {
+            currentFilteredData = globalData;
             renderTable(globalData);
+            updateDashboard(globalData);
             if (countDiv) countDiv.innerText = "";
             return;
         }
 
-        const filtered = globalData.filter(row => {
+        currentFilteredData = globalData.filter(row => {
             return String(row[0]||'').toLowerCase().includes(keyword) ||
                    String(row[1]||'').toLowerCase().includes(keyword) ||
                    String(row[2]||'').toLowerCase().includes(keyword) ||
                    String(row[3]||'').toLowerCase().includes(keyword);
         });
 
-        renderTable(filtered);
-        if (countDiv) countDiv.innerHTML = `✅ Tìm thấy <b class="text-blue-700">${filtered.length}</b> kết quả phù hợp.`;
+        renderTable(currentFilteredData);
+        updateDashboard(currentFilteredData);
+        if (countDiv) countDiv.innerHTML = `✅ Tìm thấy <b class="text-blue-700">${currentFilteredData.length}</b> kết quả phù hợp.`;
     }
 
     function resetSearch() {
         document.getElementById('searchKeyword').value = '';
         document.getElementById('searchResultCount').innerText = '';
         currentPage = 1;
+        currentFilteredData = globalData;
         renderTable(globalData);
+        updateDashboard(globalData);
     }
 
-    // --- CÁC HÀM SLIDER BẢNG TIN ---
+    // --- HÀM SLIDER BẢNG TIN ---
     function renderNewsSlide(index) {
         const container = document.getElementById('newsSliderContainer');
         const dotsContainer = document.getElementById('newsDotsContainer');
@@ -527,6 +692,7 @@
     function pauseNewsSlider() { stopNewsSlider(); }
     function stopNewsSlider() { if (newsSliderTimer) clearInterval(newsSliderTimer); }
 
+    // --- KHỔI TẠO DROPDOWN FORM NỘP BÀI ---
     function populateActivitiesFromConfig(actList) {
         const actSelect = document.getElementById('activityName');
         actSelect.innerHTML = '<option value="">-- Chọn Hoạt động (Nếu có) --</option>';
@@ -535,7 +701,7 @@
         });
     }
 
-    function initFacultyDropdown() {
+    function initFormFacultyDropdown() {
         const facultySelect = document.getElementById('facultyId');
         const classSelect = document.getElementById('classId');
         facultySelect.innerHTML = '<option value="">-- Chọn Liên Chi Đoàn / Khoa --</option>';
@@ -546,10 +712,10 @@
             facultySelect.innerHTML += `<option value="${faculty}">${faculty}</option>`;
         });
 
-        facultySelect.onchange = function() { onFacultyChange(this.value); };
+        facultySelect.onchange = function() { onFormFacultyChange(this.value); };
     }
 
-    function onFacultyChange(selectedFaculty) {
+    function onFormFacultyChange(selectedFaculty) {
         const classSelect = document.getElementById('classId');
         if (!selectedFaculty || !departmentStructure[selectedFaculty]) {
             classSelect.innerHTML = '<option value="">-- Vui lòng chọn Liên Chi Đoàn / Khoa trước --</option>';
@@ -573,6 +739,67 @@
         actSelect.innerHTML = '<option value="">-- Chọn Hoạt động (Nếu có) --</option>';
         setActivity.forEach(a => { actSelect.innerHTML += `<option value="${a}">${a}</option>`; });
     }
+
+    // --- XỬ LÝ GỬI FORM NỘP MINH CHỨNG ---
+    document.getElementById('uploadForm').addEventListener('submit', async function(e) {
+        e.preventDefault();
+        
+        const submitBtn = document.getElementById('submitBtn');
+        const originalBtnText = submitBtn.innerText;
+        submitBtn.disabled = true;
+        submitBtn.innerText = 'ĐANG TẢI VÀ GỬI MINH CHỨNG...';
+
+        try {
+            const fileInput = document.getElementById('evidenceFiles');
+            const files = fileInput.files;
+            const filePromises = [];
+
+            for (let i = 0; i < files.length; i++) {
+                filePromises.push(new Promise((resolve, reject) => {
+                    const reader = new FileReader();
+                    reader.onload = e => resolve({
+                        name: files[i].name,
+                        mimeType: files[i].type,
+                        base64: e.target.result.split(',')[1]
+                    });
+                    reader.onerror = reject;
+                    reader.readAsDataURL(files[i]);
+                }));
+            }
+
+            const convertedFiles = await Promise.all(filePromises);
+
+            const payload = {
+                studentId: document.getElementById('studentId').value.trim(),
+                studentName: document.getElementById('studentName').value.trim(),
+                facultyId: document.getElementById('facultyId').value,
+                classId: document.getElementById('classId').value,
+                activityName: document.getElementById('activityName').value,
+                achievementName: document.getElementById('achievementName').value.trim(),
+                files: convertedFiles
+            };
+
+            const response = await fetch(WEB_APP_URL, {
+                method: 'POST',
+                body: JSON.stringify(payload)
+            });
+
+            const result = await response.json();
+            if (result.status === 'success' || result.result === 'success') {
+                alert('🎉 Gửi minh chứng thành công!');
+                document.getElementById('uploadForm').reset();
+                loadData(); // Tải lại bảng & thống kê
+            } else {
+                alert('⚠️ Có lỗi xảy ra: ' + (result.message || 'Không thể gửi dữ liệu.'));
+            }
+        } catch (err) {
+            console.error(err);
+            alert('❌ Lỗi kết nối hoặc xử lý tệp: ' + err.message);
+        } finally {
+            submitBtn.disabled = false;
+            submitBtn.innerText = originalBtnText;
+        }
+    });
 
     // --- XUẤT BÁO CÁO IN KẾT QUẢ ---
     function exportReport(type) {
@@ -605,43 +832,42 @@
 
         let reportTitle = type === 'personal' ? templateConfig.personalTitle : templateConfig.groupTitle;
         let infoHeader = type === 'personal' 
-            ? `<div style="margin-bottom: 15px;">
+            ? `<div style="margin-bottom: 15px; font-size: 14px; line-height: 1.6;">
                 <p><b>Họ và tên Đoàn viên:</b> ${firstRow[1]} &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <b>Mã SV:</b> ${firstRow[0] || '...'}</p>
                 <p><b>Chi đoàn / Lớp:</b> ${firstRow[2]} &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <b>Liên Chi Đoàn/Khoa:</b> ${firstRow[3]}</p>
                </div>`
-            : `<div style="margin-bottom: 15px;">
-                <p><b>Đơn vị / Tập thể:</b> "${keyword.toUpperCase()}"</p>
-                <p><b>Tổng số thành tích đã ghi nhận duyệt:</b> ${approvedData.length}</p>
+            : `<div style="margin-bottom: 15px; font-size: 14px; line-height: 1.6;">
+                <p><b>Đơn vị / Chi đoàn:</b> ${firstRow[2] || keyword} &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <b>Thuộc Khoa/LCĐ:</b> ${firstRow[3] || ''}</p>
+                <p><b>Tổng số minh chứng được công nhận:</b> ${approvedData.length}</p>
                </div>`;
 
-        let tableRows = "";
-        approvedData.forEach((item, index) => {
-            tableRows += `
-                <tr>
-                    <td style="border: 1px solid #000; padding: 6px; text-align: center;">${index + 1}</td>
-                    ${type === 'group' ? `<td style="border: 1px solid #000; padding: 6px;">${item[1]}<br><small>(${item[2]})</small></td>` : ''}
-                    <td style="border: 1px solid #000; padding: 6px;">${item[4] || '-'}</td>
-                    <td style="border: 1px solid #000; padding: 6px;">${item[5] || '-'}</td>
-                    <td style="border: 1px solid #000; padding: 6px; text-align: center; font-weight: bold; color: green;">Đã duyệt</td>
-                </tr>
-            `;
-        });
+        let tableRowsHtml = approvedData.map((row, idx) => `
+            <tr>
+                <td style="border:1px solid #333; padding:8px; text-align:center;">${idx + 1}</td>
+                <td style="border:1px solid #333; padding:8px;">${row[1]}</td>
+                <td style="border:1px solid #333; padding:8px;">${row[2]}</td>
+                <td style="border:1px solid #333; padding:8px;">${row[4] || row[5] || '-'}</td>
+                <td style="border:1px solid #333; padding:8px;">${row[5] || 'Đã hoàn thành'}</td>
+                <td style="border:1px solid #333; padding:8px; text-align:center;">${row[7] || 'Đã duyệt'}</td>
+            </tr>
+        `).join('');
 
-        const printWindow = window.open('', '', 'width=850,height=650');
-        printWindow.document.write(`
+        const win = window.open('', '_blank');
+        win.document.write(`
+            <!DOCTYPE html>
             <html>
             <head>
                 <title>${reportTitle}</title>
                 <style>
-                    body { font-family: "Times New Roman", Times, serif; font-size: 13pt; line-height: 1.3; padding: 20px; }
-                    .header-table { width: 100%; border-collapse: collapse; margin-bottom: 20px; }
-                    .header-table td { vertical-align: top; text-align: center; }
-                    .title { text-align: center; font-size: 14pt; font-weight: bold; text-transform: uppercase; margin: 15px 0; }
-                    table.data-table { width: 100%; border-collapse: collapse; margin-top: 10px; }
-                    table.data-table th, table.data-table td { border: 1px solid #000; padding: 6px 8px; }
-                    table.data-table th { background-color: #f2f2f2; text-align: center; font-weight: bold; }
-                    .footer-table { width: 100%; border-collapse: collapse; margin-top: 30px; }
-                    .footer-table td { text-align: center; vertical-align: top; width: 50%; }
+                    body { font-family: 'Times New Roman', Times, serif; padding: 25px; color: #000; }
+                    .header-table { width: 100%; margin-bottom: 20px; }
+                    .header-table td { text-align: center; vertical-align: top; font-size: 13px; }
+                    .title { text-align: center; font-size: 18px; font-weight: bold; margin: 20px 0; text-transform: uppercase; }
+                    table.data-table { width: 100%; border-collapse: collapse; margin-top: 15px; font-size: 13px; }
+                    table.data-table th { border: 1px solid #333; padding: 8px; background-color: #f2f2f2; }
+                    .signature-table { width: 100%; margin-top: 40px; }
+                    .signature-table td { text-align: center; vertical-align: top; font-size: 13px; }
+                    @media print { body { padding: 0; } }
                 </style>
             </head>
             <body>
@@ -651,267 +877,43 @@
                         <td style="width: 55%;">${templateConfig.nationalHeader}</td>
                     </tr>
                 </table>
-
+                <div style="text-align: right; font-style: italic; font-size: 13px; margin-bottom: 10px;">${templateConfig.locationDate}</div>
+                
                 <div class="title">${reportTitle}</div>
+                
                 ${infoHeader}
 
                 <table class="data-table">
                     <thead>
                         <tr>
-                            <th style="width: 40px;">STT</th>
-                            ${type === 'group' ? `<th>Họ tên (Lớp)</th>` : ''}
-                            <th>Tên Hoạt động Đoàn</th>
-                            <th>Tóm tắt thành tích hoạt động (Nêu rõ Bằng khen/Giấy khen/Giấy Chứng nhận nếu có)</th>
-                            <th style="width: 90px;">Trạng thái</th>
+                            <th>STT</th>
+                            <th>Họ và Tên</th>
+                            <th>Chi đoàn</th>
+                            <th>Hoạt động / Thành tích</th>
+                            <th>Ghi chú</th>
+                            <th>Trạng thái</th>
                         </tr>
                     </thead>
-                    <tbody>${tableRows}</tbody>
+                    <tbody>
+                        ${tableRowsHtml}
+                    </tbody>
                 </table>
 
-                <table class="footer-table">
+                <table class="signature-table">
                     <tr>
-                        <td></td>
-                        <td><i>${templateConfig.locationDate}</i></td>
-                    </tr>
-                    <tr>
-                        <td style="padding-top: 10px;">${templateConfig.signerLeft}<br><br><br><br></td>
-                        <td style="padding-top: 10px;">${templateConfig.signerRight}<br><br><br><br></td>
+                        <td style="width: 50%;">${templateConfig.signerLeft}</td>
+                        <td style="width: 50%;">${templateConfig.signerRight}<br><br><br><br></td>
                     </tr>
                 </table>
+
+                <script>
+                    window.onload = function() { window.print(); }
+                <\/script>
             </body>
             </html>
         `);
-        printWindow.document.close();
-        setTimeout(() => {
-            printWindow.focus();
-            printWindow.print();
-        }, 500);
+        win.document.close();
     }
-
-    // --- BỔ SUNG: CẬP NHẬT DASHBOARD KPI VÀ BIỂU ĐỒ (CHART.JS) ---
-    function updateDashboard(data) {
-        let total = data.length;
-        let approved = 0;
-        let pending = 0;
-        let rejected = 0;
-
-        const facultyCounts = {};
-
-        data.forEach(row => {
-            const status = String(row[7] || '').trim().toLowerCase();
-            if (status === 'đã duyệt' || status === 'duyệt') {
-                approved++;
-            } else if (status === 'từ chối' || status === 'không duyệt') {
-                rejected++;
-            } else {
-                pending++;
-            }
-
-            const faculty = row[3] || 'Khác';
-            facultyCounts[faculty] = (facultyCounts[faculty] || 0) + 1;
-        });
-
-        // Hiển thị KPI
-        document.getElementById('kpiTotal').innerText = total;
-        document.getElementById('kpiApproved').innerText = approved;
-        document.getElementById('kpiPending').innerText = pending;
-        document.getElementById('kpiRejected').innerText = rejected;
-
-        // Vẽ biểu đồ Tròn (Trạng thái) & Biểu đồ Cột (Khoa)
-        renderStatusChart(approved, pending, rejected);
-        renderFacultyChart(facultyCounts);
-    }
-
-    function renderStatusChart(approved, pending, rejected) {
-        const ctx = document.getElementById('statusChart').getContext('2d');
-        if (statusChartInstance) statusChartInstance.destroy();
-
-        statusChartInstance = new Chart(ctx, {
-            type: 'doughnut',
-            data: {
-                labels: ['Đã duyệt', 'Đang chờ duyệt', 'Từ chối'],
-                datasets: [{
-                    data: [approved, pending, rejected],
-                    backgroundColor: ['#10b981', '#f59e0b', '#ef4444'],
-                    borderWidth: 1
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: {
-                    legend: { position: 'bottom' }
-                }
-            }
-        });
-    }
-
-    function renderFacultyChart(facultyCounts) {
-        const ctx = document.getElementById('facultyChart').getContext('2d');
-        if (facultyChartInstance) facultyChartInstance.destroy();
-
-        const labels = Object.keys(facultyCounts);
-        const dataValues = Object.values(facultyCounts);
-
-        facultyChartInstance = new Chart(ctx, {
-            type: 'bar',
-            data: {
-                labels: labels,
-                datasets: [{
-                    label: 'Số lượng minh chứng',
-                    data: dataValues,
-                    backgroundColor: '#3b82f6',
-                    borderRadius: 4
-                }]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                scales: {
-                    y: { beginAtZero: true, ticks: { stepSize: 1 } }
-                },
-                plugins: {
-                    legend: { display: false }
-                }
-            }
-        });
-    }
-
-    // --- BỔ SUNG: XỬ LÝ SỰ KIỆN SUBMIT FORM NỘP MINH CHỨNG ---
-    document.getElementById('uploadForm').addEventListener('submit', async function(e) {
-    e.preventDefault();
-    const submitBtn = document.getElementById('submitBtn');
-    submitBtn.disabled = true;
-    submitBtn.innerHTML = '⏳ Đang tải và gửi dữ liệu...';
-
-    try {
-        const fileInput = document.getElementById('evidenceFiles');
-        const files = fileInput ? fileInput.files : [];
-
-        let imageCount = 0;
-        let docCount = 0;
-        const filePromises = [];
-
-        for (let i = 0; i < files.length; i++) {
-            const file = files[i];
-            if (file.type && file.type.startsWith('image/')) imageCount++;
-            else docCount++;
-
-            filePromises.push(new Promise((resolve, reject) => {
-                const reader = new FileReader();
-                reader.onload = function(evt) {
-                    try {
-                        const res = evt.target ? evt.target.result : reader.result;
-                        let base64Data = "";
-                        
-                        // Kiểm tra an toàn: Chỉ gọi split khi res chắc chắn là chuỗi
-                        if (typeof res === 'string' && res.indexOf(',') !== -1) {
-                            base64Data = res.split(',')[1] || "";
-                        } else if (typeof res === 'string') {
-                            base64Data = res;
-                        }
-
-                        resolve({
-                            name: file.name || "file_unnamed",
-                            mimeType: file.type || "application/octet-stream",
-                            base64: base64Data
-                        });
-                    } catch (err) {
-                        reject(err);
-                    }
-                };
-                reader.onerror = (err) => reject(err);
-                reader.readAsDataURL(file);
-            }));
-        }
-
-        if (imageCount > 3 || docCount > 1) {
-            alert('Vui lòng chỉ chọn tối đa 01 file PDF/Word và tối đa 03 file Ảnh!');
-            submitBtn.disabled = false;
-            submitBtn.innerHTML = 'GỬI DUYỆT MINH CHỨNG';
-            return;
-        }
-
-        const encodedFiles = await Promise.all(filePromises);
-
-        const payload = {
-            studentId: (document.getElementById('studentId')?.value || '').trim(),
-            studentName: (document.getElementById('studentName')?.value || '').trim(),
-            facultyId: document.getElementById('facultyId')?.value || '',
-            classId: document.getElementById('classId')?.value || '',
-            activityName: document.getElementById('activityName')?.value || '',
-            achievementName: (document.getElementById('achievementName')?.value || '').trim(),
-            files: encodedFiles
-        };
-
-        const response = await fetch(WEB_APP_URL, {
-            method: 'POST',
-            body: JSON.stringify(payload)
-        });
-
-        const result = await response.json();
-        if (result.status === 'success' || result.success) {
-            alert('🎉 Gửi minh chứng thành công!');
-            document.getElementById('uploadForm').reset();
-            if (typeof loadData === 'function') loadData();
-        } else {
-            alert('❌ Máy chủ phản hồi: ' + (result.message || 'Không thể gửi dữ liệu.'));
-        }
-    } catch (err) {
-        console.error('Lỗi gửi form:', err);
-        alert('❌ Có lỗi xảy ra: ' + (err.message || err));
-    } finally {
-        submitBtn.disabled = false;
-        submitBtn.innerHTML = 'GỬI DUYỆT MINH CHỨNG';
-    }
-});
-    // Tự động kích hoạt tải dữ liệu khi trang web sẵn sàng
-    window.addEventListener('DOMContentLoaded', loadData);
     </script>
-   
-
-<!-- Đặt ngay trên thẻ </body> ở cuối file HTML của bạn -->
-<script src="https://sf-cdn.coze.com/obj/unpkg-va/flow-platform/chat-app-sdk/1.2.0-beta.6/libs/oversea/index.js"></script>
-<script>
-  new CozeWebSDK.WebChatClient({
-    config: {
-      bot_id: '7674513972959199285',
-    },
-    componentProps: {
-      title: 'Coze',
-    },
-    auth: {
-      type: 'token',
-      token: 'pat_********',
-      onRefreshToken: function () {
-        return 'pat_********'
-      }
-    }
-  });
-</script>
-<!-- BỘ ĐẾM TRUY CẬP (GÓC TRÁI DƯỚI CÙNG - XẾP DỌC THẲNG HÀNG) -->
-<div style="position: fixed; bottom: 12px; left: 12px; z-index: 9999; display: flex; flex-direction: column; align-items: flex-start; gap: 6px; background-color: rgba(255, 255, 255, 0.95); padding: 8px 12px; border-radius: 8px; border: 1px solid #e2e8f0; box-shadow: 0 4px 12px rgba(0,0,0,0.1); font-family: system-ui, -apple-system, sans-serif; font-size: 11px; color: #334155;">
-  
-  <!-- HÀNG TRÊN: ĐANG ONLINE -->
-  <div style="display: flex; align-items: center; gap: 6px;">
-    <span>Số người đang online:</span>
-    <div style="display: inline-flex; align-items: center; transform: scale(0.75); transform-origin: left center; margin-right: -20px;">
-      <script type="text/javascript" src="//widgets.amung.us/classic.js"></script>
-      <script type="text/javascript">WAU_classic('_wauegk')</script>
-    </div>
-  </div>
-
-  <!-- HÀNG DƯỚI: TỔNG SỐ LƯỢT XEM -->
-  <div style="display: flex; align-items: center; gap: 6px;">
-    <span>Tổng số người xem:</span>
-    <img 
-      src="https://api.visitorbadge.io/api/visitors?path=web-thi-dua-xi.vercel.app&label=&countColor=%230f172a&style=flat" 
-      alt="Tổng số người xem" 
-      style="height: 14px; vertical-align: middle; border-radius: 2px;" 
-    />
-  </div>
-
-</div>    
-</script>
 </body>
 </html>
