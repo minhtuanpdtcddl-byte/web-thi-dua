@@ -835,10 +835,51 @@
     }
   });
 </script>
-    <!-- Bộ đếm góc phải dưới cùng -->
-<div style="position: fixed; bottom: 16px; left: 16px; z-index: 9999; background: blue; padding: 6px; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.15);">
-  <!-- Dán toàn bộ đoạn mã <script> bạn vừa copy từ whos.amung.us vào đây -->
-  <script id="_wau8c6">var _wau = _wau || []; _wau.push(["small", "umzdonm7zm", "8c6"]);</script><script async src="//waust.at/s.js"></script>
-</div>
+    export default function VisitorCounter() {
+  // 1. Mã ID whos.amung.us của bạn
+  const SITE_ID = "_wau8c6"; 
+
+  // 2. Địa chỉ web của bạn (để VisitorBadge tính tổng lượt truy cập)
+  const MY_DOMAIN = "web-thi-dua-xi.vercel.app";
+
+  return (
+    <div className="fixed bottom-4 right-4 z-50 flex items-center gap-3 rounded-full border border-slate-200 bg-white/95 px-4 py-2 shadow-lg backdrop-blur-md text-xs font-semibold text-slate-700">
+      
+      {/* KHỐI 1: ĐANG ONLINE (whos.amung.us) */}
+      <div className="flex items-center gap-1.5">
+        <span className="relative flex h-2.5 w-2.5">
+          <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-75"></span>
+          <span className="relative inline-flex h-2.5 w-2.5 rounded-full bg-emerald-500"></span>
+        </span>
+        <span className="text-slate-500">Online:</span>
+        <a href={`https://whos.amung.us/stats/${SITE_ID}/`} target="_blank" rel="noreferrer" className="flex items-center">
+          <img 
+            src={`https://whos.amung.us/widget/${SITE_ID}.png`} 
+            alt="Đang Online" 
+            className="h-4 object-contain"
+          />
+        </a>
+      </div>
+
+      {/* Đường vạch ngăn cách */}
+      <span className="h-3 w-[1px] bg-slate-300"></span>
+
+      {/* KHỐI 2: TỔNG LƯỢT TRUY CẬP (VisitorBadge API) */}
+      <div className="flex items-center gap-1.5">
+        <svg className="h-3.5 w-3.5 text-slate-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+        </svg>
+        <span className="text-slate-500">Tổng:</span>
+        <img 
+          src={`https://api.visitorbadge.io/api/visitors?path=${MY_DOMAIN}&label=&countColor=%230f172a&style=flat`} 
+          alt="Tổng lượt truy cập" 
+          className="h-4 object-contain"
+        />
+      </div>
+
+    </div>
+  );
+}
 </body>
 </html>
