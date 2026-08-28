@@ -51,27 +51,43 @@
 
         <div class="bg-white p-6 rounded-b-xl shadow-lg border-x border-b border-slate-200">
             
-            <!-- TAB 1: BẢNG DUYỆT MINH CHỨNG -->
+            <!-- TAB 1: BẢNG DUYỆT MINH CHỨNG & TÌM KIẾM CHI ĐOÀN -->
             <div id="tabSubmissions" class="space-y-4">
-                <div class="flex justify-between items-center mb-2">
-                    <h3 class="font-bold text-blue-900 text-lg"><i class="fa-solid fa-file-invoice mr-2"></i> Danh sách Minh chứng đã nộp</h3>
-                    <span id="totalSubmissions" class="text-xs bg-blue-100 text-blue-800 font-bold px-2.5 py-1 rounded-full">Tổng: 0</span>
+                <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-3 bg-slate-50 p-3.5 rounded-xl border border-slate-200">
+                    <div class="flex items-center gap-2">
+                        <h3 class="font-bold text-blue-900 text-base"><i class="fa-solid fa-file-invoice mr-1"></i> Tra Cứu & Xét Duyệt Minh Chứng</h3>
+                        <span id="totalSubmissions" class="text-xs bg-blue-100 text-blue-800 font-bold px-2.5 py-1 rounded-full">Tổng: 0</span>
+                    </div>
+                    
+                    <!-- BỘ LỌC TÌM KIẾM DỮ LIỆU LỚN -->
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-2 w-full md:w-auto text-xs">
+                        <input type="text" id="filterSearch" oninput="filterSubmissions()" placeholder="🔍 Tìm Mã SV / Tên đoàn viên..." class="p-2 border rounded-lg outline-none focus:ring-2 focus:ring-blue-500">
+                        
+                        <select id="filterStatus" onchange="filterSubmissions()" class="p-2 border rounded-lg outline-none focus:ring-2 focus:ring-blue-500 font-semibold text-slate-700">
+                            <option value="">-- Tất cả trạng thái --</option>
+                            <option value="Chờ duyệt">Chờ duyệt</option>
+                            <option value="Đã duyệt">Đã duyệt</option>
+                            <option value="Từ chối">Từ chối</option>
+                        </select>
+
+                        <input type="text" id="filterClass" oninput="filterSubmissions()" placeholder="🏫 Lọc Chi đoàn / Liên Chi..." class="p-2 border rounded-lg outline-none focus:ring-2 focus:ring-blue-500">
+                    </div>
                 </div>
 
-                <div class="overflow-x-auto border rounded-lg">
+                <div class="overflow-x-auto border rounded-lg max-h-[600px] overflow-y-auto">
                     <table class="w-full text-left border-collapse text-xs md:text-sm">
-                        <thead>
-                            <tr class="bg-slate-100 border-b text-slate-700 font-bold uppercase">
-                                <th class="p-3">Đoàn viên / Lớp</th>
-                                <th class="p-3">Hoạt động & Tóm tắt thành tích hoạt động</th>
+                        <thead class="sticky top-0 bg-slate-100 border-b text-slate-700 font-bold uppercase shadow-sm z-10">
+                            <tr>
+                                <th class="p-3">Đoàn viên / Đơn vị</th>
+                                <th class="p-3">Hoạt động Đoàn & Thành tích</th>
                                 <th class="p-3">Minh chứng</th>
-                                <th class="p-3">Ngày nộp</th>
+                                <th class="p-3">Thời gian nộp</th>
                                 <th class="p-3 text-center">Trạng thái</th>
                                 <th class="p-3 text-center">Thao tác</th>
                             </tr>
                         </thead>
                         <tbody id="submissionTableBody" class="divide-y divide-slate-200">
-                            <!-- Dữ liệu minh chứng nạp tự động -->
+                            <!-- Dữ liệu nạp tự động -->
                         </tbody>
                     </table>
                 </div>
@@ -104,7 +120,7 @@
                     </div>
                 </div>
 
-                <!-- KHỐI QUẢN LÝ TIN TỨC DẠNG BẢNG GỌN GÀNG -->
+                <!-- KHỐI QUẢN LÝ TIN TỨC DẠNG BẢNG -->
                 <div class="p-5 bg-slate-50 rounded-xl border border-slate-200 space-y-4">
                     <div class="flex items-center justify-between">
                         <h3 class="font-bold text-blue-900 text-base flex items-center gap-2">
@@ -115,7 +131,6 @@
                         </button>
                     </div>
 
-                    <!-- Bảng danh sách tin tức -->
                     <div class="overflow-x-auto rounded-lg border border-slate-200 bg-white">
                         <table class="w-full text-left text-xs text-slate-600 border-collapse">
                             <thead class="bg-slate-100 text-slate-700 font-semibold uppercase text-[11px] border-b border-slate-200">
@@ -128,7 +143,7 @@
                                 </tr>
                             </thead>
                             <tbody id="newsTableBody" class="divide-y divide-slate-200 bg-white">
-                                <!-- Dữ liệu tin tức nạp tự động -->
+                                <!-- Dữ liệu tin tức -->
                             </tbody>
                         </table>
                     </div>
@@ -197,8 +212,8 @@
 
     <!-- SCRIPT XỬ LÝ HỆ THỐNG -->
     <script>
-        // ⚠️ DÁN ĐÚNG LINK GOOGLE APPS SCRIPT WEB APP CỦA BẠN VÀO ĐÂY
-        const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbyGV0l6-kTSzGtYrSYpqw6otZo2jphVznuSeY2PBk7xlxms4-5d_I3noqxeG8kds2Vj/exec";
+        // ⚠️ THAY DƯỜNG DẪN APPS SCRIPT WEB APP CỦA BẠN VÀO ĐÂY
+        const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbz5GkWYV6h1sDGmEdf068t5w8PzofNQL-3E2_dCPXu0aBnbX71TNti3K2m5g4-vsJih/exec";
 
         let currentPassword = "";
         let submissionsList = [];
@@ -263,7 +278,7 @@
                     loadConfigToForm(data.config);
                     
                     submissionsList = data.submissions || [];
-                    renderSubmissionsTable(submissionsList);
+                    filterSubmissions();
 
                     document.getElementById('loginBox').classList.add('hidden');
                     document.getElementById('adminPanel').classList.remove('hidden');
@@ -302,14 +317,123 @@
                 actInput.value = cfg.activities.join('\n');
             }
 
-            // Nạp dữ liệu Bảng tin tức
             currentNewsList = Array.isArray(cfg.newsList) ? cfg.newsList : [];
             renderNewsTable(currentNewsList);
         }
 
+        // HÀM LỌC TÌM KIẾM DỮ LIỆU ĐOÀN VIÊN / CHI ĐOÀN
+        function filterSubmissions() {
+            const searchText = (document.getElementById('filterSearch')?.value || '').toLowerCase().trim();
+            const statusText = document.getElementById('filterStatus')?.value || '';
+            const classText = (document.getElementById('filterClass')?.value || '').toLowerCase().trim();
+
+            const filtered = submissionsList.filter(item => {
+                const name = (item.studentName || '').toLowerCase();
+                const id = (item.studentId || '').toLowerCase();
+                const matchSearch = !searchText || name.includes(searchText) || id.includes(searchText);
+
+                const matchStatus = !statusText || item.status === statusText;
+
+                const classId = (item.classId || '').toLowerCase();
+                const facultyId = (item.facultyId || '').toLowerCase();
+                const matchClass = !classText || classId.includes(classText) || facultyId.includes(classText);
+
+                return matchSearch && matchStatus && matchClass;
+            });
+
+            renderSubmissionsTable(filtered);
+        }
+
+        function renderSubmissionsTable(list) {
+            const tbody = document.getElementById('submissionTableBody');
+            const totalElem = document.getElementById('totalSubmissions');
+
+            if (totalElem) totalElem.innerText = `Tổng hiển thị: ${list ? list.length : 0} / ${submissionsList.length}`;
+            if (!tbody) return;
+
+            tbody.innerHTML = '';
+
+            if (!list || list.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="6" class="p-5 text-center text-slate-400">Không tìm thấy dữ liệu minh chứng phù hợp.</td></tr>`;
+                return;
+            }
+
+            list.forEach(item => {
+                const tr = document.createElement('tr');
+                tr.className = "hover:bg-slate-50 transition border-b";
+
+                let filesHtml = '<span class="text-slate-400 text-xs">Không có file</span>';
+                if (item.fileUrls) {
+                    const links = item.fileUrls.split(' | ');
+                    filesHtml = links.map((link, idx) => 
+                        `<a href="${link}" target="_blank" class="inline-block bg-blue-50 text-blue-700 border border-blue-200 px-2 py-0.5 rounded text-xs hover:underline mr-1 mb-1">
+                            <i class="fa-solid fa-paperclip mr-1"></i>File ${idx + 1}
+                         </a>`
+                    ).join('');
+                }
+
+                let statusBadge = '<span class="px-2.5 py-1 bg-amber-100 text-amber-800 rounded-full font-semibold text-xs">Chờ duyệt</span>';
+                if (item.status === 'Đã duyệt') {
+                    statusBadge = '<span class="px-2.5 py-1 bg-emerald-100 text-emerald-800 rounded-full font-semibold text-xs">Đã duyệt</span>';
+                } else if (item.status === 'Từ chối') {
+                    statusBadge = '<span class="px-2.5 py-1 bg-rose-100 text-rose-800 rounded-full font-semibold text-xs">Từ chối</span>';
+                }
+
+                tr.innerHTML = `
+                    <td class="p-3">
+                        <div class="font-bold text-slate-900">${item.studentName}</div>
+                        <div class="text-xs text-slate-500"><i class="fa-solid fa-id-card text-slate-400 mr-1"></i>${item.studentId}</div>
+                        <div class="text-xs font-semibold text-blue-800 mt-0.5"><i class="fa-solid fa-users text-blue-500 mr-1"></i>${item.classId} (${item.facultyId})</div>
+                    </td>
+                    <td class="p-3">
+                        <div class="font-bold text-blue-900">${item.activityName}</div>
+                        <div class="text-xs text-slate-600 italic mt-0.5">${item.achievementName}</div>
+                    </td>
+                    <td class="p-3">${filesHtml}</td>
+                    <td class="p-3 text-xs text-slate-500">${item.submittedAt}</td>
+                    <td class="p-3 text-center">${statusBadge}</td>
+                    <td class="p-3 text-center whitespace-nowrap">
+                        <button onclick="updateStatus(${item.rowIndex}, 'Đã duyệt')" class="bg-emerald-600 hover:bg-emerald-700 text-white px-2.5 py-1 rounded text-xs font-semibold mr-1 transition shadow-sm">
+                            <i class="fa-solid fa-check mr-1"></i>Duyệt
+                        </button>
+                        <button onclick="updateStatus(${item.rowIndex}, 'Từ chối')" class="bg-rose-600 hover:bg-rose-700 text-white px-2.5 py-1 rounded text-xs font-semibold transition shadow-sm">
+                            <i class="fa-solid fa-xmark mr-1"></i>Từ chối
+                        </button>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        async function updateStatus(rowIndex, newStatus) {
+            if (!confirm(`Xác nhận chuyển trạng thái dòng này thành "${newStatus}"?`)) return;
+
+            try {
+                const res = await fetch(WEB_APP_URL, {
+                    method: 'POST',
+                    body: JSON.stringify({
+                        action: "updateStatus",
+                        password: currentPassword,
+                        rowIndex: rowIndex,
+                        newStatus: newStatus
+                    })
+                });
+                const data = await res.json();
+
+                if (data.status === "success") {
+                    submissionsList = data.submissions || [];
+                    filterSubmissions();
+                } else {
+                    alert("❌ " + data.message);
+                }
+            } catch (err) {
+                alert("❌ Lỗi khi cập nhật: " + err);
+            }
+        }
+
         function renderNewsTable(list) {
             const tbody = document.getElementById('newsTableBody');
-            if (!tbody) return; // Bảo vệ chống lỗi null
+            if (!tbody) return;
 
             tbody.innerHTML = '';
 
@@ -410,92 +534,6 @@
             if (confirm('Bạn có chắc chắn muốn xóa tin tức này không?')) {
                 currentNewsList.splice(index, 1);
                 renderNewsTable(currentNewsList);
-            }
-        }
-
-        function renderSubmissionsTable(list) {
-            const tbody = document.getElementById('submissionTableBody');
-            const totalElem = document.getElementById('totalSubmissions');
-
-            if (totalElem) totalElem.innerText = `Tổng: ${list ? list.length : 0}`;
-            if (!tbody) return; // Bảo vệ chống lỗi null
-
-            tbody.innerHTML = '';
-
-            if (!list || list.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="6" class="p-4 text-center text-slate-400">Chưa có minh chứng nào được gửi lên.</td></tr>`;
-                return;
-            }
-
-            list.forEach(item => {
-                const tr = document.createElement('tr');
-                tr.className = "hover:bg-slate-50 transition border-b";
-
-                let filesHtml = '<span class="text-slate-400 text-xs">Không có file</span>';
-                if (item.fileUrls) {
-                    const links = item.fileUrls.split(' | ');
-                    filesHtml = links.map((link, idx) => 
-                        `<a href="${link}" target="_blank" class="inline-block bg-blue-50 text-blue-700 border border-blue-200 px-2 py-0.5 rounded text-xs hover:underline mr-1 mb-1">
-                            <i class="fa-solid fa-paperclip mr-1"></i>File ${idx + 1}
-                         </a>`
-                    ).join('');
-                }
-
-                let statusBadge = '<span class="px-2 py-1 bg-amber-100 text-amber-800 rounded font-semibold text-xs">Chờ duyệt</span>';
-                if (item.status === 'Đã duyệt') {
-                    statusBadge = '<span class="px-2 py-1 bg-emerald-100 text-emerald-800 rounded font-semibold text-xs">Đã duyệt</span>';
-                } else if (item.status === 'Từ chối') {
-                    statusBadge = '<span class="px-2 py-1 bg-rose-100 text-rose-800 rounded font-semibold text-xs">Từ chối</span>';
-                }
-
-                tr.innerHTML = `
-                    <td class="p-3">
-                        <div class="font-bold text-slate-900">${item.studentName}</div>
-                        <div class="text-xs text-slate-500">${item.studentId} - ${item.classId} (${item.facultyId})</div>
-                    </td>
-                    <td class="p-3">
-                        <div class="font-semibold text-blue-900">${item.activityName}</div>
-                        <div class="text-xs text-slate-600">${item.achievementName}</div>
-                    </td>
-                    <td class="p-3">${filesHtml}</td>
-                    <td class="p-3 text-xs text-slate-500">${item.submittedAt}</td>
-                    <td class="p-3 text-center">${statusBadge}</td>
-                    <td class="p-3 text-center whitespace-nowrap">
-                        <button onclick="updateStatus(${item.rowIndex}, 'Đã duyệt')" class="bg-emerald-600 hover:bg-emerald-700 text-white px-2.5 py-1 rounded text-xs font-semibold mr-1 transition">
-                            <i class="fa-solid fa-check mr-1"></i>Duyệt
-                        </button>
-                        <button onclick="updateStatus(${item.rowIndex}, 'Từ chối')" class="bg-rose-600 hover:bg-rose-700 text-white px-2.5 py-1 rounded text-xs font-semibold transition">
-                            <i class="fa-solid fa-xmark mr-1"></i>Từ chối
-                        </button>
-                    </td>
-                `;
-                tbody.appendChild(tr);
-            });
-        }
-
-        async function updateStatus(rowIndex, newStatus) {
-            if (!confirm(`Xác nhận chuyển trạng thái dòng này thành "${newStatus}"?`)) return;
-
-            try {
-                const res = await fetch(WEB_APP_URL, {
-                    method: 'POST',
-                    body: JSON.stringify({
-                        action: "updateStatus",
-                        password: currentPassword,
-                        rowIndex: rowIndex,
-                        newStatus: newStatus
-                    })
-                });
-                const data = await res.json();
-
-                if (data.status === "success") {
-                    submissionsList = data.submissions || [];
-                    renderSubmissionsTable(submissionsList);
-                } else {
-                    alert("❌ " + data.message);
-                }
-            } catch (err) {
-                alert("❌ Lỗi khi cập nhật: " + err);
             }
         }
 
