@@ -104,19 +104,70 @@
                     </div>
                 </div>
 
-                <!-- CẤU HÌNH BẢNG TIN / TIN TỨC -->
-                <div class="border-b pb-4">
-                    <div class="flex justify-between items-center mb-3">
-                        <h3 class="font-bold text-blue-900 text-base"><i class="fa-solid fa-newspaper mr-1"></i> Quản lý Bảng Tin / Tin Tức Trang Chủ (Hàng 6 trở đi)</h3>
-                        <button type="button" onclick="addNewsCard()" class="bg-blue-800 hover:bg-blue-900 text-white text-xs font-bold px-3 py-1.5 rounded-lg transition">
-                            <i class="fa-solid fa-plus mr-1"></i> Thêm Tin Tức Mới
-                        </button>
-                    </div>
-                    <div id="newsItemsContainer" class="space-y-4">
-                        <!-- Danh sách bài tin sẽ được khởi tạo tại đây -->
-                    </div>
-                </div>
+              <!-- KHỐI QUẢN LÝ TIN TỨC DẠNG BẢNG GỌN GÀNG -->
+<div class="p-6 bg-white rounded-xl border border-slate-200 shadow-sm my-6">
+  
+  <!-- Tiêu đề & Nút thêm bài -->
+  <div class="flex items-center justify-between mb-4">
+    <h2 class="text-base font-bold text-slate-800 flex items-center gap-2">
+      📋 Quản lý Bảng Tin / Tin Tức Trang Chủ
+    </h2>
+    <button onclick="openNewsModal()" type="button" class="bg-blue-600 hover:bg-blue-700 text-white text-xs font-semibold px-4 py-2 rounded-lg transition shadow-sm">
+      + Thêm Tin Tức Mới
+    </button>
+  </div>
 
+  <!-- Bảng danh sách tin tức -->
+  <div class="overflow-x-auto rounded-lg border border-slate-200">
+    <table class="w-full text-left text-xs text-slate-600 border-collapse">
+      <thead class="bg-slate-50 text-slate-700 font-semibold uppercase text-[11px] border-b border-slate-200">
+        <tr>
+          <th class="p-3 text-center w-12">STT</th>
+          <th class="p-3 w-16 text-center">Ảnh</th>
+          <th class="p-3 w-1/3">Tiêu đề tin tức</th>
+          <th class="p-3">Nội dung tóm tắt</th>
+          <th class="p-3 text-center w-28">Thao tác</th>
+        </tr>
+      </thead>
+      <tbody id="newsTableBody" class="divide-y divide-slate-200 bg-white">
+        
+        <!-- Bài tin mẫu 1 -->
+        <tr class="hover:bg-slate-50 transition">
+          <td class="p-3 text-center font-medium text-slate-500">1</td>
+          <td class="p-3 text-center">
+            <img src="https://lh3.googleusercontent.com/d/1S38INR2Qg5takYQfmu7hV-cArV1t1Lg" class="w-9 h-9 object-cover rounded border border-slate-200 mx-auto">
+          </td>
+          <td class="p-3 font-semibold text-slate-800">Chào đón tân Học sinh sinh viên K52</td>
+          <td class="p-3 text-slate-600 max-w-md truncate">Từ ngày 05-07/08/2026 triển khai nhập học cho học sinh sinh viên K52</td>
+          <td class="p-3 text-center">
+            <div class="flex items-center justify-center gap-1.5">
+              <button onclick="openNewsModal('Chào đón tân Học sinh sinh viên K52', 'Từ ngày 05-07/08/2026 triển khai nhập học cho học sinh sinh viên K52', 'https://lh3.googleusercontent.com/d/1S38INR2Qg5takYQfmu7hV-cArV1t1Lg')" type="button" class="px-2.5 py-1 text-blue-600 hover:bg-blue-50 border border-blue-200 rounded font-medium transition">Sửa</button>
+              <button onclick="deleteNewsRow(this)" type="button" class="px-2.5 py-1 text-red-600 hover:bg-red-50 border border-red-200 rounded font-medium transition">Xóa</button>
+            </div>
+          </td>
+        </tr>
+
+        <!-- Bài tin mẫu 2 -->
+        <tr class="hover:bg-slate-50 transition">
+          <td class="p-3 text-center font-medium text-slate-500">2</td>
+          <td class="p-3 text-center">
+            <div class="w-9 h-9 bg-slate-100 rounded border border-slate-200 flex items-center justify-center text-[10px] text-slate-400 mx-auto">Chưa có</div>
+          </td>
+          <td class="p-3 font-semibold text-slate-800">Phát động Sinh Viên 5 Tốt - Học Sinh 3 Rèn luyện</td>
+          <td class="p-3 text-slate-600 max-w-md truncate">Sinh viên 5 tốt dành cho sinh viên hệ Cao đẳng và Học sinh 3 rèn luyện...</td>
+          <td class="p-3 text-center">
+            <div class="flex items-center justify-center gap-1.5">
+              <button onclick="openNewsModal('Phát động Sinh Viên 5 Tốt - Học Sinh 3 Rèn luyện', 'Sinh viên 5 tốt dành cho sinh viên hệ Cao đẳng và Học sinh 3 rèn luyện dành cho học sinh hệ Trung cấp', '')" type="button" class="px-2.5 py-1 text-blue-600 hover:bg-blue-50 border border-blue-200 rounded font-medium transition">Sửa</button>
+              <button onclick="deleteNewsRow(this)" type="button" class="px-2.5 py-1 text-red-600 hover:bg-red-50 border border-red-200 rounded font-medium transition">Xóa</button>
+            </div>
+          </td>
+        </tr>
+
+      </tbody>
+    </table>
+  </div>
+
+</div>
                 <!-- DANH SÁCH HOẠT ĐỘNG -->
                 <div class="border-b pb-4">
                     <h3 class="font-bold text-blue-900 text-base mb-2"><i class="fa-solid fa-list-check mr-1"></i> Danh sách Hoạt động Đoàn (Cột E)</h3>
