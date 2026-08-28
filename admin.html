@@ -63,7 +63,7 @@
                         <thead>
                             <tr class="bg-slate-100 border-b text-slate-700 font-bold uppercase">
                                 <th class="p-3">Đoàn viên / Lớp</th>
-                                <th class="p-3">Hoạt động & Tóm tắt thành tích hoạt động (Nêu rõ thành tích Bằng khen/Giấy khen/Giấy chứng nhận nếu có)</th>
+                                <th class="p-3">Hoạt động & Tóm tắt thành tích hoạt động</th>
                                 <th class="p-3">Minh chứng</th>
                                 <th class="p-3">Ngày nộp</th>
                                 <th class="p-3 text-center">Trạng thái</th>
@@ -104,74 +104,40 @@
                     </div>
                 </div>
 
-              <!-- KHỐI QUẢN LÝ TIN TỨC DẠNG BẢNG GỌN GÀNG -->
-<div class="p-6 bg-white rounded-xl border border-slate-200 shadow-sm my-6">
-  
-  <!-- Tiêu đề & Nút thêm bài -->
-  <div class="flex items-center justify-between mb-4">
-    <h2 class="text-base font-bold text-slate-800 flex items-center gap-2">
-      📋 Quản lý Bảng Tin / Tin Tức Trang Chủ
-    </h2>
-    <button onclick="openNewsModal()" type="button" class="bg-blue-600 hover:bg-blue-700 text-white text-xs font-semibold px-4 py-2 rounded-lg transition shadow-sm">
-      + Thêm Tin Tức Mới
-    </button>
-  </div>
+                <!-- KHỐI QUẢN LÝ TIN TỨC DẠNG BẢNG GỌN GÀNG -->
+                <div class="p-5 bg-slate-50 rounded-xl border border-slate-200 space-y-4">
+                    <div class="flex items-center justify-between">
+                        <h3 class="font-bold text-blue-900 text-base flex items-center gap-2">
+                            <i class="fa-solid fa-newspaper"></i> Quản lý Bảng Tin / Tin Tức Trang Chủ
+                        </h3>
+                        <button onclick="openNewsModal(-1)" type="button" class="bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold px-3.5 py-2 rounded-lg transition shadow-sm flex items-center gap-1.5">
+                            <i class="fa-solid fa-plus"></i> Thêm Tin Tức Mới
+                        </button>
+                    </div>
 
-  <!-- Bảng danh sách tin tức -->
-  <div class="overflow-x-auto rounded-lg border border-slate-200">
-    <table class="w-full text-left text-xs text-slate-600 border-collapse">
-      <thead class="bg-slate-50 text-slate-700 font-semibold uppercase text-[11px] border-b border-slate-200">
-        <tr>
-          <th class="p-3 text-center w-12">STT</th>
-          <th class="p-3 w-16 text-center">Ảnh</th>
-          <th class="p-3 w-1/3">Tiêu đề tin tức</th>
-          <th class="p-3">Nội dung tóm tắt</th>
-          <th class="p-3 text-center w-28">Thao tác</th>
-        </tr>
-      </thead>
-      <tbody id="newsTableBody" class="divide-y divide-slate-200 bg-white">
-        
-        <!-- Bài tin mẫu 1 -->
-        <tr class="hover:bg-slate-50 transition">
-          <td class="p-3 text-center font-medium text-slate-500">1</td>
-          <td class="p-3 text-center">
-            <img src="https://lh3.googleusercontent.com/d/1S38INR2Qg5takYQfmu7hV-cArV1t1Lg" class="w-9 h-9 object-cover rounded border border-slate-200 mx-auto">
-          </td>
-          <td class="p-3 font-semibold text-slate-800">Chào đón tân Học sinh sinh viên K52</td>
-          <td class="p-3 text-slate-600 max-w-md truncate">Từ ngày 05-07/08/2026 triển khai nhập học cho học sinh sinh viên K52</td>
-          <td class="p-3 text-center">
-            <div class="flex items-center justify-center gap-1.5">
-              <button onclick="openNewsModal('Chào đón tân Học sinh sinh viên K52', 'Từ ngày 05-07/08/2026 triển khai nhập học cho học sinh sinh viên K52', 'https://lh3.googleusercontent.com/d/1S38INR2Qg5takYQfmu7hV-cArV1t1Lg')" type="button" class="px-2.5 py-1 text-blue-600 hover:bg-blue-50 border border-blue-200 rounded font-medium transition">Sửa</button>
-              <button onclick="deleteNewsRow(this)" type="button" class="px-2.5 py-1 text-red-600 hover:bg-red-50 border border-red-200 rounded font-medium transition">Xóa</button>
-            </div>
-          </td>
-        </tr>
+                    <!-- Bảng danh sách tin tức -->
+                    <div class="overflow-x-auto rounded-lg border border-slate-200 bg-white">
+                        <table class="w-full text-left text-xs text-slate-600 border-collapse">
+                            <thead class="bg-slate-100 text-slate-700 font-semibold uppercase text-[11px] border-b border-slate-200">
+                                <tr>
+                                    <th class="p-3 text-center w-12">STT</th>
+                                    <th class="p-3 w-16 text-center">Ảnh</th>
+                                    <th class="p-3 w-1/3">Tiêu đề tin tức</th>
+                                    <th class="p-3">Nội dung tóm tắt</th>
+                                    <th class="p-3 text-center w-28">Thao tác</th>
+                                </tr>
+                            </thead>
+                            <tbody id="newsTableBody" class="divide-y divide-slate-200 bg-white">
+                                <!-- Dữ liệu tin tức nạp tự động -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
 
-        <!-- Bài tin mẫu 2 -->
-        <tr class="hover:bg-slate-50 transition">
-          <td class="p-3 text-center font-medium text-slate-500">2</td>
-          <td class="p-3 text-center">
-            <div class="w-9 h-9 bg-slate-100 rounded border border-slate-200 flex items-center justify-center text-[10px] text-slate-400 mx-auto">Chưa có</div>
-          </td>
-          <td class="p-3 font-semibold text-slate-800">Phát động Sinh Viên 5 Tốt - Học Sinh 3 Rèn luyện</td>
-          <td class="p-3 text-slate-600 max-w-md truncate">Sinh viên 5 tốt dành cho sinh viên hệ Cao đẳng và Học sinh 3 rèn luyện...</td>
-          <td class="p-3 text-center">
-            <div class="flex items-center justify-center gap-1.5">
-              <button onclick="openNewsModal('Phát động Sinh Viên 5 Tốt - Học Sinh 3 Rèn luyện', 'Sinh viên 5 tốt dành cho sinh viên hệ Cao đẳng và Học sinh 3 rèn luyện dành cho học sinh hệ Trung cấp', '')" type="button" class="px-2.5 py-1 text-blue-600 hover:bg-blue-50 border border-blue-200 rounded font-medium transition">Sửa</button>
-              <button onclick="deleteNewsRow(this)" type="button" class="px-2.5 py-1 text-red-600 hover:bg-red-50 border border-red-200 rounded font-medium transition">Xóa</button>
-            </div>
-          </td>
-        </tr>
-
-      </tbody>
-    </table>
-  </div>
-
-</div>
                 <!-- DANH SÁCH HOẠT ĐỘNG -->
                 <div class="border-b pb-4">
                     <h3 class="font-bold text-blue-900 text-base mb-2"><i class="fa-solid fa-list-check mr-1"></i> Danh sách Hoạt động Đoàn (Cột E)</h3>
-                    <p class="text-xs text-slate-500 mb-2">Mỗi tên Hoạt động nằm trên **01 dòng riêng biệt**:</p>
+                    <p class="text-xs text-slate-500 mb-2">Mỗi tên Hoạt động nằm trên <strong>01 dòng riêng biệt</strong>:</p>
                     <textarea id="cfgActivities" rows="5" class="w-full p-2.5 border rounded-lg text-sm font-mono focus:ring-2 focus:ring-blue-500 outline-none" placeholder="Nhập danh sách hoạt động..."></textarea>
                 </div>
 
@@ -191,13 +157,55 @@
         </div>
     </div>
 
+    <!-- KHUNG MODAL CHỈNH SỬA / THÊM TIN TỨC (POPUP) -->
+    <div id="newsModal" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-slate-900/40 backdrop-blur-sm p-4">
+        <div class="bg-white rounded-xl shadow-xl border border-slate-200 w-full max-w-lg overflow-hidden animate-in fade-in duration-150">
+            <div class="flex items-center justify-between px-5 py-3 border-b border-slate-100 bg-slate-50">
+                <h3 id="newsModalTitle" class="text-sm font-bold text-slate-800">Thêm / Chỉnh sửa Tin tức</h3>
+                <button onclick="closeNewsModal()" type="button" class="text-slate-400 hover:text-slate-600 text-lg">✕</button>
+            </div>
+
+            <form onsubmit="handleNewsSubmit(event)" class="p-5 space-y-4 text-xs">
+                <div>
+                    <label class="block font-semibold text-slate-700 mb-1">TIÊU ĐỀ TIN TỨC</label>
+                    <input id="newsTitleInput" type="text" required class="w-full px-3 py-2 border border-slate-300 rounded-lg outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500" placeholder="Nhập tiêu đề bài viết...">
+                </div>
+
+                <div>
+                    <label class="block font-semibold text-slate-700 mb-1">NỘI DUNG TÓM TẮT</label>
+                    <textarea id="newsSummaryInput" rows="3" required class="w-full px-3 py-2 border border-slate-300 rounded-lg outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500" placeholder="Nhập nội dung ngắn..."></textarea>
+                </div>
+
+                <div>
+                    <label class="block font-semibold text-slate-700 mb-1">ẢNH MINH HỌA (Chọn tệp hoặc Dán Link)</label>
+                    <div class="flex items-center gap-3">
+                        <img id="newsModalPreview" class="w-12 h-12 object-cover border rounded bg-slate-50 hidden" />
+                        <div class="flex-1 space-y-1">
+                            <input type="file" accept="image/*" onchange="handleModalNewsFileSelect(event)" class="block w-full text-xs text-slate-500 file:mr-2 file:py-1 file:px-2.5 file:rounded file:border-0 file:text-xs file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 cursor-pointer">
+                            <input id="newsImageInput" type="text" class="w-full px-3 py-1.5 border border-slate-300 rounded-lg outline-none focus:border-blue-500" placeholder="Hoặc dán Link URL ảnh tại đây...">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="flex justify-end gap-2 pt-3 border-t border-slate-100">
+                    <button type="button" onclick="closeNewsModal()" class="px-4 py-2 border border-slate-300 text-slate-600 rounded-lg hover:bg-slate-50 font-medium">Hủy</button>
+                    <button type="submit" class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium shadow-sm">Lưu tin tức này</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- SCRIPT XỬ LÝ HỆ THỐNG -->
     <script>
-        // ⚠️ DÁN LINK WEB APP CỦA BẠN VÀO ĐÂY
+        // ⚠️ DÁN ĐÚNG LINK GOOGLE APPS SCRIPT WEB APP CỦA BẠN VÀO ĐÂY
         const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbyGV0l6-kTSzGtYrSYpqw6otZo2jphVznuSeY2PBk7xlxms4-5d_I3noqxeG8kds2Vj/exec";
 
         let currentPassword = "";
         let submissionsList = [];
+        let currentNewsList = [];
+        let editingNewsIndex = -1;
         let logoFileBase64 = null;
+        let modalNewsFileBase64 = null;
 
         function readFileAsBase64(file) {
             return new Promise((resolve, reject) => {
@@ -217,20 +225,22 @@
             if (file) {
                 logoFileBase64 = await readFileAsBase64(file);
                 const preview = document.getElementById('logoPreview');
-                preview.src = logoFileBase64.base64;
-                preview.classList.remove('hidden');
+                if (preview) {
+                    preview.src = logoFileBase64.base64;
+                    preview.classList.remove('hidden');
+                }
             }
         }
 
-        async function handleNewsFileSelect(e, inputElem) {
+        async function handleModalNewsFileSelect(e) {
             const file = e.target.files[0];
-            const card = inputElem.closest('.news-card');
-            const imgPreview = card.querySelector('.news-preview');
             if (file) {
-                const fileObj = await readFileAsBase64(file);
-                card.dataset.fileBase64 = JSON.stringify(fileObj);
-                imgPreview.src = fileObj.base64;
-                imgPreview.classList.remove('hidden');
+                modalNewsFileBase64 = await readFileAsBase64(file);
+                const preview = document.getElementById('newsModalPreview');
+                if (preview) {
+                    preview.src = modalNewsFileBase64.base64;
+                    preview.classList.remove('hidden');
+                }
             }
         }
 
@@ -271,66 +281,145 @@
         }
 
         function loadConfigToForm(cfg) {
-            document.getElementById('cfgSchoolName').value = cfg.schoolName || '';
-            document.getElementById('cfgLogoUrl').value = cfg.logoUrl || '';
-            
+            if (!cfg) return;
+
+            const schoolInput = document.getElementById('cfgSchoolName');
+            const logoUrlInput = document.getElementById('cfgLogoUrl');
             const logoPreview = document.getElementById('logoPreview');
-            if (cfg.logoUrl) {
+            const annInput = document.getElementById('cfgAnnouncement');
+            const actInput = document.getElementById('cfgActivities');
+
+            if (schoolInput) schoolInput.value = cfg.schoolName || '';
+            if (logoUrlInput) logoUrlInput.value = cfg.logoUrl || '';
+            
+            if (logoPreview && cfg.logoUrl) {
                 logoPreview.src = cfg.logoUrl;
                 logoPreview.classList.remove('hidden');
             }
 
-            document.getElementById('cfgAnnouncement').value = cfg.announcement || '';
-            if (Array.isArray(cfg.activities)) {
-                document.getElementById('cfgActivities').value = cfg.activities.join('\n');
+            if (annInput) annInput.value = cfg.announcement || '';
+            if (actInput && Array.isArray(cfg.activities)) {
+                actInput.value = cfg.activities.join('\n');
             }
 
-            // Render Bảng tin
-            const container = document.getElementById('newsItemsContainer');
-            container.innerHTML = '';
-            if (Array.isArray(cfg.newsList) && cfg.newsList.length > 0) {
-                cfg.newsList.forEach(item => addNewsCard(item.title, item.content, item.imageUrl));
-            } else {
-                addNewsCard();
-            }
+            // Nạp dữ liệu Bảng tin tức
+            currentNewsList = Array.isArray(cfg.newsList) ? cfg.newsList : [];
+            renderNewsTable(currentNewsList);
         }
 
-        function addNewsCard(title = '', content = '', imageUrl = '') {
-            const container = document.getElementById('newsItemsContainer');
-            const card = document.createElement('div');
-            card.className = "news-card bg-slate-50 border p-4 rounded-lg space-y-3 relative";
-            
-            const hasImg = imageUrl ? '' : 'hidden';
+        function renderNewsTable(list) {
+            const tbody = document.getElementById('newsTableBody');
+            if (!tbody) return; // Bảo vệ chống lỗi null
 
-            card.innerHTML = `
-                <button type="button" onclick="this.parentElement.remove()" class="absolute top-2 right-2 text-red-500 hover:text-red-700 text-xs font-bold px-2 py-1">
-                    <i class="fa-solid fa-trash mr-1"></i>Xóa bài
-                </button>
-                <div>
-                    <label class="block text-xs font-bold uppercase mb-1">Tiêu đề tin tức</label>
-                    <input type="text" class="news-title w-full p-2 border rounded text-sm outline-none" value="${title}" placeholder="Nhập tiêu đề...">
-                </div>
-                <div>
-                    <label class="block text-xs font-bold uppercase mb-1">Nội dung tóm tắt</label>
-                    <textarea class="news-content w-full p-2 border rounded text-sm outline-none" rows="2" placeholder="Nhập nội dung tin tức...">${content}</textarea>
-                </div>
-                <div>
-                    <label class="block text-xs font-bold uppercase mb-1">Ảnh minh họa (Chọn tệp ảnh hoặc dán Link)</label>
-                    <div class="flex items-center gap-3">
-                        <img class="news-preview w-12 h-12 object-cover border rounded bg-slate-100 ${hasImg}" src="${imageUrl}" />
-                        <div class="flex-1 space-y-1">
-                            <input type="file" accept="image/*" onchange="handleNewsFileSelect(event, this)" class="news-file block w-full text-xs text-slate-500 file:mr-2 file:py-1 file:px-2.5 file:rounded file:border-0 file:text-xs file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 cursor-pointer">
-                            <input type="text" class="news-img w-full p-2 border rounded text-xs outline-none" value="${imageUrl}" placeholder="Hoặc dán Link URL ảnh tại đây...">
+            tbody.innerHTML = '';
+
+            if (!list || list.length === 0) {
+                tbody.innerHTML = `<tr><td colSpan="5" class="p-5 text-center text-slate-400">Chưa có tin tức nào. Bấm nút "+ Thêm Tin Tức Mới" để tạo.</td></tr>`;
+                return;
+            }
+
+            list.forEach((item, index) => {
+                const tr = document.createElement('tr');
+                tr.className = "hover:bg-slate-50 transition";
+
+                const title = item.title || item.t || '';
+                const summary = item.content || item.summary || item.c || '';
+                const img = item.imageUrl || item.img || (item.imageFile ? item.imageFile.base64 : '');
+
+                let imgHtml = `<div class="w-8 h-8 bg-slate-100 rounded border border-slate-200 flex items-center justify-center text-[10px] text-slate-400 mx-auto">Chưa có</div>`;
+                if (img) {
+                    imgHtml = `<img src="${img}" class="w-8 h-8 object-cover rounded border border-slate-200 mx-auto" />`;
+                }
+
+                tr.innerHTML = `
+                    <td class="p-3 text-center font-medium text-slate-500">${index + 1}</td>
+                    <td class="p-3 text-center">${imgHtml}</td>
+                    <td class="p-3 font-semibold text-slate-800">${title}</td>
+                    <td class="p-3 text-slate-600 max-w-xs md:max-w-md truncate">${summary}</td>
+                    <td class="p-3 text-center">
+                        <div class="flex items-center justify-center gap-1.5">
+                            <button onclick="openNewsModal(${index})" type="button" class="px-2.5 py-1 text-blue-600 hover:bg-blue-50 border border-blue-200 rounded font-medium transition">Sửa</button>
+                            <button onclick="deleteNewsRow(${index})" type="button" class="px-2.5 py-1 text-red-600 hover:bg-red-50 border border-red-200 rounded font-medium transition">Xóa</button>
                         </div>
-                    </div>
-                </div>
-            `;
-            container.appendChild(card);
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        function openNewsModal(index = -1) {
+            editingNewsIndex = index;
+            modalNewsFileBase64 = null;
+            const preview = document.getElementById('newsModalPreview');
+
+            if (index >= 0 && currentNewsList[index]) {
+                const item = currentNewsList[index];
+                document.getElementById('newsTitleInput').value = item.title || item.t || '';
+                document.getElementById('newsSummaryInput').value = item.content || item.summary || item.c || '';
+                document.getElementById('newsImageInput').value = item.imageUrl || item.img || '';
+                document.getElementById('newsModalTitle').innerText = 'Chỉnh sửa Tin tức';
+
+                const img = item.imageUrl || item.img || (item.imageFile ? item.imageFile.base64 : '');
+                if (img && preview) {
+                    preview.src = img;
+                    preview.classList.remove('hidden');
+                } else if (preview) {
+                    preview.classList.add('hidden');
+                }
+            } else {
+                document.getElementById('newsTitleInput').value = '';
+                document.getElementById('newsSummaryInput').value = '';
+                document.getElementById('newsImageInput').value = '';
+                document.getElementById('newsModalTitle').innerText = 'Thêm Tin Tức Mới';
+                if (preview) preview.classList.add('hidden');
+            }
+
+            document.getElementById('newsModal').classList.remove('hidden');
+        }
+
+        function closeNewsModal() {
+            document.getElementById('newsModal').classList.add('hidden');
+        }
+
+        function handleNewsSubmit(e) {
+            e.preventDefault();
+            const t = document.getElementById('newsTitleInput').value.trim();
+            const c = document.getElementById('newsSummaryInput').value.trim();
+            const img = document.getElementById('newsImageInput').value.trim();
+
+            const existingImgFile = (editingNewsIndex >= 0 && currentNewsList[editingNewsIndex]) ? currentNewsList[editingNewsIndex].imageFile : null;
+
+            const newItem = {
+                title: t,
+                content: c,
+                imageUrl: img,
+                imageFile: modalNewsFileBase64 || existingImgFile
+            };
+
+            if (editingNewsIndex >= 0) {
+                currentNewsList[editingNewsIndex] = newItem;
+            } else {
+                currentNewsList.push(newItem);
+            }
+
+            renderNewsTable(currentNewsList);
+            closeNewsModal();
+        }
+
+        function deleteNewsRow(index) {
+            if (confirm('Bạn có chắc chắn muốn xóa tin tức này không?')) {
+                currentNewsList.splice(index, 1);
+                renderNewsTable(currentNewsList);
+            }
         }
 
         function renderSubmissionsTable(list) {
             const tbody = document.getElementById('submissionTableBody');
-            document.getElementById('totalSubmissions').innerText = `Tổng: ${list.length}`;
+            const totalElem = document.getElementById('totalSubmissions');
+
+            if (totalElem) totalElem.innerText = `Tổng: ${list ? list.length : 0}`;
+            if (!tbody) return; // Bảo vệ chống lỗi null
+
             tbody.innerHTML = '';
 
             if (!list || list.length === 0) {
@@ -419,31 +508,13 @@
             const activitiesText = document.getElementById('cfgActivities').value;
             const activitiesArray = activitiesText.split('\n').map(a => a.trim()).filter(a => a !== '');
 
-            // Thu thập dữ liệu Bảng tin
-            const newsCards = document.querySelectorAll('.news-card');
-            const newsList = [];
-            
-            for (const card of newsCards) {
-                const t = card.querySelector('.news-title').value.trim();
-                const c = card.querySelector('.news-content').value.trim();
-                const img = card.querySelector('.news-img').value.trim();
-                let imageFile = null;
-                if (card.dataset.fileBase64) {
-                    imageFile = JSON.parse(card.dataset.fileBase64);
-                }
-
-                if (t || c || img || imageFile) {
-                    newsList.push({ title: t, content: c, imageUrl: img, imageFile: imageFile });
-                }
-            }
-
             const updatedConfig = {
                 schoolName: document.getElementById('cfgSchoolName').value.trim(),
                 logoUrl: document.getElementById('cfgLogoUrl').value.trim(),
                 logoFile: logoFileBase64,
                 announcement: document.getElementById('cfgAnnouncement').value.trim(),
                 activities: activitiesArray,
-                newsList: newsList
+                newsList: currentNewsList
             };
 
             if (newPass !== "") updatedConfig.admin_password = newPass;
@@ -463,7 +534,7 @@
                     alert("🎉 " + data.message);
                     if (newPass !== "") currentPassword = newPass;
                     document.getElementById('cfgNewPassword').value = "";
-                    logoFileBase64 = null; // Reset bộ nhớ ảnh logo tạm
+                    logoFileBase64 = null;
                 } else {
                     alert("❌ " + data.message);
                 }
@@ -501,65 +572,5 @@
             document.getElementById('adminPassword').value = "";
         }
     </script>
-    <!-- KHUNG MODAL CHỈNH SỬA / THÊM TIN TỨC (POPUP) -->
-<div id="newsModal" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-slate-900/40 backdrop-blur-sm p-4">
-  <div class="bg-white rounded-xl shadow-xl border border-slate-200 w-full max-w-lg overflow-hidden">
-    
-    <div class="flex items-center justify-between px-5 py-3 border-b border-slate-100 bg-slate-50">
-      <h3 id="newsModalTitle" class="text-sm font-bold text-slate-800">Thêm / Chỉnh sửa Tin tức</h3>
-      <button onclick="closeNewsModal()" type="button" class="text-slate-400 hover:text-slate-600 text-lg">✕</button>
-    </div>
-
-    <form onsubmit="handleNewsSubmit(event)" class="p-5 space-y-4 text-xs">
-      <div>
-        <label class="block font-semibold text-slate-700 mb-1">TIÊU ĐỀ TIN TỨC</label>
-        <input id="newsTitleInput" type="text" required class="w-full px-3 py-2 border border-slate-300 rounded-lg outline-none focus:border-blue-500" placeholder="Nhập tiêu đề bài viết...">
-      </div>
-
-      <div>
-        <label class="block font-semibold text-slate-700 mb-1">NỘI DUNG TÓM TẮT</label>
-        <textarea id="newsSummaryInput" rows="3" required class="w-full px-3 py-2 border border-slate-300 rounded-lg outline-none focus:border-blue-500" placeholder="Nhập nội dung ngắn..."></textarea>
-      </div>
-
-      <div>
-        <label class="block font-semibold text-slate-700 mb-1">LINK ÁNH MINH HỌA</label>
-        <input id="newsImageInput" type="text" class="w-full px-3 py-2 border border-slate-300 rounded-lg outline-none focus:border-blue-500" placeholder="https://...">
-      </div>
-
-      <div class="flex justify-end gap-2 pt-3 border-t border-slate-100">
-        <button type="button" onclick="closeNewsModal()" class="px-4 py-2 border border-slate-300 text-slate-600 rounded-lg hover:bg-slate-50 font-medium">Hủy</button>
-        <button type="submit" class="px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium shadow-sm">Lưu thay đổi</button>
-      </div>
-    </form>
-
-  </div>
-</div>
-
-<!-- SCRIPT BẬT/TẮT MODAL -->
-<script>
-  function openNewsModal(title = '', summary = '', image = '') {
-    document.getElementById('newsTitleInput').value = title;
-    document.getElementById('newsSummaryInput').value = summary;
-    document.getElementById('newsImageInput').value = image;
-    document.getElementById('newsModalTitle').innerText = title ? 'Chỉnh sửa Tin tức' : 'Thêm Tin Tức Mới';
-    document.getElementById('newsModal').classList.remove('hidden');
-  }
-
-  function closeNewsModal() {
-    document.getElementById('newsModal').classList.add('hidden');
-  }
-
-  function deleteNewsRow(btn) {
-    if (confirm('Bạn có chắc chắn muốn xóa tin tức này không?')) {
-      btn.closest('tr').remove();
-    }
-  }
-
-  function handleNewsSubmit(e) {
-    e.preventDefault();
-    alert('Đã lưu thông tin tin tức thành công!');
-    closeNewsModal();
-  }
-</script>
 </body>
 </html>
