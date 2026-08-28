@@ -109,38 +109,39 @@
             <h2 class="text-base font-bold text-slate-800 uppercase mb-4 flex items-center gap-2">
                 📊 BÁO CÁO THỐNG KÊ TỔNG QUAN
             </h2>
-<!-- THANH BỘ LỌC THỐNG KÊ -->
-<div style="background: #ffffff; padding: 16px; border-radius: 10px; margin-bottom: 20px; box-shadow: 0 2px 6px rgba(0,0,0,0.05); border: 1px solid #e5e7eb;">
-  <div style="display: flex; gap: 15px; flex-wrap: wrap; align-items: center;">
-    <div style="flex: 1; min-width: 220px;">
-      <label style="font-weight: 600; font-size: 13px; color: #374151; display: block; margin-bottom: 5px;">Liên Chi đoàn / Khoa:</label>
-      <select id="filterFaculty" onchange="onFacultyFilterChange()" style="width: 100%; padding: 8px 12px; border-radius: 6px; border: 1px solid #d1d5db;">
-        <option value="">-- Tất cả Liên Chi đoàn --</option>
-      </select>
+<!-- KHỐI BỘ LỌC THỐNG KÊ (Thay thế khối cũ của bạn bằng đoạn này) -->
+<div class="grid grid-cols-1 md:grid-cols-4 gap-3 w-full text-xs items-end mb-4">
+    <!-- 1. Chọn Liên Chi đoàn -->
+    <div>
+        <label class="block font-semibold mb-1 text-slate-700">Liên Chi đoàn / Khoa:</label>
+        <select id="filterFaculty" onchange="onFacultyChange()" class="w-full p-2 border rounded-lg outline-none focus:ring-2 focus:ring-blue-500 font-semibold text-slate-700">
+            <option value="">-- Tất cả Liên Chi đoàn --</option>
+        </select>
     </div>
 
-    <div style="flex: 1; min-width: 200px;">
-      <label style="font-weight: 600; font-size: 13px; color: #374151; display: block; margin-bottom: 5px;">Chi đoàn / Lớp:</label>
-      <select id="filterClass" onchange="applyReportFilter()" style="width: 100%; padding: 8px 12px; border-radius: 6px; border: 1px solid #d1d5db;">
-        <option value="">-- Tất cả Chi đoàn --</option>
-      </select>
+    <!-- 2. Chọn Chi đoàn -->
+    <div>
+        <label class="block font-semibold mb-1 text-slate-700">Chi đoàn / Lớp:</label>
+        <select id="filterClass" onchange="filterSubmissions()" class="w-full p-2 border rounded-lg outline-none focus:ring-2 focus:ring-blue-500 font-semibold text-slate-700">
+            <option value="">-- Tất cả Chi đoàn --</option>
+        </select>
     </div>
 
-    <div style="flex: 1; min-width: 220px;">
-      <label style="font-weight: 600; font-size: 13px; color: #374151; display: block; margin-bottom: 5px;">Hoạt động Đoàn:</label>
-      <select id="filterActivity" onchange="applyReportFilter()" style="width: 100%; padding: 8px 12px; border-radius: 6px; border: 1px solid #d1d5db;">
-        <option value="">-- Tất cả Hoạt động --</option>
-      </select>
+    <!-- 3. Chọn Hoạt động Đoàn -->
+    <div>
+        <label class="block font-semibold mb-1 text-slate-700">Hoạt động Đoàn:</label>
+        <select id="filterActivity" onchange="filterSubmissions()" class="w-full p-2 border rounded-lg outline-none focus:ring-2 focus:ring-blue-500 font-semibold text-slate-700">
+            <option value="">-- Tất cả Hoạt động --</option>
+        </select>
     </div>
 
-    <div style="margin-top: 22px;">
-      <button onclick="resetReportFilter()" style="padding: 8px 16px; background-color: #6b7280; color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: 500;">
-        🔄 Đặt lại
-      </button>
+    <!-- 4. Nút Đặt lại -->
+    <div>
+        <button type="button" onclick="resetFilters()" class="w-full bg-slate-700 hover:bg-slate-800 text-white font-bold py-2 px-3 rounded-lg transition text-xs flex items-center justify-center gap-1.5 h-[38px]">
+            <i class="fa-solid fa-rotate-right"></i> Đặt lại
+        </button>
     </div>
-  </div>
 </div>
-
 <!-- THÊM THẺ THỐNG KÊ SỐ ĐOÀN VIÊN THỰC TẾ THAM GIA -->
 <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px; margin-bottom: 20px;">
   <div style="background: #fff; padding: 15px; border-radius: 8px; border-left: 4px solid #2563eb; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
