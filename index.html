@@ -999,34 +999,7 @@
   updateOnlineUsers();
   setInterval(updateOnlineUsers, 15000);
 </script>
-    Chatbase là lựa chọn rất tối ưu vì vừa dễ thiết lập dữ liệu vừa hiển thị biểu tượng chat ở góc dưới bên phải màn hình một cách tự động, không lo bị đè lên bộ đếm lượt truy cập ở góc trái.
-
-**Bước 1: Tạo và huấn luyện Chatbot**
-
-1. Truy cập trang chủ [Chatbase.co](https://www.chatbase.co/) và đăng nhập tài khoản.
-2. Chọn **New Chatbot**.
-3. Nạp dữ liệu cho AI bằng cách chọn một trong các hình thức:
-* **Files:** Tải lên file PDF, DOCX chứa thông tin trang web/tổ chức của bạn.
-* **Text:** Dán trực tiếp nội dung văn bản hướng dẫn.
-* **Website:** Nhập đường link trang web để bot tự thu thập dữ liệu.
-
-
-4. Nhấn **Create Chatbot** và đợi hệ thống xử lý dữ liệu trong vài giây.
-
-**Bước 2: Cấu hình công khai & Lấy mã nhúng**
-
-1. Trong giao diện quản lý Bot, vào **Settings** -> mục **Chatbot Security** -> đổi trạng thái từ *Private* sang **Public** (bắt buộc để người xem web dùng được).
-2. Chuyển sang tab **Connect** (hoặc **Embed on site**).
-3. Sao chép (Copy) đoạn mã `<script>` được đán sẵn ở đó.
-
-**Bước 3: Thêm mã vào file `index.html**`
-
-Mở file `index.html`, dán đoạn mã vừa copy vào ngay **trước thẻ đóng `</body>**` (đặt bên dưới mã bộ đếm truy cập).
-
-Mã mẫu của Chatbase sẽ có dạng như sau:
-
-```html
-<!-- MÃ NHÚNG CHATBASE AI -->
+  <!-- MÃ NHÚNG CHATBASE AI -->
 <script>
   window.chatbaseConfig = {
     chatbotId: "MA_CHATBOT_CUA_BAN",
