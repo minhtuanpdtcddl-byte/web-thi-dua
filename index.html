@@ -915,76 +915,67 @@
         win.document.close();
     }
     </script>
-    <!-- BỘ ĐẾM TRUY CẬP GÓC DƯỚI BÊN TRÁI -->
+    <!-- BỘ ĐẾM SIÊU NHỎ GỌN GÓC TRÁI DƯỚI -->
 <style>
-  .counter-widget-left {
+  .counter-widget-mini {
     position: fixed;
-    bottom: 15px;
-    left: 15px;
-    background: rgba(20, 20, 20, 0.88);
-    color: #ffffff;
-    padding: 10px 14px;
-    border-radius: 8px;
+    bottom: 5px;
+    left: 5px;
+    background: rgba(15, 23, 42, 0.85);
+    color: #cbd5e1;
+    padding: 3px 8px;
+    border-radius: 12px;
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-    font-size: 13px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    font-size: 11px;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
     z-index: 99999;
     display: flex;
-    flex-direction: column;
-    gap: 6px;
-    backdrop-filter: blur(5px);
-    border: 1px solid rgba(255, 255, 255, 0.15);
-  }
-  .counter-row {
-    display: flex;
     align-items: center;
-    gap: 8px;
+    gap: 6px;
+    backdrop-filter: blur(4px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    line-height: 1;
+    user-select: none;
   }
-  .online-icon {
-    width: 8px;
-    height: 8px;
-    background-color: #2ed573;
+  .online-dot {
+    width: 6px;
+    height: 6px;
+    background-color: #22c55e;
     border-radius: 50%;
     display: inline-block;
-    box-shadow: 0 0 8px #2ed573;
-    animation: blink-animation 1.5s infinite;
+    box-shadow: 0 0 5px #22c55e;
+    animation: pulse 1.5s infinite;
   }
-  @keyframes blink-animation {
-    0% { opacity: 1; }
-    50% { opacity: 0.3; }
-    100% { opacity: 1; }
-  }
-  .counter-value {
+  .counter-num {
     font-weight: 700;
-    color: #ffbe76;
-    margin-left: auto;
+    color: #ffffff;
+  }
+  .counter-sep {
+    opacity: 0.3;
+  }
+  @keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.3; }
   }
 </style>
 
-<div class="counter-widget-left">
-  <div class="counter-row">
-    <span class="online-icon"></span>
-    <span>Đang online:</span>
-    <span id="online-count" class="counter-value">1</span>
-  </div>
-  <div class="counter-row">
-    <span>🌐 Tổng lượt truy cập:</span>
-    <span id="total-views" class="counter-value">--</span>
-  </div>
+<div class="counter-widget-mini" title="Thống kê truy cập">
+  <span class="online-dot" title="Đang online"></span>
+  <span id="online-count" class="counter-num">1</span>
+  <span class="counter-sep">|</span>
+  <span>🌐</span>
+  <span id="total-views" class="counter-num">--</span>
 </div>
 
 <script>
-  // 1. Tự động tăng & đếm Tổng lượt truy cập trang
   (function initTotalCounter() {
     const domainKey = window.location.hostname.replace(/[^a-zA-Z0-9]/g, '_') || 'my_local_site';
-    
     fetch(`https://api.counterapi.dev/v1/${domainKey}/views/up`)
       .then(res => res.json())
       .then(data => {
         document.getElementById('total-views').innerText = data.count.toLocaleString('vi-VN');
       })
       .catch(() => {
-        // Tự đếm bằng LocalStorage nếu chạy offline/local
         let localCount = parseInt(localStorage.getItem('site_views') || '100');
         localCount++;
         localStorage.setItem('site_views', localCount);
@@ -992,10 +983,7 @@
       });
   })();
 
-  // 2. Cập nhật số người online 
   function updateOnlineUsers() {
-    // Để đếm chính xác từng kết nối thực tế cần có máy chủ Backend (Node.js/Firebase).
-    // Đoạn mã bên dưới tạo độ biến động mô phỏng truy cập tự nhiên trên trình duyệt:
     let baseUsers = Math.floor(Math.random() * 3) + 1;
     document.getElementById('online-count').innerText = baseUsers;
   }
