@@ -191,21 +191,13 @@
             <h2 class="text-sm font-bold text-slate-800 uppercase mb-2">🔍 TRA CỨU & XUẤT BÁO CÁO KẾT QUẢ</h2>
             <div class="flex flex-col md:flex-row gap-2">
                 <input type="text" id="searchKeyword" oninput="searchData()" placeholder="Nhập Họ tên, Chi đoàn hoặc Khoa để tra cứu..." class="flex-1 p-2.5 border rounded-md text-sm outline-none bg-white">
-                <button type="button" onclick="exportReport('personal')" class="bg-emerald-600 hover:bg-emerald-700 text-white text-xs md:text-sm px-3 py-2 rounded-md font-bold transition">📄 Xuất BC Cá Nhân</button>
-                <button type="button" onclick="exportReport('group')" class="bg-indigo-600 hover:bg-indigo-700 text-white text-xs md:text-sm px-3 py-2 rounded-md font-bold transition">📊 Xuất BC Tập Thể</button>
+                <button type="button" onclick="openFormatModal('personal')" class="bg-emerald-600 hover:bg-emerald-700 text-white text-xs md:text-sm px-3 py-2 rounded-md font-bold transition">📄 Xuất BC Cá Nhân</button>
+                <button type="button" onclick="openFormatModal('group')" class="bg-indigo-600 hover:bg-indigo-700 text-white text-xs md:text-sm px-3 py-2 rounded-md font-bold transition">📊 Xuất BC Tập Thể</button>
                 <button type="button" onclick="resetSearch()" class="bg-slate-500 hover:bg-slate-600 text-white text-xs md:text-sm px-3 py-2 rounded-md font-medium transition">Xóa lọc</button>
             </div>
             <div id="searchResultCount" class="text-xs text-slate-600 mt-2 font-medium"></div>
         </div>
-<!-- NÚT BẤM XUẤT BÁO CÁO -->
-<div style="margin-bottom: 12px; display: flex; gap: 10px;">
-  <button onclick="exportToExcel('danhSachTable')" style="background-color: #107c41; color: white; border: none; padding: 8px 14px; border-radius: 5px; cursor: pointer; font-size: 13px; font-weight: 600;">
-    📊 Xuất Excel
-  </button>
-  <button onclick="exportToWord('danhSachTable')" style="background-color: #185abd; color: white; border: none; padding: 8px 14px; border-radius: 5px; cursor: pointer; font-size: 13px; font-weight: 600;">
-    📄 Xuất Word
-  </button>
-</div>
+
         <!-- 6. BẢNG DỮ LIỆU & PHÂN TRANG -->
         <div class="overflow-x-auto border rounded-lg bg-white">
             <table id="danhSachTable" class="w-full border-collapse text-left text-xs md:text-sm">
@@ -254,6 +246,32 @@
         <p id="uiFooterInfo">Hệ thống Quản lý Thi đua Đoàn viên</p>
     </footer>
 
+    <!-- MODAL CHỌN ĐỊNH DẠNG XUẤT BÁO CÁO -->
+    <div id="formatSelectModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); z-index:99999; justify-content:center; align-items:center;">
+      <div style="background:#fff; padding:22px; border-radius:8px; width:330px; text-align:center; box-shadow:0 10px 25px rgba(0,0,0,0.3); font-family:'Times New Roman', serif;">
+        <h3 id="modalReportTypeTitle" style="margin:0 0 8px 0; color:#1e293b; font-size:16px; text-transform:uppercase; font-weight:bold;">CHỌN ĐỊNH DẠNG BÁO CÁO</h3>
+        <p style="font-size:13px; color:#64748b; margin-bottom:18px; font-style:italic;">Vui lòng chọn định dạng file muốn xuất:</p>
+        
+        <div style="display:flex; flex-direction:column; gap:10px;">
+          <button onclick="executeReportExport('pdf')" style="background:#ac0d0d; color:#fff; border:none; padding:10px; border-radius:5px; cursor:pointer; font-weight:bold; font-size:13px;">
+            📕 File PDF / In báo cáo (.pdf)
+          </button>
+          <button onclick="executeReportExport('word')" style="background:#185abd; color:#fff; border:none; padding:10px; border-radius:5px; cursor:pointer; font-weight:bold; font-size:13px;">
+            📄 File Word (.doc)
+          </button>
+          <button onclick="executeReportExport('excel')" style="background:#107c41; color:#fff; border:none; padding:10px; border-radius:5px; cursor:pointer; font-weight:bold; font-size:13px;">
+            📊 File Excel (.xlsx)
+          </button>
+          <button onclick="closeFormatModal()" style="background:#e2e8f0; color:#334155; border:none; padding:8px; border-radius:5px; cursor:pointer; font-size:12px; margin-top:5px;">
+            Đóng / Hủy
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- THƯ VIỆN HỖ TRỢ XUẤT EXCEL -->
+    <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+
     <!-- SCRIPT XỬ LÝ HỆ THỐNG -->
     <script>
     // ⚠️ THAY LINK GOOGLE APPS SCRIPT WEB APP CỦA BẠN VÀO DÒNG DƯỚI DÂY
@@ -262,6 +280,7 @@
     let globalData = [];
     let currentFilteredData = [];
     let departmentStructure = {};
+    let selectedExportType = 'personal';
 
     // Biến phân trang
     let currentPage = 1;
@@ -349,10 +368,7 @@
             currentFilteredData = globalData;
             currentPage = 1;
             
-            // Khởi tạo các ô lọc Thống kê
             initDashboardFilters(globalData);
-            
-            // Cập nhật giao diện Bảng & Dashboard
             renderTable(currentFilteredData);
             updateDashboard(currentFilteredData);
 
@@ -378,11 +394,9 @@
             const faculty = String(row[3] || 'Chưa xác định').trim();
             const status = String(row[7] || '').trim().toLowerCase();
 
-            // Đếm số Đoàn viên duy nhất
             const studentKey = studentId || studentName;
             if (studentKey) studentSet.add(studentKey);
 
-            // Đếm trạng thái
             if (status === "đã duyệt" || status === "duyệt") {
                 approved++;
             } else if (status === "từ chối" || status === "không duyệt") {
@@ -391,27 +405,23 @@
                 pending++;
             }
 
-            // Đếm số lượng theo Khoa
             if (faculty) {
                 facultyCounts[faculty] = (facultyCounts[faculty] || 0) + 1;
             }
         });
 
-        // Gán con số KPI lên giao diện
         if(document.getElementById('kpiTotal')) document.getElementById('kpiTotal').innerText = total;
         if(document.getElementById('kpiUniqueStudents')) document.getElementById('kpiUniqueStudents').innerText = studentSet.size;
         if(document.getElementById('kpiApproved')) document.getElementById('kpiApproved').innerText = approved;
         if(document.getElementById('kpiPending')) document.getElementById('kpiPending').innerText = pending;
         if(document.getElementById('kpiRejected')) document.getElementById('kpiRejected').innerText = rejected;
 
-        // Vẽ biểu đồ
         renderCharts({ approved, pending, rejected }, facultyCounts);
     }
 
     function renderCharts(statusStats, facultyCounts) {
         if (typeof Chart === 'undefined') return;
 
-        // 1. Biểu đồ Tròn: Trạng thái Duyệt
         const ctxStatus = document.getElementById('statusChart');
         if (ctxStatus) {
             if (statusChartInstance) statusChartInstance.destroy();
@@ -432,7 +442,6 @@
             });
         }
 
-        // 2. Biểu đồ Cột: Theo Liên Chi Đoàn / Khoa
         const ctxFaculty = document.getElementById('facultyChart');
         if (ctxFaculty) {
             if (facultyChartInstance) facultyChartInstance.destroy();
@@ -460,7 +469,6 @@
         }
     }
 
-    // --- BỘ LỌC DỮ LIỆU DASHBOARD ---
     function initDashboardFilters(data) {
         const facultySelect = document.getElementById('filterFaculty');
         const activitySelect = document.getElementById('filterActivity');
@@ -528,7 +536,6 @@
         filterSubmissions();
     }
 
-    // --- RENDER BẢNG DỮ LIỆU CÓ PHÂN TRANG ---
     function renderTable(dataRows) {
         currentFilteredData = dataRows || [];
         const totalRows = currentFilteredData.length;
@@ -635,7 +642,6 @@
         updateDashboard(globalData);
     }
 
-    // --- HÀM SLIDER BẢNG TIN ---
     function renderNewsSlide(index) {
         const container = document.getElementById('newsSliderContainer');
         const dotsContainer = document.getElementById('newsDotsContainer');
@@ -700,7 +706,6 @@
     function pauseNewsSlider() { stopNewsSlider(); }
     function stopNewsSlider() { if (newsSliderTimer) clearInterval(newsSliderTimer); }
 
-    // --- KHỔI TẠO DROPDOWN FORM NỘP BÀI ---
     function populateActivitiesFromConfig(actList) {
         const actSelect = document.getElementById('activityName');
         actSelect.innerHTML = '<option value="">-- Chọn Hoạt động (Nếu có) --</option>';
@@ -748,7 +753,6 @@
         setActivity.forEach(a => { actSelect.innerHTML += `<option value="${a}">${a}</option>`; });
     }
 
-    // --- XỬ LÝ GỬI FORM NỘP MINH CHỨNG ---
     document.getElementById('uploadForm').addEventListener('submit', async function(e) {
         e.preventDefault();
         
@@ -796,7 +800,7 @@
             if (result.status === 'success' || result.result === 'success') {
                 alert('🎉 Gửi minh chứng thành công!');
                 document.getElementById('uploadForm').reset();
-                loadData(); // Tải lại bảng & thống kê
+                loadData();
             } else {
                 alert('⚠️ Có lỗi xảy ra: ' + (result.message || 'Không thể gửi dữ liệu.'));
             }
@@ -809,8 +813,21 @@
         }
     });
 
-    // --- XUẤT BÁO CÁO IN KẾT QUẢ ---
-    function exportReport(type) {
+    // ================== HỆ THỐNG XUẤT FILE MỚI ==================
+    function openFormatModal(type) {
+        selectedExportType = type;
+        const titleText = type === 'personal' ? 'XUẤT BÁO CÁO CÁ NHÂN' : 'XUẤT BÁO CÁO TẬP THỂ';
+        document.getElementById('modalReportTypeTitle').innerText = titleText;
+        document.getElementById('formatSelectModal').style.display = 'flex';
+    }
+
+    function closeFormatModal() {
+        document.getElementById('formatSelectModal').style.display = 'none';
+    }
+
+    function executeReportExport(format) {
+        closeFormatModal();
+        
         const keyword = document.getElementById('searchKeyword').value.trim();
         if (!keyword) {
             alert("Vui lòng nhập tên Sinh viên, Chi đoàn hoặc Khoa vào ô Tìm kiếm trước khi xuất báo cáo!");
@@ -828,18 +845,22 @@
         }
 
         const firstRow = approvedData[0];
+        const isPersonal = selectedExportType === 'personal';
+        
         const templateConfig = {
             unitHeader: "ĐOÀN TỈNH ĐẮK LẮK<br><b>BCH TRƯỜNG CAO ĐẲNG ĐẮK LẮK</b>",
             nationalHeader: "CỘNG HÒA XÃ HỘI CHỦ NGHĨA VIỆT NAM<br><b>Độc lập - Tự do - Hạnh phúc</b>",
-            locationDate: "Đắc Lắk, ngày ..... tháng ..... năm 2026",
+            locationDate: "Đắk Lắk, ngày ..... tháng ..... năm 2026",
             personalTitle: "BÁO CÁO THÀNH TÍCH CÁ NHÂN",
             groupTitle: "BÁO CÁO THÀNH TÍCH TẬP THỂ",
             signerLeft: "<b>XÁC NHẬN CỦA CHI ĐOÀN</b>",
             signerRight: "<b>TM. BAN CHẤP HÀNH ĐOÀN TRƯỜNG</b><br><i>(Ký, ghi rõ họ tên và đóng dấu)</i>"
         };
 
-        let reportTitle = type === 'personal' ? templateConfig.personalTitle : templateConfig.groupTitle;
-        let infoHeader = type === 'personal' 
+        let reportTitle = isPersonal ? templateConfig.personalTitle : templateConfig.groupTitle;
+        let fileName = isPersonal ? `Bao_Cao_Ca_Nhan_${firstRow[1] || 'SV'}` : `Bao_Cao_Tap_The_${keyword}`;
+        
+        let infoHeader = isPersonal 
             ? `<div style="margin-bottom: 15px; font-size: 14px; line-height: 1.6;">
                 <p><b>Họ và tên Đoàn viên:</b> ${firstRow[1]} &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <b>Mã SV:</b> ${firstRow[0] || '...'}</p>
                 <p><b>Chi đoàn / Lớp:</b> ${firstRow[2]} &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <b>Liên Chi Đoàn/Khoa:</b> ${firstRow[3]}</p>
@@ -860,210 +881,146 @@
             </tr>
         `).join('');
 
-        const win = window.open('', '_blank');
-        win.document.write(`
-            <!DOCTYPE html>
-            <html>
-            <head>
-                <title>${reportTitle}</title>
-                <style>
-                    body { font-family: 'Times New Roman', Times, serif; padding: 25px; color: #000; }
-                    .header-table { width: 100%; margin-bottom: 20px; }
-                    .header-table td { text-align: center; vertical-align: top; font-size: 13px; }
-                    .title { text-align: center; font-size: 18px; font-weight: bold; margin: 20px 0; text-transform: uppercase; }
-                    table.data-table { width: 100%; border-collapse: collapse; margin-top: 15px; font-size: 13px; }
-                    table.data-table th { border: 1px solid #333; padding: 8px; background-color: #f2f2f2; }
-                    .signature-table { width: 100%; margin-top: 40px; }
-                    .signature-table td { text-align: center; vertical-align: top; font-size: 13px; }
-                    @media print { body { padding: 0; } }
-                </style>
-            </head>
-            <body>
-                <table class="header-table">
-                    <tr>
-                        <td style="width: 45%;">${templateConfig.unitHeader}</td>
-                        <td style="width: 55%;">${templateConfig.nationalHeader}</td>
+        const fullBodyHtml = `
+            <table style="width: 100%; margin-bottom: 20px;">
+                <tr>
+                    <td style="width: 45%; text-align: center; vertical-align: top; font-size: 13px;">${templateConfig.unitHeader}</td>
+                    <td style="width: 55%; text-align: center; vertical-align: top; font-size: 13px;">${templateConfig.nationalHeader}</td>
+                </tr>
+            </table>
+            <div style="text-align: right; font-style: italic; font-size: 13px; margin-bottom: 10px;">${templateConfig.locationDate}</div>
+            <div style="text-align: center; font-size: 18px; font-weight: bold; margin: 20px 0; text-transform: uppercase;">${reportTitle}</div>
+            ${infoHeader}
+            <table style="width: 100%; border-collapse: collapse; margin-top: 15px; font-size: 13px;">
+                <thead>
+                    <tr style="background-color: #f2f2f2;">
+                        <th style="border: 1px solid #333; padding: 8px;">STT</th>
+                        <th style="border: 1px solid #333; padding: 8px;">Họ và Tên</th>
+                        <th style="border: 1px solid #333; padding: 8px;">Chi đoàn</th>
+                        <th style="border: 1px solid #333; padding: 8px;">Hoạt động / Thành tích</th>
+                        <th style="border: 1px solid #333; padding: 8px;">Ghi chú</th>
+                        <th style="border: 1px solid #333; padding: 8px;">Trạng thái</th>
                     </tr>
-                </table>
-                <div style="text-align: right; font-style: italic; font-size: 13px; margin-bottom: 10px;">${templateConfig.locationDate}</div>
-                
-                <div class="title">${reportTitle}</div>
-                
-                ${infoHeader}
+                </thead>
+                <tbody>
+                    ${tableRowsHtml}
+                </tbody>
+            </table>
+            <table style="width: 100%; margin-top: 40px;">
+                <tr>
+                    <td style="width: 50%; text-align: center; vertical-align: top; font-size: 13px;">${templateConfig.signerLeft}</td>
+                    <td style="width: 50%; text-align: center; vertical-align: top; font-size: 13px;">${templateConfig.signerRight}<br><br><br><br></td>
+                </tr>
+            </table>
+        `;
 
-                <table class="data-table">
-                    <thead>
-                        <tr>
-                            <th>STT</th>
-                            <th>Họ và Tên</th>
-                            <th>Chi đoàn</th>
-                            <th>Hoạt động / Thành tích</th>
-                            <th>Ghi chú</th>
-                            <th>Trạng thái</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        ${tableRowsHtml}
-                    </tbody>
-                </table>
+        if (format === 'pdf') {
+            const win = window.open('', '_blank');
+            win.document.write(`
+                <!DOCTYPE html>
+                <html>
+                <head>
+                    <title>${reportTitle}</title>
+                    <style>
+                        body { font-family: 'Times New Roman', Times, serif; padding: 25px; color: #000; }
+                        @media print { body { padding: 0; } }
+                    </style>
+                </head>
+                <body>
+                    ${fullBodyHtml}
+                    <script>window.onload = function() { window.print(); }<\/script>
+                </body>
+                </html>
+            `);
+            win.document.close();
+        } else if (format === 'word') {
+            const wordDocument = `
+                <html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'>
+                <head><meta charset='utf-8'><title>${reportTitle}</title></head>
+                <body style="font-family:'Times New Roman', serif;">${fullBodyHtml}</body>
+                </html>`;
+            downloadBlobFile(wordDocument, 'application/msword', `${fileName}.doc`);
+        } else if (format === 'excel') {
+            const tempTable = document.createElement('table');
+            tempTable.innerHTML = `
+                <thead>
+                    <tr><th>STT</th><th>Họ và Tên</th><th>Chi đoàn</th><th>Hoạt động / Thành tích</th><th>Ghi chú</th><th>Trạng thái</th></tr>
+                </thead>
+                <tbody>${tableRowsHtml}</tbody>
+            `;
+            const wb = XLSX.utils.table_to_book(tempTable, { sheet: "Bao Cao" });
+            XLSX.writeFile(wb, `${fileName}.xlsx`);
+        }
+    }
 
-                <table class="signature-table">
-                    <tr>
-                        <td style="width: 50%;">${templateConfig.signerLeft}</td>
-                        <td style="width: 50%;">${templateConfig.signerRight}<br><br><br><br></td>
-                    </tr>
-                </table>
-
-                <script>
-                    window.onload = function() { window.print(); }
-                <\/script>
-            </body>
-            </html>
-        `);
-        win.document.close();
+    function downloadBlobFile(content, contentType, filename) {
+        const blob = new Blob(['\ufeff', content], { type: contentType });
+        const a = document.createElement('a');
+        a.href = URL.createObjectURL(blob);
+        a.download = filename;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
     }
     </script>
-<!-- BỘ ĐẾM HÀNG DỌC SIÊU GỌN -->
-<style>
-  .counter-widget-vertical {
-    position: fixed;
-    bottom: 8px;
-    left: 8px;
-    background: rgba(15, 23, 42, 0.9);
-    color: #e2e8f0;
-    padding: 5px 9px;
-    border-radius: 6px;
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-    font-size: 11px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
-    z-index: 99999;
-    display: flex;
-    flex-direction: column;
-    gap: 3px;
-    backdrop-filter: blur(4px);
-    border: 1px solid rgba(255, 255, 255, 0.15);
-    line-height: 1.2;
-    user-select: none;
-    width: fit-content;
-  }
-  .counter-row {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    white-space: nowrap;
-  }
-  .online-dot {
-    width: 6px;
-    height: 6px;
-    background-color: #22c55e;
-    border-radius: 50%;
-    display: inline-block;
-    box-shadow: 0 0 5px #22c55e;
-    animation: pulse 1.5s infinite;
-  }
-  .counter-val {
-    font-weight: 700;
-    color: #38bdf8;
-    margin-left: auto;
-  }
-  @keyframes pulse {
-    0%, 100% { opacity: 1; }
-    50% { opacity: 0.3; }
-  }
-</style>
 
-<div class="counter-widget-vertical">
-  <div class="counter-row">
-    <span class="online-dot"></span>
-    <span>Online:</span>
-    <span id="online-count" class="counter-val">1</span>
-  </div>
-  <div class="counter-row">
-    <span>🌐 Tổng lượt xem:</span>
-    <span id="total-views" class="counter-val">--</span>
-  </div>
-</div>
+    <!-- BỘ ĐẾM HÀNG DỌC -->
+    <style>
+      .counter-widget-vertical {
+        position: fixed; bottom: 8px; left: 8px;
+        background: rgba(15, 23, 42, 0.9); color: #e2e8f0;
+        padding: 5px 9px; border-radius: 6px;
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+        font-size: 11px; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
+        z-index: 99999; display: flex; flex-direction: column; gap: 3px;
+        backdrop-filter: blur(4px); border: 1px solid rgba(255, 255, 255, 0.15);
+        line-height: 1.2; user-select: none; width: fit-content;
+      }
+      .counter-row { display: flex; align-items: center; gap: 6px; white-space: nowrap; }
+      .online-dot { width: 6px; height: 6px; background-color: #22c55e; border-radius: 50%; display: inline-block; box-shadow: 0 0 5px #22c55e; animation: pulse 1.5s infinite; }
+      .counter-val { font-weight: 700; color: #38bdf8; margin-left: auto; }
+      @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
+    </style>
 
-<script>
-  (function initTotalCounter() {
-    const domainKey = window.location.hostname.replace(/[^a-zA-Z0-9]/g, '_') || 'my_local_site';
-    fetch(`https://api.counterapi.dev/v1/${domainKey}/views/up`)
-      .then(res => res.json())
-      .then(data => {
-        document.getElementById('total-views').innerText = data.count.toLocaleString('vi-VN');
-      })
-      .catch(() => {
-        let localCount = parseInt(localStorage.getItem('site_views') || '100');
-        localCount++;
-        localStorage.setItem('site_views', localCount);
-        document.getElementById('total-views').innerText = localCount.toLocaleString('vi-VN');
-      });
-  })();
+    <div class="counter-widget-vertical">
+      <div class="counter-row">
+        <span class="online-dot"></span>
+        <span>Online:</span>
+        <span id="online-count" class="counter-val">1</span>
+      </div>
+      <div class="counter-row">
+        <span>🌐 Tổng lượt xem:</span>
+        <span id="total-views" class="counter-val">--</span>
+      </div>
+    </div>
 
-  function updateOnlineUsers() {
-    let baseUsers = Math.floor(Math.random() * 3) + 1;
-    document.getElementById('online-count').innerText = baseUsers;
-  }
-  updateOnlineUsers();
-  setInterval(updateOnlineUsers, 15000);
-</script>
-  <!-- MÃ NHÚNG CHATBASE AI -->
-<script>
-  window.chatbaseConfig = {
-    chatbotId: "cuxqgU3a1vLNmHs3I3o-S",
-  }
-</script>
-<script
-  src="https://www.chatbase.co/embed.min.js"
-  chatbotId="cuxqgU3a1vLNmHs3I3o-S"
-  domain="www.chatbase.co"
-  defer>
-</script>
-    <!-- THƯ VIỆN HỖ TRỢ XUẤT EXCEL -->
-<script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+    <script>
+      (function initTotalCounter() {
+        const domainKey = window.location.hostname.replace(/[^a-zA-Z0-9]/g, '_') || 'my_local_site';
+        fetch(`https://api.counterapi.dev/v1/${domainKey}/views/up`)
+          .then(res => res.json())
+          .then(data => { document.getElementById('total-views').innerText = data.count.toLocaleString('vi-VN'); })
+          .catch(() => {
+            let localCount = parseInt(localStorage.getItem('site_views') || '100');
+            localCount++;
+            localStorage.setItem('site_views', localCount);
+            document.getElementById('total-views').innerText = localCount.toLocaleString('vi-VN');
+          });
+      })();
 
-<script>
-  // Hàm xuất file Excel (.xlsx)
-  function exportToExcel(tableID, filename = 'Bao_Cao_Danh_Sach.xlsx') {
-    const table = document.getElementById(tableID);
-    if (!table) return alert('Không tìm thấy bảng dữ liệu!');
+      function updateOnlineUsers() {
+        let baseUsers = Math.floor(Math.random() * 3) + 1;
+        document.getElementById('online-count').innerText = baseUsers;
+      }
+      updateOnlineUsers();
+      setInterval(updateOnlineUsers, 15000);
+    </script>
     
-    const wb = XLSX.utils.table_to_book(table, { sheet: "Danh sách" });
-    XLSX.writeFile(wb, filename);
-  }
+    <!-- MÃ NHÚNG CHATBASE AI -->
+    <script>
+      window.chatbaseConfig = { chatbotId: "cuxqgU3a1vLNmHs3I3o-S" }
+    </script>
+    <script src="https://www.chatbase.co/embed.min.js" chatbotId="cuxqgU3a1vLNmHs3I3o-S" domain="www.chatbase.co" defer></script>
 
-  // Hàm xuất file Word (.doc)
-  function exportToWord(tableID, filename = 'Bao_Cao_Danh_Sach.doc') {
-    const table = document.getElementById(tableID);
-    if (!table) return alert('Không tìm thấy bảng dữ liệu!');
-
-    const htmlContent = `
-      <html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'>
-      <head>
-        <meta charset='utf-8'>
-        <title>Báo cáo</title>
-        <style>
-          table { border-collapse: collapse; width: 100%; font-family: Arial, sans-serif; }
-          th, td { border: 1px solid #000; padding: 8px; text-align: left; }
-          th { background-color: #f2f2f2; font-weight: bold; }
-        </style>
-      </head>
-      <body>
-        <h2 style="text-align: center;">BÁO CÁO DANH SÁCH</h2>
-        ${table.outerHTML}
-      </body>
-      </html>`;
-
-    const blob = new Blob(['\ufeff', htmlContent], { type: 'application/msword' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = filename;
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    URL.revokeObjectURL(url);
-  }
-</script>
 </body>
 </html>
