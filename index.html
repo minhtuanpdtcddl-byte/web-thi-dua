@@ -197,10 +197,18 @@
             </div>
             <div id="searchResultCount" class="text-xs text-slate-600 mt-2 font-medium"></div>
         </div>
-
+<!-- NÚT BẤM XUẤT BÁO CÁO -->
+<div style="margin-bottom: 12px; display: flex; gap: 10px;">
+  <button onclick="exportToExcel('danhSachTable')" style="background-color: #107c41; color: white; border: none; padding: 8px 14px; border-radius: 5px; cursor: pointer; font-size: 13px; font-weight: 600;">
+    📊 Xuất Excel
+  </button>
+  <button onclick="exportToWord('danhSachTable')" style="background-color: #185abd; color: white; border: none; padding: 8px 14px; border-radius: 5px; cursor: pointer; font-size: 13px; font-weight: 600;">
+    📄 Xuất Word
+  </button>
+</div>
         <!-- 6. BẢNG DỮ LIỆU & PHÂN TRANG -->
         <div class="overflow-x-auto border rounded-lg bg-white">
-            <table class="w-full border-collapse text-left text-xs md:text-sm">
+            <table id="danhSachTable" class="w-full border-collapse text-left text-xs md:text-sm">
                 <thead>
                     <tr class="bg-slate-200 text-slate-700 font-bold border-b">
                         <th class="p-3 whitespace-nowrap">Mã SV</th>
@@ -1010,6 +1018,52 @@
   chatbotId="cuxqgU3a1vLNmHs3I3o-S"
   domain="www.chatbase.co"
   defer>
+</script>
+    <!-- THƯ VIỆN HỖ TRỢ XUẤT EXCEL -->
+<script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+
+<script>
+  // Hàm xuất file Excel (.xlsx)
+  function exportToExcel(tableID, filename = 'Bao_Cao_Danh_Sach.xlsx') {
+    const table = document.getElementById(tableID);
+    if (!table) return alert('Không tìm thấy bảng dữ liệu!');
+    
+    const wb = XLSX.utils.table_to_book(table, { sheet: "Danh sách" });
+    XLSX.writeFile(wb, filename);
+  }
+
+  // Hàm xuất file Word (.doc)
+  function exportToWord(tableID, filename = 'Bao_Cao_Danh_Sach.doc') {
+    const table = document.getElementById(tableID);
+    if (!table) return alert('Không tìm thấy bảng dữ liệu!');
+
+    const htmlContent = `
+      <html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'>
+      <head>
+        <meta charset='utf-8'>
+        <title>Báo cáo</title>
+        <style>
+          table { border-collapse: collapse; width: 100%; font-family: Arial, sans-serif; }
+          th, td { border: 1px solid #000; padding: 8px; text-align: left; }
+          th { background-color: #f2f2f2; font-weight: bold; }
+        </style>
+      </head>
+      <body>
+        <h2 style="text-align: center;">BÁO CÁO DANH SÁCH</h2>
+        ${table.outerHTML}
+      </body>
+      </html>`;
+
+    const blob = new Blob(['\ufeff', htmlContent], { type: 'application/msword' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  }
 </script>
 </body>
 </html>
