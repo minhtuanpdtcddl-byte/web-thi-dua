@@ -272,7 +272,7 @@
     <!-- THƯ VIỆN HỖ TRỢ XUẤT EXCEL -->
     <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 
-    <!-- SCRIPT XỬ LÝ HỆ THỐNG -->
+    <!-- SCRIPT XỬ LÝ HỆ THỐNG TOÀN CỤC -->
     <script>
     // ⚠️ THAY LINK GOOGLE APPS SCRIPT WEB APP CỦA BẠN VÀO DÒNG DƯỚI DÂY
     const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbxS04mwquBMsFTxOz3pFC2_3f_NbyfzNMypQFDcjhjDn7zse6yRRSI44p3_0indAjyi/exec";
@@ -299,6 +299,52 @@
     document.addEventListener("DOMContentLoaded", function() {
         loadData();
     });
+
+    // 1. HÀM CHUẨN HÓA VÀ GỘP TÊN LIÊN CHI ĐOÀN / KHOA THÔNG MINH
+    function getStandardFaculty(facultyStr, classStr = '') {
+        if (!facultyStr) facultyStr = '';
+        let rawFac = facultyStr.trim().replace(/\s+/g, ' ');
+        let rawClass = (classStr || '').trim().toLowerCase();
+        let lowerFac = rawFac.toLowerCase();
+
+        // Tra cứu theo Lớp
+        if (rawClass && typeof departmentStructure === 'object' && departmentStructure) {
+            for (let [officialFac, classList] of Object.entries(departmentStructure)) {
+                if (Array.isArray(classList) && classList.some(c => c.trim().toLowerCase() === rawClass)) {
+                    return officialFac;
+                }
+            }
+        }
+
+        // Gộp các Khoa thành phần / sáp nhập
+        if (lowerFac.includes('cơ khí') || lowerFac.includes('điện - điện tử') || lowerFac.includes('cơ - điện')) {
+            return 'Cơ - Điện - Xây dựng';
+        }
+        if (lowerFac.includes('công nghệ thông tin') || lowerFac.includes('kế toán')) {
+            return 'Công nghệ Thông tin - Kế toán';
+        }
+        if (lowerFac.includes('sư phạm') || lowerFac.includes('hành chính') || lowerFac.includes('xã hội')) {
+            return 'Sư phạm - Hành chính - Xã hội';
+        }
+        if (lowerFac.includes('nông - lâm') || lowerFac.includes('thú y') || lowerFac.includes('thực phẩm')) {
+            return 'Nông - Lâm - Thú y - Thực phẩm';
+        }
+        if (lowerFac.includes('ô tô') || lowerFac.includes('công nghệ ô tô')) {
+            return 'Công nghệ Ô tô';
+        }
+
+        // So khớp hoa/thường với sơ đồ
+        if (typeof departmentStructure === 'object' && departmentStructure) {
+            for (let officialFac of Object.keys(departmentStructure)) {
+                if (officialFac.toLowerCase() === lowerFac) {
+                    return officialFac;
+                }
+            }
+        }
+
+        if (!rawFac) return 'Chưa xác định';
+        return rawFac.toLowerCase().replace(/(^|\s)\S/g, l => l.toUpperCase());
+    }
 
     function formatDriveUrl(url) {
         if (!url) return '';
@@ -391,8 +437,12 @@
         data.forEach(row => {
             const studentId = String(row[0] || '').trim();
             const studentName = String(row[1] || '').trim();
-            const faculty = String(row[3] || 'Chưa xác định').trim();
+            const rawClass = String(row[2] || '').trim();
+            const rawFaculty = String(row[3] || '').trim();
             const status = String(row[7] || '').trim().toLowerCase();
+
+            // Gọi hàm chuẩn hóa tên Khoa
+            const faculty = getStandardFaculty(rawFaculty, rawClass);
 
             const studentKey = studentId || studentName;
             if (studentKey) studentSet.add(studentKey);
@@ -475,10 +525,11 @@
 
         if (!data || data.length === 0) return;
 
-        const faculties = [...new Set(data.map(r => r[3]).filter(Boolean))].sort();
+        // Lấy danh sách Khoa đã được gộp & chuẩn hóa
+        const normalizedFaculties = [...new Set(data.map(r => getStandardFaculty(r[3], r[2])).filter(Boolean))].sort();
         if (facultySelect) {
             facultySelect.innerHTML = '<option value="">-- Tất cả Liên Chi đoàn --</option>' +
-                faculties.map(f => `<option value="${f}">${f}</option>`).join('');
+                normalizedFaculties.map(f => `<option value="${f}">${f}</option>`).join('');
         }
 
         const activities = [...new Set(data.map(r => r[4]).filter(Boolean))].sort();
@@ -502,7 +553,7 @@
 
         let filtered = data;
         if (facultyFilter) {
-            filtered = data.filter(r => r[3] === facultyFilter);
+            filtered = data.filter(r => getStandardFaculty(r[3], r[2]) === facultyFilter);
         }
 
         const classes = [...new Set(filtered.map(r => r[2]).filter(Boolean))].sort();
@@ -516,7 +567,8 @@
         const activity = document.getElementById('filterActivity')?.value || '';
 
         currentFilteredData = globalData.filter(row => {
-            const matchFaculty = !faculty || row[3] === faculty;
+            const rowFaculty = getStandardFaculty(row[3], row[2]);
+            const matchFaculty = !faculty || rowFaculty === faculty;
             const matchClass = !className || row[2] === className;
             const matchActivity = !activity || row[4] === activity;
             return matchFaculty && matchClass && matchActivity;
@@ -557,6 +609,7 @@
             pageData.forEach(row => {
                 const [studentId, name, classId, facultyId, actName, achName, fileUrlStr, status] = row;
                 const displayActivity = actName || achName || '-';
+                const standardFaculty = getStandardFaculty(facultyId, classId);
 
                 let statusColor = "bg-amber-100 text-amber-800 border border-amber-300";
                 let statusText = status || 'Chờ duyệt';
@@ -575,7 +628,7 @@
                         <td class="p-3 font-semibold text-blue-900 whitespace-nowrap">${studentId || 'Chưa có'}</td>
                         <td class="p-3 font-medium text-slate-800">${name || ''}</td>
                         <td class="p-3 text-gray-600">${classId || ''}</td>
-                        <td class="p-3 text-gray-800 font-semibold">${facultyId || ''}</td>
+                        <td class="p-3 text-gray-800 font-semibold">${standardFaculty}</td>
                         <td class="p-3 text-slate-700">${displayActivity}</td>
                         <td class="p-3 whitespace-nowrap">
                             <span class="${statusColor} px-2.5 py-1 rounded-full text-xs shadow-sm inline-block">
@@ -622,10 +675,11 @@
         }
 
         currentFilteredData = globalData.filter(row => {
+            const stdFaculty = getStandardFaculty(row[3], row[2]).toLowerCase();
             return String(row[0]||'').toLowerCase().includes(keyword) ||
                    String(row[1]||'').toLowerCase().includes(keyword) ||
                    String(row[2]||'').toLowerCase().includes(keyword) ||
-                   String(row[3]||'').toLowerCase().includes(keyword);
+                   stdFaculty.includes(keyword);
         });
 
         renderTable(currentFilteredData);
@@ -813,7 +867,7 @@
         }
     });
 
-    // ================== HỆ THỐNG XUẤT FILE MỚI ==================
+    // ================== HỆ THỐNG XUẤT FILE ==================
     function openFormatModal(type) {
         selectedExportType = type;
         const titleText = type === 'personal' ? 'XUẤT BÁO CÁO CÁ NHÂN' : 'XUẤT BÁO CÁO TẬP THỂ';
@@ -846,6 +900,7 @@
 
         const firstRow = approvedData[0];
         const isPersonal = selectedExportType === 'personal';
+        const stdFaculty = getStandardFaculty(firstRow[3], firstRow[2]);
         
         const templateConfig = {
             unitHeader: "ĐOÀN TỈNH ĐẮK LẮK<br><b>BCH TRƯỜNG CAO ĐẲNG ĐẮK LẮK</b>",
@@ -863,10 +918,10 @@
         let infoHeader = isPersonal 
             ? `<div style="margin-bottom: 15px; font-size: 14px; line-height: 1.6;">
                 <p><b>Họ và tên Đoàn viên:</b> ${firstRow[1]} &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <b>Mã SV:</b> ${firstRow[0] || '...'}</p>
-                <p><b>Chi đoàn / Lớp:</b> ${firstRow[2]} &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <b>Liên Chi Đoàn/Khoa:</b> ${firstRow[3]}</p>
+                <p><b>Chi đoàn / Lớp:</b> ${firstRow[2]} &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <b>Liên Chi Đoàn/Khoa:</b> ${stdFaculty}</p>
                </div>`
             : `<div style="margin-bottom: 15px; font-size: 14px; line-height: 1.6;">
-                <p><b>Đơn vị / Chi đoàn:</b> ${firstRow[2] || keyword} &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <b>Thuộc Khoa/LCĐ:</b> ${firstRow[3] || ''}</p>
+                <p><b>Đơn vị / Chi đoàn:</b> ${firstRow[2] || keyword} &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <b>Thuộc Khoa/LCĐ:</b> ${stdFaculty}</p>
                 <p><b>Tổng số minh chứng được công nhận:</b> ${approvedData.length}</p>
                </div>`;
 
@@ -1021,140 +1076,5 @@
       window.chatbaseConfig = { chatbotId: "cuxqgU3a1vLNmHs3I3o-S" }
     </script>
     <script src="https://www.chatbase.co/embed.min.js" chatbotId="cuxqgU3a1vLNmHs3I3o-S" domain="www.chatbase.co" defer></script>
- <script>
-// 1. HÀM CHUẨN HÓA VÀ GỘP TÊN LIÊN CHI ĐOÀN / KHOA THÔNG MINH
-function getStandardFaculty(facultyStr, classStr = '') {
-    if (!facultyStr) facultyStr = '';
-    let rawFac = facultyStr.trim().replace(/\s+/g, ' ');
-    let rawClass = (classStr || '').trim().toLowerCase();
-    let lowerFac = rawFac.toLowerCase();
-
-    // Quy tắc 1: Tự động tra cứu Khoa chuẩn dựa theo Lớp (nếu có trong sơ đồ departmentStructure)
-    if (rawClass && typeof departmentStructure === 'object' && departmentStructure) {
-        for (let [officialFac, classList] of Object.entries(departmentStructure)) {
-            if (Array.isArray(classList) && classList.some(c => c.trim().toLowerCase() === rawClass)) {
-                return officialFac;
-            }
-        }
-    }
-
-    // Quy tắc 2: Gộp các Khoa sáp nhập / Khoa thành phần cũ về Liên Chi đoàn mới
-    if (lowerFac.includes('cơ khí') || lowerFac.includes('điện - điện tử') || lowerFac.includes('cơ - điện')) {
-        return 'Cơ - Điện - Xây dựng';
-    }
-    if (lowerFac.includes('công nghệ thông tin') || lowerFac.includes('kế toán')) {
-        return 'Công nghệ Thông tin - Kế toán';
-    }
-    if (lowerFac.includes('sư phạm') || lowerFac.includes('hành chính') || lowerFac.includes('xã hội')) {
-        return 'Sư phạm - Hành chính - Xã hội';
-    }
-    if (lowerFac.includes('nông - lâm') || lowerFac.includes('thú y') || lowerFac.includes('thực phẩm')) {
-        return 'Nông - Lâm - Thú y - Thực phẩm';
-    }
-    if (lowerFac.includes('ô tô') || lowerFac.includes('công nghệ ô tô')) {
-        return 'Công nghệ Ô tô';
-    }
-
-    // Quy tắc 3: So khớp không phân biệt chữ hoa / chữ thường với sơ đồ trường
-    if (typeof departmentStructure === 'object' && departmentStructure) {
-        for (let officialFac of Object.keys(departmentStructure)) {
-            if (officialFac.toLowerCase() === lowerFac) {
-                return officialFac;
-            }
-        }
-    }
-
-    // Quy tắc 4: Chuẩn hóa chữ cái đầu từng từ (Title Case) cho các trường hợp còn lại
-    if (!rawFac) return 'Chưa xác định';
-    return rawFac.toLowerCase().replace(/(^|\s)\S/g, l => l.toUpperCase());
-}
-
-// 2. CẬP NHẬT LẠI HÀM DASHBOARD ĐỂ SỬ DỤNG TÊN KHOA ĐÃ CHUẨN HÓA
-function updateDashboard(data) {
-    data = data || [];
-    const total = data.length;
-    
-    let approved = 0;
-    let pending = 0;
-    let rejected = 0;
-    const studentSet = new Set();
-    const facultyCounts = {};
-
-    data.forEach(row => {
-        const studentId = String(row[0] || '').trim();
-        const studentName = String(row[1] || '').trim();
-        const rawClass = String(row[2] || '').trim();
-        const rawFaculty = String(row[3] || '').trim();
-        const status = String(row[7] || '').trim().toLowerCase();
-
-        // Gọi hàm chuẩn hóa tên Khoa
-        const faculty = getStandardFaculty(rawFaculty, rawClass);
-
-        const studentKey = studentId || studentName;
-        if (studentKey) studentSet.add(studentKey);
-
-        if (status === "đã duyệt" || status === "duyệt") {
-            approved++;
-        } else if (status === "từ chối" || status === "không duyệt") {
-            rejected++;
-        } else {
-            pending++;
-        }
-
-        if (faculty) {
-            facultyCounts[faculty] = (facultyCounts[faculty] || 0) + 1;
-        }
-    });
-
-    if(document.getElementById('kpiTotal')) document.getElementById('kpiTotal').innerText = total;
-    if(document.getElementById('kpiUniqueStudents')) document.getElementById('kpiUniqueStudents').innerText = studentSet.size;
-    if(document.getElementById('kpiApproved')) document.getElementById('kpiApproved').innerText = approved;
-    if(document.getElementById('kpiPending')) document.getElementById('kpiPending').innerText = pending;
-    if(document.getElementById('kpiRejected')) document.getElementById('kpiRejected').innerText = rejected;
-
-    renderCharts({ approved, pending, rejected }, facultyCounts);
-}
-
-// 3. CẬP NHẬT BỘ LỌC VÀ TÌM KIẾM ĐỒNG BỘ THEO DỮ LIỆU ĐÃ CHUẨN HÓA
-function initDashboardFilters(data) {
-    const facultySelect = document.getElementById('filterFaculty');
-    const activitySelect = document.getElementById('filterActivity');
-
-    if (!data || data.length === 0) return;
-
-    // Lấy danh sách Khoa đã được gộp & chuẩn hóa
-    const normalizedFaculties = [...new Set(data.map(r => getStandardFaculty(r[3], r[2])).filter(Boolean))].sort();
-    if (facultySelect) {
-        facultySelect.innerHTML = '<option value="">-- Tất cả Liên Chi đoàn --</option>' +
-            normalizedFaculties.map(f => `<option value="${f}">${f}</option>`).join('');
-    }
-
-    const activities = [...new Set(data.map(r => r[4]).filter(Boolean))].sort();
-    if (activitySelect) {
-        activitySelect.innerHTML = '<option value="">-- Tất cả Hoạt động --</option>' +
-            activities.map(a => `<option value="${a}">${a}</option>`).join('');
-    }
-
-    updateFilterClassDropdown(data);
-}
-
-function filterSubmissions() {
-    const faculty = document.getElementById('filterFaculty')?.value || '';
-    const className = document.getElementById('filterClass')?.value || '';
-    const activity = document.getElementById('filterActivity')?.value || '';
-
-    currentFilteredData = globalData.filter(row => {
-        const rowFaculty = getStandardFaculty(row[3], row[2]);
-        const matchFaculty = !faculty || rowFaculty === faculty;
-        const matchClass = !className || row[2] === className;
-        const matchActivity = !activity || row[4] === activity;
-        return matchFaculty && matchClass && matchActivity;
-    });
-
-    currentPage = 1;
-    renderTable(currentFilteredData);
-    updateDashboard(currentFilteredData);
-}
-    <script> 
 </body>
 </html>
