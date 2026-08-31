@@ -275,9 +275,9 @@
     <!-- SCRIPT XỬ LÝ HỆ THỐNG TOÀN CỤC -->
     <script>
     // =========================================================================
-    // ⚠️ CHỔ DÁN LINK GOOGLE APPS SCRIPT WEB APP CỦA BẠN (Thay chuỗi bên dưới)
+    // ⚠️ ĐÃ ĐỔI LINK GOOGLE APPS SCRIPT CHUẨN (CÓ CHỨA THAM SỐ ?output=json)
     // =========================================================================
-    const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbwz_xEyv2cNfZRHPPcQtfh74QP7VoJuB0AlKuPH1qB2Di0syCfIyzmbjh8Ozvnw57ti/exec";
+    const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbwz_xEyv2cNfZRHPPcQtfh74QP7VoJuB0AlKuPH1qB2Di0syCfIyzmbjh8Ozvnw57ti/exec"; 
 
     let globalData = [];
     let currentFilteredData = [];
@@ -361,7 +361,7 @@
 
     async function loadData() {
         try {
-            const res = await fetch(WEB_APP_URL + "?t=" + new Date().getTime());
+            const res = await fetch(WEB_APP_URL + "?output=json&t=" + new Date().getTime());
             const result = await res.json();
             
             if (result.config) {
@@ -422,6 +422,7 @@
 
         } catch (err) { 
             console.error("Lỗi kết nối dữ liệu:", err); 
+            document.getElementById('uiSchoolName').innerText = "CỔNG THÔNG TIN THI ĐUA ĐOÀN VIÊN";
         }
     }
 
@@ -809,6 +810,7 @@
         setActivity.forEach(a => { actSelect.innerHTML += `<option value="${a}">${a}</option>`; });
     }
 
+    // GỬI DUYỆT FORM NỘP MINH CHỨNG (TỐI ƯU CORS KHI TRUYỀN VÀO GOOGLE APPS SCRIPT)
     document.getElementById('uploadForm').addEventListener('submit', async function(e) {
         e.preventDefault();
         
@@ -849,6 +851,7 @@
 
             const response = await fetch(WEB_APP_URL, {
                 method: 'POST',
+                headers: { 'Content-Type': 'text/plain;charset=utf-8' },
                 body: JSON.stringify(payload)
             });
 
@@ -1021,7 +1024,7 @@
     }
     </script>
 
-    <!-- BỘ ĐẾM HÀNG DỌC -->
+    <!-- BỘ ĐẾM HÀNG DỌC CÓ AN TOÀN TRÁNH LỖI 410 CỦA COUNTERAPI -->
     <style>
       .counter-widget-vertical {
         position: fixed; bottom: 8px; left: 8px;
@@ -1052,26 +1055,23 @@
     </div>
 
     <script>
-      (function initTotalCounter() {
+      (async function initTotalCounter() {
         const domainKey = window.location.hostname.replace(/[^a-zA-Z0-9]/g, '_') || 'my_local_site';
-        fetch(`https://api.counterapi.dev/v1/${domainKey}/views/up`)
-          .then(res => {
-            if (!res.ok) throw new Error("API Counter Error");
-            return res.json();
-          })
-          .then(data => { 
-            if (data && data.count) {
-              document.getElementById('total-views').innerText = data.count.toLocaleString('vi-VN'); 
-            } else {
-              throw new Error("Invalid Count");
-            }
-          })
-          .catch(() => {
-            let localCount = parseInt(localStorage.getItem('site_views') || '105');
-            localCount++;
-            localStorage.setItem('site_views', localCount);
-            document.getElementById('total-views').innerText = localCount.toLocaleString('vi-VN');
-          });
+        try {
+          const res = await fetch(`https://api.counterapi.dev/v1/${domainKey}/views/up`);
+          if (!res.ok) throw new Error("API Counter Error Status " + res.status);
+          const data = await res.json();
+          if (data && data.count) {
+            document.getElementById('total-views').innerText = data.count.toLocaleString('vi-VN'); 
+            return;
+          }
+        } catch (err) {
+          // Tự động chuyển qua bộ đếm LocalStorage nếu API bị ngắt kết nối
+          let localCount = parseInt(localStorage.getItem('site_views') || '105');
+          localCount++;
+          localStorage.setItem('site_views', localCount);
+          document.getElementById('total-views').innerText = localCount.toLocaleString('vi-VN');
+        }
       })();
 
       function updateOnlineUsers() {
