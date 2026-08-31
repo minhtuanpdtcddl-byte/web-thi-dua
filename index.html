@@ -1158,5 +1158,105 @@
       window.chatbaseConfig = { chatbotId: "cuxqgU3a1vLNmHs3I3o-S" }
     </script>
     <script src="https://www.chatbase.co/embed.min.js" chatbotId="cuxqgU3a1vLNmHs3I3o-S" domain="www.chatbase.co" defer></script>
+    <!-- Các phần HTML của trang index.html ở trên -->
+    
+    <!-- ================= CHÈN ĐOẠN SCRIPT NÀY VÀO ĐÂY ================= -->
+    <script>
+        // ⚠️ THAY BẰNG URL WEB APP GOOGLE APPS SCRIPT CỦA BẠN
+        const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbzueg6EhKejP0pN8q5n6ugIwvQbAqVCi9D66cKa05EnNBUDMQ0aOAGtP2N1hpzb7Szh/exec";
+
+        // Chuẩn hóa tên Khoa / Liên chi đoàn
+        function getStandardFaculty(facultyStr) {
+            if (!facultyStr) return '';
+            let raw = facultyStr.trim();
+            let lower = raw.toLowerCase();
+
+            if (lower.includes('cơ khí') || lower.includes('điện') || lower.includes('cơ - điện')) return 'Cơ - Điện - Xây dựng';
+            if (lower.includes('công nghệ thông tin') || lower.includes('kế toán')) return 'Công nghệ Thông tin - Kế toán';
+            if (lower.includes('sư phạm') || lower.includes('hành chính') || lower.includes('xã hội')) return 'Sư phạm - Hành chính - Xã hội';
+            if (lower.includes('nông') || lower.includes('lâm') || lower.includes('thú y') || lower.includes('thực phẩm')) return 'Nông - Lâm - Thú y - Thực phẩm';
+            if (lower.includes('ô tô') || lower.includes('công nghệ ô tô')) return 'Công nghệ Ô tô';
+
+            return raw;
+        }
+
+        // Tự động chạy khi trang web tải xong
+        window.addEventListener('DOMContentLoaded', () => {
+            loadIndexData();
+        });
+
+        async function loadIndexData() {
+            const loadingHeader = document.getElementById('loadingHeader'); // Hoặc ID thẻ hiển thị dòng "ĐANG TẢI THÔNG TIN..."
+
+            try {
+                let data;
+                // Nhận diện môi trường Google Apps Script Native hoặc gọi Fetch Web App
+                if (typeof google !== 'undefined' && google.script && google.script.run) {
+                    data = await new Promise((resolve, reject) => {
+                        google.script.run
+                            .withSuccessHandler(resolve)
+                            .withFailureHandler(reject)
+                            .getClientConfig();
+                    });
+                } else {
+                    const res = await fetch(WEB_APP_URL + "?action=getClientConfig");
+                    data = await res.json();
+                }
+
+                if (data && data.status === "success" && data.config) {
+                    renderPageUI(data.config);
+                }
+            } catch (err) {
+                console.error("Lỗi tải dữ liệu Client:", err);
+            } finally {
+                // Đổi dòng chữ "ĐANG TẢI THÔNG TIN..." thành Tiêu đề chuẩn
+                if (loadingHeader) {
+                    loadingHeader.innerText = "HỆ THỐNG CỔNG THÔNG TIN THI ĐUA CỦA ĐOÀN VIÊN";
+                }
+            }
+        }
+
+        function renderPageUI(cfg) {
+            // 1. Đổ danh sách Hoạt động vào Dropdown select
+            const actSelect = document.getElementById('selectActivity') || document.querySelector('select[name="activity"]');
+            if (actSelect && Array.isArray(cfg.activities)) {
+                actSelect.innerHTML = '<option value="">-- Chọn Hoạt động (Nếu có) --</option>';
+                cfg.activities.forEach(act => {
+                    const opt = document.createElement('option');
+                    opt.value = act;
+                    opt.textContent = act;
+                    actSelect.appendChild(opt);
+                });
+            }
+
+            // 2. Đổ danh sách Khoa / Liên chi đoàn đã chuẩn hóa vào Dropdown (nếu chưa có sẵn)
+            const facultySelect = document.getElementById('selectFaculty') || document.querySelector('select[name="faculty"]');
+            if (facultySelect && facultySelect.options.length <= 1) {
+                const faculties = [
+                    'Cơ - Điện - Xây dựng',
+                    'Công nghệ Thông tin - Kế toán',
+                    'Sư phạm - Hành chính - Xã hội',
+                    'Nông - Lâm - Thú y - Thực phẩm',
+                    'Công nghệ Ô tô'
+                ];
+                facultySelect.innerHTML = '<option value="">-- Chọn Liên Chi Đoàn / Khoa --</option>';
+                faculties.forEach(f => {
+                    const opt = document.createElement('option');
+                    opt.value = f;
+                    opt.textContent = f;
+                    facultySelect.appendChild(opt);
+                });
+            }
+
+            // 3. Cập nhật Logo & Tiêu đề trường (nếu có phần tử tương ứng)
+            const schoolTitle = document.getElementById('schoolTitle');
+            if (schoolTitle && cfg.schoolName) schoolTitle.innerText = cfg.schoolName;
+
+            const logoImg = document.getElementById('schoolLogo');
+            if (logoImg && cfg.logoUrl) logoImg.src = cfg.logoUrl;
+        }
+    </script>
+</body>
+</html>
 </body>
 </html>
