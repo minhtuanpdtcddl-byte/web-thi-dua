@@ -274,7 +274,9 @@
 
     <!-- SCRIPT XỬ LÝ HỆ THỐNG TOÀN CỤC -->
     <script>
-    // ⚠️ DÁN LINK GOOGLE APPS SCRIPT WEB APP CỦA BẠN VÀO DÒNG DƯỚI DÂY (Thay thế chuỗi URL bên dưới)
+    // =========================================================================
+    // ⚠️ CHỔ DÁN LINK GOOGLE APPS SCRIPT WEB APP CỦA BẠN (Thay chuỗi bên dưới)
+    // =========================================================================
     const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbwfjNdk4LFhd-_AV_vlphJovgkKzj93m-lTis2vXjqiCpmLMq697LOak0T5-EongMS3/exec";
 
     let globalData = [];
@@ -1053,10 +1055,19 @@
       (function initTotalCounter() {
         const domainKey = window.location.hostname.replace(/[^a-zA-Z0-9]/g, '_') || 'my_local_site';
         fetch(`https://api.counterapi.dev/v1/${domainKey}/views/up`)
-          .then(res => res.json())
-          .then(data => { document.getElementById('total-views').innerText = data.count.toLocaleString('vi-VN'); })
+          .then(res => {
+            if (!res.ok) throw new Error("API Counter Error");
+            return res.json();
+          })
+          .then(data => { 
+            if (data && data.count) {
+              document.getElementById('total-views').innerText = data.count.toLocaleString('vi-VN'); 
+            } else {
+              throw new Error("Invalid Count");
+            }
+          })
           .catch(() => {
-            let localCount = parseInt(localStorage.getItem('site_views') || '100');
+            let localCount = parseInt(localStorage.getItem('site_views') || '105');
             localCount++;
             localStorage.setItem('site_views', localCount);
             document.getElementById('total-views').innerText = localCount.toLocaleString('vi-VN');
