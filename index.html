@@ -4,21 +4,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Hệ thống Quản lý Thi đua Đoàn viên</title>
-
-    <!-- ================================================================= -->
-    <!-- ⚙️ CẤU HÌNH HỆ THỐNG: DÁN LINK WEB APP CỦA BẠN VÀO DƯỚI ĐÂY      -->
-    <!-- ================================================================= -->
-    <script>
-        const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbywDb7oaPoiw0A-limy_k0POz9YcOQjquf8ZLHbBaY6Qky72mp8J7h0D-0c202fk4VW/exec"; 
-    </script>
-
     <!-- Chart.js & Tailwind CSS -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- FontAwesome Icon -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
-    <!-- Thư viện Xuất Excel -->
-    <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 </head>
 <body class="bg-slate-100 p-3 md:p-8 font-sans min-h-screen flex flex-col justify-between">
     
@@ -28,7 +18,7 @@
         <div class="border-b-2 border-blue-600 pb-4 mb-5 flex flex-col items-center justify-center text-center">
             <img id="uiLogo" src="" alt="Logo" class="h-16 md:h-20 w-auto object-contain mb-2 hidden" onerror="this.classList.add('hidden')">
             <div>
-                <h1 id="uiSchoolName" class="text-xl md:text-2xl font-bold text-blue-900 uppercase">TRƯỜNG CAO ĐẲNG ĐẮK LẮK</h1>
+                <h1 id="uiSchoolName" class="text-xl md:text-2xl font-bold text-blue-900 uppercase">Đang tải thông tin...</h1>
                 <p class="text-blue-700 font-semibold text-xs md:text-sm mt-1 uppercase tracking-wide">
                     HỆ THỐNG CỔNG THÔNG TIN THI ĐUA CỦA ĐOÀN VIÊN
                 </p>
@@ -56,8 +46,8 @@
             <div class="relative group" onmouseenter="pauseNewsSlider()" onmouseleave="startNewsSlider()">
                 <div id="newsSliderContainer" class="p-5 min-h-[300px]"></div>
 
-                <button type="button" onclick="prevNewsSlide()" class="absolute left-2 top-1/2 -translate-y-1/2 bg-black/40 hover:bg-black/70 text-white p-2 rounded-full opacity-0 group-hover:opacity-100 transition duration-300">❮</button>
-                <button type="button" onclick="nextNewsSlide()" class="absolute right-2 top-1/2 -translate-y-1/2 bg-black/40 hover:bg-black/70 text-white p-2 rounded-full opacity-0 group-hover:opacity-100 transition duration-300">❯</button>
+                <button onclick="prevNewsSlide()" class="absolute left-2 top-1/2 -translate-y-1/2 bg-black/40 hover:bg-black/70 text-white p-2 rounded-full opacity-0 group-hover:opacity-100 transition duration-300">❮</button>
+                <button onclick="nextNewsSlide()" class="absolute right-2 top-1/2 -translate-y-1/2 bg-black/40 hover:bg-black/70 text-white p-2 rounded-full opacity-0 group-hover:opacity-100 transition duration-300">❯</button>
 
                 <div id="newsDotsContainer" class="flex justify-center gap-2 pb-4"></div>
             </div>
@@ -118,12 +108,13 @@
             </form>
         </div>
 
-        <!-- 5. DASHBOARD BÁO CÁO -->
+        <!-- 5. DASHBOARD BÁO CÁO TRỰC QUAN -->
         <div class="mb-8">
             <h2 class="text-base font-bold text-slate-800 uppercase mb-4 flex items-center gap-2">
                 📊 BÁO CÁO THỐNG KÊ TỔNG QUAN
             </h2>
 
+            <!-- KHỐI BỘ LỌC THỐNG KÊ -->
             <div class="grid grid-cols-1 md:grid-cols-4 gap-3 w-full text-xs items-end mb-6 bg-slate-50 p-3 rounded-lg border border-slate-200">
                 <div>
                     <label class="block font-semibold mb-1 text-slate-700">Liên Chi đoàn / Khoa:</label>
@@ -153,6 +144,7 @@
                 </div>
             </div>
 
+            <!-- CÁC THẺ KPI CHỈ SỐ -->
             <div class="grid grid-cols-2 md:grid-cols-5 gap-3 mb-6">
                 <div class="bg-blue-50 border-l-4 border-blue-600 p-3.5 rounded-r-lg shadow-sm">
                     <p class="text-[11px] font-bold text-blue-700 uppercase">Tổng số minh chứng</p>
@@ -176,6 +168,7 @@
                 </div>
             </div>
 
+            <!-- HIỂN THỊ BIỂU ĐỒ -->
             <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
                 <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm flex flex-col items-center">
                     <h3 class="text-xs font-bold text-slate-600 uppercase mb-3">Tỷ lệ Trạng thái Duyệt</h3>
@@ -224,6 +217,7 @@
             </table>
         </div>
 
+        <!-- CỤM ĐIỀU KHIỂN PHÂN TRANG -->
         <div class="flex flex-col sm:flex-row justify-between items-center gap-4 mt-4 px-2 text-sm text-slate-600">
             <div class="flex items-center gap-2">
                 <span>Hiển thị:</span>
@@ -249,51 +243,72 @@
     </div>
 
     <footer class="text-center py-4 text-xs text-slate-500 border-t border-slate-200 max-w-5xl mx-auto w-full">
-        <p id="uiFooterInfo">Hệ thống Quản lý Thi đua Đoàn viên - Trường Cao đẳng Đắk Lắk</p>
+        <p id="uiFooterInfo">Hệ thống Quản lý Thi đua Đoàn viên</p>
     </footer>
 
-    <!-- MODAL XUẤT BÁO CÁO -->
+    <!-- MODAL CHỌN ĐỊNH DẠNG XUẤT BÁO CÁO -->
     <div id="formatSelectModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); z-index:99999; justify-content:center; align-items:center;">
-      <div style="background:#fff; padding:22px; border-radius:8px; width:330px; text-align:center; box-shadow:0 10px 25px rgba(0,0,0,0.3);">
-        <h3 id="modalReportTypeTitle" style="margin:0 0 8px 0; color:#1e293b; font-size:16px; font-weight:bold;">CHỌN ĐỊNH DẠNG BÁO CÁO</h3>
-        <p style="font-size:13px; color:#64748b; margin-bottom:18px;">Vui lòng chọn định dạng file muốn xuất:</p>
+      <div style="background:#fff; padding:22px; border-radius:8px; width:330px; text-align:center; box-shadow:0 10px 25px rgba(0,0,0,0.3); font-family:'Times New Roman', serif;">
+        <h3 id="modalReportTypeTitle" style="margin:0 0 8px 0; color:#1e293b; font-size:16px; text-transform:uppercase; font-weight:bold;">CHỌN ĐỊNH DẠNG BÁO CÁO</h3>
+        <p style="font-size:13px; color:#64748b; margin-bottom:18px; font-style:italic;">Vui lòng chọn định dạng file muốn xuất:</p>
         
         <div style="display:flex; flex-direction:column; gap:10px;">
-          <button onclick="executeReportExport('pdf')" style="background:#ac0d0d; color:#fff; border:none; padding:10px; border-radius:5px; font-weight:bold; cursor:pointer;">📕 File PDF (.pdf)</button>
-          <button onclick="executeReportExport('word')" style="background:#185abd; color:#fff; border:none; padding:10px; border-radius:5px; font-weight:bold; cursor:pointer;">📄 File Word (.doc)</button>
-          <button onclick="executeReportExport('excel')" style="background:#107c41; color:#fff; border:none; padding:10px; border-radius:5px; font-weight:bold; cursor:pointer;">📊 File Excel (.xlsx)</button>
-          <button onclick="closeFormatModal()" style="background:#e2e8f0; color:#334155; border:none; padding:8px; border-radius:5px; cursor:pointer; margin-top:5px;">Hủy</button>
+          <button onclick="executeReportExport('pdf')" style="background:#ac0d0d; color:#fff; border:none; padding:10px; border-radius:5px; cursor:pointer; font-weight:bold; font-size:13px;">
+            📕 File PDF / In báo cáo (.pdf)
+          </button>
+          <button onclick="executeReportExport('word')" style="background:#185abd; color:#fff; border:none; padding:10px; border-radius:5px; cursor:pointer; font-weight:bold; font-size:13px;">
+            📄 File Word (.doc)
+          </button>
+          <button onclick="executeReportExport('excel')" style="background:#107c41; color:#fff; border:none; padding:10px; border-radius:5px; cursor:pointer; font-weight:bold; font-size:13px;">
+            📊 File Excel (.xlsx)
+          </button>
+          <button onclick="closeFormatModal()" style="background:#e2e8f0; color:#334155; border:none; padding:8px; border-radius:5px; cursor:pointer; font-size:12px; margin-top:5px;">
+            Đóng / Hủy
+          </button>
         </div>
       </div>
     </div>
 
+    <!-- THƯ VIỆN HỖ TRỢ XUẤT EXCEL -->
+    <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+
+    <!-- SCRIPT XỬ LÝ HỆ THỐNG TOÀN CỤC -->
     <script>
+    // ⚠️ DÁN LINK GOOGLE APPS SCRIPT WEB APP CỦA BẠN VÀO DÒNG DƯỚI DÂY (Thay thế chuỗi URL bên dưới)
+    const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbywDb7oaPoiw0A-limy_k0POz9YcOQjquf8ZLHbBaY6Qky72mp8J7h0D-0c202fk4VW/exec";
+
     let globalData = [];
     let currentFilteredData = [];
-    let departmentStructure = {
-        "Cơ - Điện - Xây dựng": ["Lớp Cơ khí 01", "Lớp Điện 02"],
-        "Công nghệ Thông tin - Kế toán": ["Lớp CNTT K46", "Lớp Kế toán K46"],
-        "Sư phạm - Hành chính - Xã hội": ["Lớp Sư phạm 01"],
-        "Nông - Lâm - Thú y - Thực phẩm": ["Lớp Thú y 01"]
-    };
+    let departmentStructure = {};
     let selectedExportType = 'personal';
+
+    // Biến phân trang
     let currentPage = 1;
     let rowsPerPage = 10;
+
+    // Biến slider
+    let newsDataList = [];
+    let currentSlideIndex = 0;
+    let newsSliderTimer = null;
+    let slideIntervalTime = 15000;
+
+    // Biến biểu đồ
     let statusChartInstance = null;
     let facultyChartInstance = null;
 
     document.addEventListener("DOMContentLoaded", function() {
-        initFormFacultyDropdown();
         loadData();
     });
 
+    // 1. HÀM CHUẨN HÓA VÀ GỘP TÊN LIÊN CHI ĐOÀN / KHOA THÔNG MINH
     function getStandardFaculty(facultyStr, classStr = '') {
         if (!facultyStr) facultyStr = '';
         let rawFac = facultyStr.trim().replace(/\s+/g, ' ');
         let rawClass = (classStr || '').trim().toLowerCase();
         let lowerFac = rawFac.toLowerCase();
 
-        if (rawClass && typeof departmentStructure === 'object') {
+        // Tra cứu theo Lớp
+        if (rawClass && typeof departmentStructure === 'object' && departmentStructure) {
             for (let [officialFac, classList] of Object.entries(departmentStructure)) {
                 if (Array.isArray(classList) && classList.some(c => c.trim().toLowerCase() === rawClass)) {
                     return officialFac;
@@ -301,126 +316,155 @@
             }
         }
 
-        if (lowerFac.includes('cơ khí') || lowerFac.includes('điện') || lowerFac.includes('xây dựng')) return 'Cơ - Điện - Xây dựng';
-        if (lowerFac.includes('công nghệ thông tin') || lowerFac.includes('kế toán') || lowerFac.includes('cntt')) return 'Công nghệ Thông tin - Kế toán';
-        if (lowerFac.includes('sư phạm') || lowerFac.includes('hành chính') || lowerFac.includes('xã hội')) return 'Sư phạm - Hành chính - Xã hội';
-        if (lowerFac.includes('nông') || lowerFac.includes('lâm') || lowerFac.includes('thú y')) return 'Nông - Lâm - Thú y - Thực phẩm';
+        // Gộp các Khoa thành phần / sáp nhập
+        if (lowerFac.includes('cơ khí') || lowerFac.includes('điện - điện tử') || lowerFac.includes('cơ - điện')) {
+            return 'Cơ - Điện - Xây dựng';
+        }
+        if (lowerFac.includes('công nghệ thông tin') || lowerFac.includes('kế toán')) {
+            return 'Công nghệ Thông tin - Kế toán';
+        }
+        if (lowerFac.includes('sư phạm') || lowerFac.includes('hành chính') || lowerFac.includes('xã hội')) {
+            return 'Sư phạm - Hành chính - Xã hội';
+        }
+        if (lowerFac.includes('nông - lâm') || lowerFac.includes('thú y') || lowerFac.includes('thực phẩm')) {
+            return 'Nông - Lâm - Thú y - Thực phẩm';
+        }
+        if (lowerFac.includes('ô tô') || lowerFac.includes('công nghệ ô tô')) {
+            return 'Công nghệ Ô tô';
+        }
 
-        return rawFac || 'Khác';
-    }
-
-    // Tải dữ liệu an toàn có Timeout
-    async function loadData() {
-        const schoolNameHeader = document.getElementById('uiSchoolName');
-        schoolNameHeader.innerText = "TRƯỜNG CAO ĐẲNG ĐẮK LẮK"; // Đặt ngay mặc định
-
-        let fetchedSuccess = false;
-
-        try {
-            if (typeof google !== 'undefined' && google.script && google.script.run) {
-                const result = await new Promise((resolve, reject) => {
-                    google.script.run.withSuccessHandler(resolve).withFailureHandler(reject).getInitialData();
-                });
-                applyData(result);
-                fetchedSuccess = true;
-            } else if (WEB_APP_URL && WEB_APP_URL.includes("http")) {
-                const controller = new AbortController();
-                const timeoutId = setTimeout(() => controller.abort(), 4000); // Tối đa 4s
-
-                const res = await fetch(WEB_APP_URL + "?action=getClientConfig&t=" + new Date().getTime(), { signal: controller.signal });
-                clearTimeout(timeoutId);
-
-                if (res.ok) {
-                    const result = await res.json();
-                    applyData(result);
-                    fetchedSuccess = true;
+        // So khớp hoa/thường với sơ đồ
+        if (typeof departmentStructure === 'object' && departmentStructure) {
+            for (let officialFac of Object.keys(departmentStructure)) {
+                if (officialFac.toLowerCase() === lowerFac) {
+                    return officialFac;
                 }
             }
-        } catch (err) {
-            console.warn("Không kết nối được Apps Script, hiển thị chế độ xem thử:", err);
         }
 
-        // Nếu không tải được từ backend thì dùng dữ liệu mặc định hiển thị giao diện ngay
-        if (!fetchedSuccess && globalData.length === 0) {
-            currentFilteredData = [];
-            initDashboardFilters([]);
-            renderTable([]);
-            updateDashboard([]);
-        }
+        if (!rawFac) return 'Chưa xác định';
+        return rawFac.toLowerCase().replace(/(^|\s)\S/g, l => l.toUpperCase());
     }
 
-    function applyData(result) {
-        if (!result) return;
-        const schoolNameHeader = document.getElementById('uiSchoolName');
-        if (result.config && result.config.schoolName) {
-            schoolNameHeader.innerText = result.config.schoolName;
-        }
-        if (result.config && result.config.structure) {
-            departmentStructure = result.config.structure;
-            initFormFacultyDropdown();
-        }
-        globalData = result.data || [];
-        currentFilteredData = globalData;
-        initDashboardFilters(globalData);
-        renderTable(currentFilteredData);
-        updateDashboard(currentFilteredData);
-    }
-
-    function initFormFacultyDropdown() {
-        const facultySelect = document.getElementById('facultyId');
-        const classSelect = document.getElementById('classId');
-        if (!facultySelect || !classSelect) return;
-
-        facultySelect.innerHTML = '<option value="">-- Chọn Liên Chi Đoàn / Khoa --</option>';
-        classSelect.innerHTML = '<option value="">-- Vui lòng chọn Khoa trước --</option>';
-        classSelect.disabled = true;
-
-        Object.keys(departmentStructure).forEach(faculty => {
-            facultySelect.innerHTML += `<option value="${faculty}">${faculty}</option>`;
-        });
-
-        facultySelect.onchange = function() {
-            const selected = this.value;
-            if (!selected || !departmentStructure[selected]) {
-                classSelect.innerHTML = '<option value="">-- Vui lòng chọn Khoa trước --</option>';
-                classSelect.disabled = true;
-                return;
+    function formatDriveUrl(url) {
+        if (!url) return '';
+        if (url.includes('drive.google.com') || url.includes('lh3.googleusercontent.com')) {
+            const match = url.match(/\/d\/([a-zA-Z0-9_-]+)/) || url.match(/id=([a-zA-Z0-9_-]+)/);
+            if (match && match[1]) {
+                return `https://lh3.googleusercontent.com/d/${match[1]}`;
             }
-            classSelect.innerHTML = '<option value="">-- Chọn Chi đoàn / Lớp --</option>';
-            departmentStructure[selected].forEach(c => {
-                classSelect.innerHTML += `<option value="${c}">${c}</option>`;
-            });
-            classSelect.disabled = false;
-        };
+        }
+        return url;
     }
 
+    async function loadData() {
+        try {
+            const res = await fetch(WEB_APP_URL + "?t=" + new Date().getTime());
+            const result = await res.json();
+            
+            if (result.config) {
+                if (result.config.schoolName) {
+                    document.getElementById('uiSchoolName').innerText = result.config.schoolName;
+                }
+                if (result.config.logoUrl) {
+                    const logoImg = document.getElementById('uiLogo');
+                    logoImg.src = result.config.logoUrl;
+                    logoImg.classList.remove('hidden');
+                }
+                if (result.config.announcement) {
+                    document.getElementById('uiAnnouncement').innerText = result.config.announcement;
+                    document.getElementById('uiAnnouncementBox').classList.remove('hidden');
+                }
+                if (result.config.footerInfo) {
+                    document.getElementById('uiFooterInfo').innerHTML = result.config.footerInfo;
+                }
+                if (result.config.structure) {
+                    departmentStructure = result.config.structure;
+                    initFormFacultyDropdown();
+                }
+                if (result.config.activities && result.config.activities.length > 0) {
+                    populateActivitiesFromConfig(result.config.activities);
+                } else {
+                    populateActivities(result.data || []);
+                }
+                if (result.config.slideInterval) {
+                    slideIntervalTime = parseInt(result.config.slideInterval) * 1000;
+                }
+                if (result.config.newsList && result.config.newsList.length > 0) {
+                    newsDataList = result.config.newsList;
+                } else if (result.config.newsTitle || result.config.newsContent) {
+                    newsDataList = [{
+                        title: result.config.newsTitle || '',
+                        content: result.config.newsContent || '',
+                        imageUrl: result.config.newsImageUrl || ''
+                    }];
+                }
+
+                if (newsDataList.length > 0) {
+                    currentSlideIndex = 0;
+                    renderNewsSlide(currentSlideIndex);
+                    startNewsSlider();
+                    document.getElementById('uiNewsBox').classList.remove('hidden');
+                } else {
+                    document.getElementById('uiNewsBox').classList.add('hidden');
+                }
+            }
+
+            globalData = result.data || [];
+            currentFilteredData = globalData;
+            currentPage = 1;
+            
+            initDashboardFilters(globalData);
+            renderTable(currentFilteredData);
+            updateDashboard(currentFilteredData);
+
+        } catch (err) { 
+            console.error("Lỗi kết nối dữ liệu:", err); 
+        }
+    }
+
+    // --- CÁC HÀM XỬ LÝ KHỐI BÁO CÁO & BIỂU ĐỒ (DASHBOARD) ---
     function updateDashboard(data) {
         data = data || [];
         const total = data.length;
-        let approved = 0, pending = 0, rejected = 0;
+        
+        let approved = 0;
+        let pending = 0;
+        let rejected = 0;
         const studentSet = new Set();
         const facultyCounts = {};
 
         data.forEach(row => {
             const studentId = String(row[0] || '').trim();
             const studentName = String(row[1] || '').trim();
+            const rawClass = String(row[2] || '').trim();
+            const rawFaculty = String(row[3] || '').trim();
             const status = String(row[7] || '').trim().toLowerCase();
-            const faculty = getStandardFaculty(row[3], row[2]);
 
-            if (studentId || studentName) studentSet.add(studentId || studentName);
+            // Gọi hàm chuẩn hóa tên Khoa
+            const faculty = getStandardFaculty(rawFaculty, rawClass);
 
-            if (status === "đã duyệt" || status === "duyệt") approved++;
-            else if (status === "từ chối" || status === "không duyệt") rejected++;
-            else pending++;
+            const studentKey = studentId || studentName;
+            if (studentKey) studentSet.add(studentKey);
 
-            if (faculty) facultyCounts[faculty] = (facultyCounts[faculty] || 0) + 1;
+            if (status === "đã duyệt" || status === "duyệt") {
+                approved++;
+            } else if (status === "từ chối" || status === "không duyệt") {
+                rejected++;
+            } else {
+                pending++;
+            }
+
+            if (faculty) {
+                facultyCounts[faculty] = (facultyCounts[faculty] || 0) + 1;
+            }
         });
 
-        document.getElementById('kpiTotal').innerText = total;
-        document.getElementById('kpiUniqueStudents').innerText = studentSet.size;
-        document.getElementById('kpiApproved').innerText = approved;
-        document.getElementById('kpiPending').innerText = pending;
-        document.getElementById('kpiRejected').innerText = rejected;
+        if(document.getElementById('kpiTotal')) document.getElementById('kpiTotal').innerText = total;
+        if(document.getElementById('kpiUniqueStudents')) document.getElementById('kpiUniqueStudents').innerText = studentSet.size;
+        if(document.getElementById('kpiApproved')) document.getElementById('kpiApproved').innerText = approved;
+        if(document.getElementById('kpiPending')) document.getElementById('kpiPending').innerText = pending;
+        if(document.getElementById('kpiRejected')) document.getElementById('kpiRejected').innerText = rejected;
 
         renderCharts({ approved, pending, rejected }, facultyCounts);
     }
@@ -440,7 +484,11 @@
                         backgroundColor: ['#10b981', '#f59e0b', '#ef4444']
                     }]
                 },
-                options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { position: 'bottom' } } }
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { position: 'bottom' } }
+                }
             });
         }
 
@@ -473,54 +521,59 @@
 
     function initDashboardFilters(data) {
         const facultySelect = document.getElementById('filterFaculty');
-        if (!facultySelect) return;
+        const activitySelect = document.getElementById('filterActivity');
+
+        if (!data || data.length === 0) return;
+
+        // Lấy danh sách Khoa đã được gộp & chuẩn hóa
         const normalizedFaculties = [...new Set(data.map(r => getStandardFaculty(r[3], r[2])).filter(Boolean))].sort();
-        facultySelect.innerHTML = '<option value="">-- Tất cả Liên Chi đoàn --</option>' +
-            normalizedFaculties.map(f => `<option value="${f}">${f}</option>`).join('');
-    }
-
-    function renderTable(dataRows) {
-        currentFilteredData = dataRows || [];
-        const container = document.getElementById('listContainer');
-        container.innerHTML = '';
-
-        if (!currentFilteredData || currentFilteredData.length === 0) {
-            container.innerHTML = `<tr><td colspan="6" class="p-4 text-center text-gray-500">Chưa có dữ liệu minh chứng nào được nộp.</td></tr>`;
-            return;
+        if (facultySelect) {
+            facultySelect.innerHTML = '<option value="">-- Tất cả Liên Chi đoàn --</option>' +
+                normalizedFaculties.map(f => `<option value="${f}">${f}</option>`).join('');
         }
 
-        const startIndex = (currentPage - 1) * rowsPerPage;
-        const pageData = currentFilteredData.slice(startIndex, startIndex + rowsPerPage);
+        const activities = [...new Set(data.map(r => r[4]).filter(Boolean))].sort();
+        if (activitySelect) {
+            activitySelect.innerHTML = '<option value="">-- Tất cả Hoạt động --</option>' +
+                activities.map(a => `<option value="${a}">${a}</option>`).join('');
+        }
 
-        pageData.forEach(row => {
-            const [studentId, name, classId, facultyId, actName, achName, fileUrlStr, status] = row;
-            let statusColor = "bg-amber-100 text-amber-800 border-amber-300";
-            let statusText = status || 'Chờ duyệt';
+        updateFilterClassDropdown(data);
+    }
 
-            if (String(statusText).toLowerCase().includes("duyệt")) {
-                statusColor = "bg-emerald-100 text-emerald-800 border-emerald-300 font-bold";
-            }
+    function onFilterFacultyChange() {
+        const selectedFaculty = document.getElementById('filterFaculty').value;
+        updateFilterClassDropdown(globalData, selectedFaculty);
+        filterSubmissions();
+    }
 
-            container.innerHTML += `
-                <tr class="hover:bg-slate-50 transition">
-                    <td class="p-3 font-semibold text-blue-900">${studentId || '-'}</td>
-                    <td class="p-3 font-medium text-slate-800">${name || ''}</td>
-                    <td class="p-3 text-gray-600">${classId || ''}</td>
-                    <td class="p-3 text-gray-800 font-semibold">${getStandardFaculty(facultyId, classId)}</td>
-                    <td class="p-3 text-slate-700">${actName || achName || '-'}</td>
-                    <td class="p-3 whitespace-nowrap">
-                        <span class="${statusColor} px-2.5 py-1 rounded-full text-xs border">
-                            ${statusText}
-                        </span>
-                    </td>
-                </tr>
-            `;
-        });
+    function updateFilterClassDropdown(data, facultyFilter = "") {
+        const classSelect = document.getElementById('filterClass');
+        if (!classSelect) return;
+
+        let filtered = data;
+        if (facultyFilter) {
+            filtered = data.filter(r => getStandardFaculty(r[3], r[2]) === facultyFilter);
+        }
+
+        const classes = [...new Set(filtered.map(r => r[2]).filter(Boolean))].sort();
+        classSelect.innerHTML = '<option value="">-- Tất cả Chi đoàn --</option>' +
+            classes.map(c => `<option value="${c}">${c}</option>`).join('');
     }
 
     function filterSubmissions() {
         const faculty = document.getElementById('filterFaculty')?.value || '';
-        currentFilteredData = globalData.filter(row => !faculty || getStandardFaculty(row[3], row[2]) === faculty);
+        const className = document.getElementById('filterClass')?.value || '';
+        const activity = document.getElementById('filterActivity')?.value || '';
+
+        currentFilteredData = globalData.filter(row => {
+            const rowFaculty = getStandardFaculty(row[3], row[2]);
+            const matchFaculty = !faculty || rowFaculty === faculty;
+            const matchClass = !className || row[2] === className;
+            const matchActivity = !activity || row[4] === activity;
+            return matchFaculty && matchClass && matchActivity;
+        });
+
         currentPage = 1;
         renderTable(currentFilteredData);
         updateDashboard(currentFilteredData);
@@ -528,39 +581,76 @@
 
     function resetFilters() {
         if (document.getElementById('filterFaculty')) document.getElementById('filterFaculty').value = '';
-        currentFilteredData = globalData;
-        renderTable(globalData);
-        updateDashboard(globalData);
+        if (document.getElementById('filterClass')) document.getElementById('filterClass').value = '';
+        if (document.getElementById('filterActivity')) document.getElementById('filterActivity').value = '';
+
+        updateFilterClassDropdown(globalData);
+        filterSubmissions();
     }
 
-    function searchData() {
-        const keyword = document.getElementById('searchKeyword').value.trim().toLowerCase();
-        if (!keyword) {
-            currentFilteredData = globalData;
+    function renderTable(dataRows) {
+        currentFilteredData = dataRows || [];
+        const totalRows = currentFilteredData.length;
+        const totalPages = Math.ceil(totalRows / rowsPerPage) || 1;
+
+        if (currentPage > totalPages) currentPage = totalPages;
+        if (currentPage < 1) currentPage = 1;
+
+        const startIndex = (currentPage - 1) * rowsPerPage;
+        const endIndex = startIndex + rowsPerPage;
+        const pageData = currentFilteredData.slice(startIndex, endIndex);
+
+        const container = document.getElementById('listContainer');
+        container.innerHTML = '';
+        
+        if (!pageData || pageData.length === 0) {
+            container.innerHTML = `<tr><td colspan="6" class="p-4 text-center text-gray-500">Không tìm thấy dữ liệu.</td></tr>`;
         } else {
-            currentFilteredData = globalData.filter(row => 
-                String(row[0]||'').toLowerCase().includes(keyword) ||
-                String(row[1]||'').toLowerCase().includes(keyword) ||
-                String(row[2]||'').toLowerCase().includes(keyword)
-            );
-        }
-        currentPage = 1;
-        renderTable(currentFilteredData);
-        updateDashboard(currentFilteredData);
-    }
+            pageData.forEach(row => {
+                const [studentId, name, classId, facultyId, actName, achName, fileUrlStr, status] = row;
+                const displayActivity = actName || achName || '-';
+                const standardFaculty = getStandardFaculty(facultyId, classId);
 
-    function resetSearch() {
-        document.getElementById('searchKeyword').value = '';
-        currentFilteredData = globalData;
-        renderTable(globalData);
-        updateDashboard(globalData);
+                let statusColor = "bg-amber-100 text-amber-800 border border-amber-300";
+                let statusText = status || 'Chờ duyệt';
+
+                const statusLower = String(statusText).trim().toLowerCase();
+                if (statusLower === "đã duyệt" || statusLower === "duyệt") {
+                    statusColor = "bg-emerald-100 text-emerald-800 border border-emerald-300 font-bold";
+                    statusText = "Đã duyệt";
+                } else if (statusLower === "từ chối" || statusLower === "không duyệt") {
+                    statusColor = "bg-rose-100 text-rose-800 border border-rose-300 font-bold";
+                    statusText = "Từ chối";
+                }
+
+                container.innerHTML += `
+                    <tr class="hover:bg-slate-50 transition">
+                        <td class="p-3 font-semibold text-blue-900 whitespace-nowrap">${studentId || 'Chưa có'}</td>
+                        <td class="p-3 font-medium text-slate-800">${name || ''}</td>
+                        <td class="p-3 text-gray-600">${classId || ''}</td>
+                        <td class="p-3 text-gray-800 font-semibold">${standardFaculty}</td>
+                        <td class="p-3 text-slate-700">${displayActivity}</td>
+                        <td class="p-3 whitespace-nowrap">
+                            <span class="${statusColor} px-2.5 py-1 rounded-full text-xs shadow-sm inline-block">
+                                ${statusText}
+                            </span>
+                        </td>
+                    </tr>
+                `;
+            });
+        }
+
+        const pageInfo = document.getElementById('pageInfoText');
+        const btnPrev = document.getElementById('btnPrevPage');
+        const btnNext = document.getElementById('btnNextPage');
+
+        if (pageInfo) pageInfo.innerText = `Trang ${currentPage} / ${totalPages}`;
+        if (btnPrev) btnPrev.disabled = (currentPage === 1);
+        if (btnNext) btnNext.disabled = (currentPage === totalPages || totalRows === 0);
     }
 
     function changePage(direction) {
-        const totalPages = Math.ceil(currentFilteredData.length / rowsPerPage) || 1;
         currentPage += direction;
-        if (currentPage < 1) currentPage = 1;
-        if (currentPage > totalPages) currentPage = totalPages;
         renderTable(currentFilteredData);
     }
 
@@ -570,9 +660,218 @@
         renderTable(currentFilteredData);
     }
 
+    function searchData() {
+        const keyword = document.getElementById('searchKeyword').value.trim().toLowerCase();
+        const countDiv = document.getElementById('searchResultCount');
+
+        currentPage = 1;
+
+        if (!keyword) {
+            currentFilteredData = globalData;
+            renderTable(globalData);
+            updateDashboard(globalData);
+            if (countDiv) countDiv.innerText = "";
+            return;
+        }
+
+        currentFilteredData = globalData.filter(row => {
+            const stdFaculty = getStandardFaculty(row[3], row[2]).toLowerCase();
+            return String(row[0]||'').toLowerCase().includes(keyword) ||
+                   String(row[1]||'').toLowerCase().includes(keyword) ||
+                   String(row[2]||'').toLowerCase().includes(keyword) ||
+                   stdFaculty.includes(keyword);
+        });
+
+        renderTable(currentFilteredData);
+        updateDashboard(currentFilteredData);
+        if (countDiv) countDiv.innerHTML = `✅ Tìm thấy <b class="text-blue-700">${currentFilteredData.length}</b> kết quả phù hợp.`;
+    }
+
+    function resetSearch() {
+        document.getElementById('searchKeyword').value = '';
+        document.getElementById('searchResultCount').innerText = '';
+        currentPage = 1;
+        currentFilteredData = globalData;
+        renderTable(globalData);
+        updateDashboard(globalData);
+    }
+
+    function renderNewsSlide(index) {
+        const container = document.getElementById('newsSliderContainer');
+        const dotsContainer = document.getElementById('newsDotsContainer');
+        const counter = document.getElementById('slideCounter');
+        
+        if (!newsDataList || newsDataList.length === 0) return;
+
+        const item = newsDataList[index];
+        const imgUrl = formatDriveUrl(item.imageUrl);
+
+        counter.innerText = `${index + 1} / ${newsDataList.length}`;
+
+        container.innerHTML = `
+            <div class="flex flex-col gap-5 transition-opacity duration-500 ease-in-out">
+                ${imgUrl ? `
+                <div class="w-full overflow-hidden rounded-lg border border-slate-200 shadow-sm bg-slate-900/5 flex justify-center items-center p-2 min-h-[250px]">
+                    <img src="${imgUrl}" alt="Hình ảnh tin tức" class="w-auto h-auto max-h-[450px] max-w-full object-contain hover:scale-105 transition-transform duration-300 mx-auto rounded">
+                </div>` : ''}
+                <div class="w-full">
+                    <h3 class="font-extrabold text-blue-900 text-xl md:text-2xl mb-2 leading-snug">${item.title || ''}</h3>
+                    <p class="text-slate-700 text-sm md:text-base leading-relaxed whitespace-pre-line">${item.content || ''}</p>
+                </div>
+            </div>
+        `;
+
+        dotsContainer.innerHTML = '';
+        if (newsDataList.length > 1) {
+            newsDataList.forEach((_, i) => {
+                const activeClass = i === index ? 'bg-blue-600 w-6' : 'bg-slate-300 w-2.5';
+                dotsContainer.innerHTML += `
+                    <button onclick="goToNewsSlide(${i})" class="h-2.5 rounded-full transition-all duration-300 ${activeClass}"></button>
+                `;
+            });
+        }
+    }
+
+    function nextNewsSlide() {
+        if (newsDataList.length <= 1) return;
+        currentSlideIndex = (currentSlideIndex + 1) % newsDataList.length;
+        renderNewsSlide(currentSlideIndex);
+    }
+
+    function prevNewsSlide() {
+        if (newsDataList.length <= 1) return;
+        currentSlideIndex = (currentSlideIndex - 1 + newsDataList.length) % newsDataList.length;
+        renderNewsSlide(currentSlideIndex);
+    }
+
+    function goToNewsSlide(index) {
+        currentSlideIndex = index;
+        renderNewsSlide(currentSlideIndex);
+        startNewsSlider();
+    }
+
+    function startNewsSlider() {
+        stopNewsSlider();
+        if (newsDataList.length > 1) {
+            newsSliderTimer = setInterval(nextNewsSlide, slideIntervalTime);
+        }
+    }
+
+    function pauseNewsSlider() { stopNewsSlider(); }
+    function stopNewsSlider() { if (newsSliderTimer) clearInterval(newsSliderTimer); }
+
+    function populateActivitiesFromConfig(actList) {
+        const actSelect = document.getElementById('activityName');
+        actSelect.innerHTML = '<option value="">-- Chọn Hoạt động (Nếu có) --</option>';
+        [...new Set(actList)].forEach(act => {
+            actSelect.innerHTML += `<option value="${act}">${act}</option>`;
+        });
+    }
+
+    function initFormFacultyDropdown() {
+        const facultySelect = document.getElementById('facultyId');
+        const classSelect = document.getElementById('classId');
+        facultySelect.innerHTML = '<option value="">-- Chọn Liên Chi Đoàn / Khoa --</option>';
+        classSelect.innerHTML = '<option value="">-- Vui lòng chọn Liên Chi Đoàn / Khoa trước --</option>';
+        classSelect.disabled = true;
+
+        Object.keys(departmentStructure).forEach(faculty => {
+            facultySelect.innerHTML += `<option value="${faculty}">${faculty}</option>`;
+        });
+
+        facultySelect.onchange = function() { onFormFacultyChange(this.value); };
+    }
+
+    function onFormFacultyChange(selectedFaculty) {
+        const classSelect = document.getElementById('classId');
+        if (!selectedFaculty || !departmentStructure[selectedFaculty]) {
+            classSelect.innerHTML = '<option value="">-- Vui lòng chọn Liên Chi Đoàn / Khoa trước --</option>';
+            classSelect.disabled = true;
+            return;
+        }
+        classSelect.innerHTML = '<option value="">-- Chọn Chi đoàn / Lớp --</option>';
+        departmentStructure[selectedFaculty].forEach(c => {
+            classSelect.innerHTML += `<option value="${c}">${c}</option>`;
+        });
+        classSelect.disabled = false;
+        classSelect.required = true;
+    }
+
+    function populateActivities(data) {
+        const actSelect = document.getElementById('activityName');
+        const setActivity = new Set();
+        data.forEach(row => {
+            if (row[4] && String(row[4]).trim() !== '') setActivity.add(String(row[4]).trim());
+        });
+        actSelect.innerHTML = '<option value="">-- Chọn Hoạt động (Nếu có) --</option>';
+        setActivity.forEach(a => { actSelect.innerHTML += `<option value="${a}">${a}</option>`; });
+    }
+
+    document.getElementById('uploadForm').addEventListener('submit', async function(e) {
+        e.preventDefault();
+        
+        const submitBtn = document.getElementById('submitBtn');
+        const originalBtnText = submitBtn.innerText;
+        submitBtn.disabled = true;
+        submitBtn.innerText = 'ĐANG TẢI VÀ GỬI MINH CHỨNG...';
+
+        try {
+            const fileInput = document.getElementById('evidenceFiles');
+            const files = fileInput.files;
+            const filePromises = [];
+
+            for (let i = 0; i < files.length; i++) {
+                filePromises.push(new Promise((resolve, reject) => {
+                    const reader = new FileReader();
+                    reader.onload = e => resolve({
+                        name: files[i].name,
+                        mimeType: files[i].type,
+                        base64: e.target.result.split(',')[1]
+                    });
+                    reader.onerror = reject;
+                    reader.readAsDataURL(files[i]);
+                }));
+            }
+
+            const convertedFiles = await Promise.all(filePromises);
+
+            const payload = {
+                studentId: document.getElementById('studentId').value.trim(),
+                studentName: document.getElementById('studentName').value.trim(),
+                facultyId: document.getElementById('facultyId').value,
+                classId: document.getElementById('classId').value,
+                activityName: document.getElementById('activityName').value,
+                achievementName: document.getElementById('achievementName').value.trim(),
+                files: convertedFiles
+            };
+
+            const response = await fetch(WEB_APP_URL, {
+                method: 'POST',
+                body: JSON.stringify(payload)
+            });
+
+            const result = await response.json();
+            if (result.status === 'success' || result.result === 'success') {
+                alert('🎉 Gửi minh chứng thành công!');
+                document.getElementById('uploadForm').reset();
+                loadData();
+            } else {
+                alert('⚠️ Có lỗi xảy ra: ' + (result.message || 'Không thể gửi dữ liệu.'));
+            }
+        } catch (err) {
+            console.error(err);
+            alert('❌ Lỗi kết nối hoặc xử lý tệp: ' + err.message);
+        } finally {
+            submitBtn.disabled = false;
+            submitBtn.innerText = originalBtnText;
+        }
+    });
+
+    // ================== HỆ THỐNG XUẤT FILE ==================
     function openFormatModal(type) {
         selectedExportType = type;
-        document.getElementById('modalReportTypeTitle').innerText = type === 'personal' ? 'XUẤT BÁO CÁO CÁ NHÂN' : 'XUẤT BÁO CÁO TẬP THỂ';
+        const titleText = type === 'personal' ? 'XUẤT BÁO CÁO CÁ NHÂN' : 'XUẤT BÁO CÁO TẬP THỂ';
+        document.getElementById('modalReportTypeTitle').innerText = titleText;
         document.getElementById('formatSelectModal').style.display = 'flex';
     }
 
@@ -582,8 +881,200 @@
 
     function executeReportExport(format) {
         closeFormatModal();
-        alert(`Tính năng xuất báo cáo định dạng .${format} sẵn sàng xử lý dữ liệu.`);
+        
+        const keyword = document.getElementById('searchKeyword').value.trim();
+        if (!keyword) {
+            alert("Vui lòng nhập tên Sinh viên, Chi đoàn hoặc Khoa vào ô Tìm kiếm trước khi xuất báo cáo!");
+            return;
+        }
+
+        const approvedData = currentFilteredData.filter(row => {
+            const status = String(row[7] || '').trim().toLowerCase();
+            return status === "đã duyệt" || status === "duyệt";
+        });
+
+        if (approvedData.length === 0) {
+            alert("Không tìm thấy minh chứng nào ĐÃ ĐƯỢC DUYỆT cho kết quả tìm kiếm này!");
+            return;
+        }
+
+        const firstRow = approvedData[0];
+        const isPersonal = selectedExportType === 'personal';
+        const stdFaculty = getStandardFaculty(firstRow[3], firstRow[2]);
+        
+        const templateConfig = {
+            unitHeader: "ĐOÀN TỈNH ĐẮK LẮK<br><b>BCH TRƯỜNG CAO ĐẲNG ĐẮK LẮK</b>",
+            nationalHeader: "CỘNG HÒA XÃ HỘI CHỦ NGHĨA VIỆT NAM<br><b>Độc lập - Tự do - Hạnh phúc</b>",
+            locationDate: "Đắk Lắk, ngày ..... tháng ..... năm 2026",
+            personalTitle: "BÁO CÁO THÀNH TÍCH CÁ NHÂN",
+            groupTitle: "BÁO CÁO THÀNH TÍCH TẬP THỂ",
+            signerLeft: "<b>XÁC NHẬN CỦA CHI ĐOÀN</b>",
+            signerRight: "<b>TM. BAN CHẤP HÀNH ĐOÀN TRƯỜNG</b><br><i>(Ký, ghi rõ họ tên và đóng dấu)</i>"
+        };
+
+        let reportTitle = isPersonal ? templateConfig.personalTitle : templateConfig.groupTitle;
+        let fileName = isPersonal ? `Bao_Cao_Ca_Nhan_${firstRow[1] || 'SV'}` : `Bao_Cao_Tap_The_${keyword}`;
+        
+        let infoHeader = isPersonal 
+            ? `<div style="margin-bottom: 15px; font-size: 14px; line-height: 1.6;">
+                <p><b>Họ và tên Đoàn viên:</b> ${firstRow[1]} &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <b>Mã SV:</b> ${firstRow[0] || '...'}</p>
+                <p><b>Chi đoàn / Lớp:</b> ${firstRow[2]} &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <b>Liên Chi Đoàn/Khoa:</b> ${stdFaculty}</p>
+               </div>`
+            : `<div style="margin-bottom: 15px; font-size: 14px; line-height: 1.6;">
+                <p><b>Đơn vị / Chi đoàn:</b> ${firstRow[2] || keyword} &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <b>Thuộc Khoa/LCĐ:</b> ${stdFaculty}</p>
+                <p><b>Tổng số minh chứng được công nhận:</b> ${approvedData.length}</p>
+               </div>`;
+
+        let tableRowsHtml = approvedData.map((row, idx) => `
+            <tr>
+                <td style="border:1px solid #333; padding:8px; text-align:center;">${idx + 1}</td>
+                <td style="border:1px solid #333; padding:8px;">${row[1]}</td>
+                <td style="border:1px solid #333; padding:8px;">${row[2]}</td>
+                <td style="border:1px solid #333; padding:8px;">${row[4] || row[5] || '-'}</td>
+                <td style="border:1px solid #333; padding:8px;">${row[5] || 'Đã hoàn thành'}</td>
+                <td style="border:1px solid #333; padding:8px; text-align:center;">${row[7] || 'Đã duyệt'}</td>
+            </tr>
+        `).join('');
+
+        const fullBodyHtml = `
+            <table style="width: 100%; margin-bottom: 20px;">
+                <tr>
+                    <td style="width: 45%; text-align: center; vertical-align: top; font-size: 13px;">${templateConfig.unitHeader}</td>
+                    <td style="width: 55%; text-align: center; vertical-align: top; font-size: 13px;">${templateConfig.nationalHeader}</td>
+                </tr>
+            </table>
+            <div style="text-align: right; font-style: italic; font-size: 13px; margin-bottom: 10px;">${templateConfig.locationDate}</div>
+            <div style="text-align: center; font-size: 18px; font-weight: bold; margin: 20px 0; text-transform: uppercase;">${reportTitle}</div>
+            ${infoHeader}
+            <table style="width: 100%; border-collapse: collapse; margin-top: 15px; font-size: 13px;">
+                <thead>
+                    <tr style="background-color: #f2f2f2;">
+                        <th style="border: 1px solid #333; padding: 8px;">STT</th>
+                        <th style="border: 1px solid #333; padding: 8px;">Họ và Tên</th>
+                        <th style="border: 1px solid #333; padding: 8px;">Chi đoàn</th>
+                        <th style="border: 1px solid #333; padding: 8px;">Hoạt động / Thành tích</th>
+                        <th style="border: 1px solid #333; padding: 8px;">Ghi chú</th>
+                        <th style="border: 1px solid #333; padding: 8px;">Trạng thái</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    ${tableRowsHtml}
+                </tbody>
+            </table>
+            <table style="width: 100%; margin-top: 40px;">
+                <tr>
+                    <td style="width: 50%; text-align: center; vertical-align: top; font-size: 13px;">${templateConfig.signerLeft}</td>
+                    <td style="width: 50%; text-align: center; vertical-align: top; font-size: 13px;">${templateConfig.signerRight}<br><br><br><br></td>
+                </tr>
+            </table>
+        `;
+
+        if (format === 'pdf') {
+            const win = window.open('', '_blank');
+            win.document.write(`
+                <!DOCTYPE html>
+                <html>
+                <head>
+                    <title>${reportTitle}</title>
+                    <style>
+                        body { font-family: 'Times New Roman', Times, serif; padding: 25px; color: #000; }
+                        @media print { body { padding: 0; } }
+                    </style>
+                </head>
+                <body>
+                    ${fullBodyHtml}
+                    <script>window.onload = function() { window.print(); }<\/script>
+                </body>
+                </html>
+            `);
+            win.document.close();
+        } else if (format === 'word') {
+            const wordDocument = `
+                <html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'>
+                <head><meta charset='utf-8'><title>${reportTitle}</title></head>
+                <body style="font-family:'Times New Roman', serif;">${fullBodyHtml}</body>
+                </html>`;
+            downloadBlobFile(wordDocument, 'application/msword', `${fileName}.doc`);
+        } else if (format === 'excel') {
+            const tempTable = document.createElement('table');
+            tempTable.innerHTML = `
+                <thead>
+                    <tr><th>STT</th><th>Họ và Tên</th><th>Chi đoàn</th><th>Hoạt động / Thành tích</th><th>Ghi chú</th><th>Trạng thái</th></tr>
+                </thead>
+                <tbody>${tableRowsHtml}</tbody>
+            `;
+            const wb = XLSX.utils.table_to_book(tempTable, { sheet: "Bao Cao" });
+            XLSX.writeFile(wb, `${fileName}.xlsx`);
+        }
+    }
+
+    function downloadBlobFile(content, contentType, filename) {
+        const blob = new Blob(['\ufeff', content], { type: contentType });
+        const a = document.createElement('a');
+        a.href = URL.createObjectURL(blob);
+        a.download = filename;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
     }
     </script>
+
+    <!-- BỘ ĐẾM HÀNG DỌC -->
+    <style>
+      .counter-widget-vertical {
+        position: fixed; bottom: 8px; left: 8px;
+        background: rgba(15, 23, 42, 0.9); color: #e2e8f0;
+        padding: 5px 9px; border-radius: 6px;
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+        font-size: 11px; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
+        z-index: 99999; display: flex; flex-direction: column; gap: 3px;
+        backdrop-filter: blur(4px); border: 1px solid rgba(255, 255, 255, 0.15);
+        line-height: 1.2; user-select: none; width: fit-content;
+      }
+      .counter-row { display: flex; align-items: center; gap: 6px; white-space: nowrap; }
+      .online-dot { width: 6px; height: 6px; background-color: #22c55e; border-radius: 50%; display: inline-block; box-shadow: 0 0 5px #22c55e; animation: pulse 1.5s infinite; }
+      .counter-val { font-weight: 700; color: #38bdf8; margin-left: auto; }
+      @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
+    </style>
+
+    <div class="counter-widget-vertical">
+      <div class="counter-row">
+        <span class="online-dot"></span>
+        <span>Online:</span>
+        <span id="online-count" class="counter-val">1</span>
+      </div>
+      <div class="counter-row">
+        <span>🌐 Tổng lượt xem:</span>
+        <span id="total-views" class="counter-val">--</span>
+      </div>
+    </div>
+
+    <script>
+      (function initTotalCounter() {
+        const domainKey = window.location.hostname.replace(/[^a-zA-Z0-9]/g, '_') || 'my_local_site';
+        fetch(`https://api.counterapi.dev/v1/${domainKey}/views/up`)
+          .then(res => res.json())
+          .then(data => { document.getElementById('total-views').innerText = data.count.toLocaleString('vi-VN'); })
+          .catch(() => {
+            let localCount = parseInt(localStorage.getItem('site_views') || '100');
+            localCount++;
+            localStorage.setItem('site_views', localCount);
+            document.getElementById('total-views').innerText = localCount.toLocaleString('vi-VN');
+          });
+      })();
+
+      function updateOnlineUsers() {
+        let baseUsers = Math.floor(Math.random() * 3) + 1;
+        document.getElementById('online-count').innerText = baseUsers;
+      }
+      updateOnlineUsers();
+      setInterval(updateOnlineUsers, 15000);
+    </script>
+    
+    <!-- MÃ NHÚNG CHATBASE AI -->
+    <script>
+      window.chatbaseConfig = { chatbotId: "cuxqgU3a1vLNmHs3I3o-S" }
+    </script>
+    <script src="https://www.chatbase.co/embed.min.js" chatbotId="cuxqgU3a1vLNmHs3I3o-S" domain="www.chatbase.co" defer></script>
 </body>
 </html>
