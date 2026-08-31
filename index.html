@@ -4,11 +4,21 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Hệ thống Quản lý Thi đua Đoàn viên</title>
+
+    <!-- ================================================================= -->
+    <!-- ⚙️ CAO ĐẶT CẤU HÌNH HỆ THỐNG (CHỈ CẦN THAY 1 LẦN DUY NHẤT TẠI ĐÂY) -->
+    <!-- ================================================================= -->
+    <script>
+        const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbzueg6EhKejP0pN8q5n6ugIwvQbAqVCi9D66cKa05EnNBUDMQ0aOAGtP2N1hpzb7Szh/exec"; // Dán URL Google Apps Script của bạn vào đây
+    </script>
+
     <!-- Chart.js & Tailwind CSS -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- FontAwesome Icon -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <!-- Thư viện Xuất Excel -->
+    <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 </head>
 <body class="bg-slate-100 p-3 md:p-8 font-sans min-h-screen flex flex-col justify-between">
     
@@ -236,7 +246,7 @@
             </div>
         </div>
 
-        <!-- 8. MỤC CẤU HÌNH ADMIN LANDING PAGE (MỚI BỔ SUNG) -->
+        <!-- 8. MỤC CẤU HÌNH ADMIN LANDING PAGE -->
         <div id="adminLandingConfigSection" class="mt-8 bg-slate-50 border border-slate-300 p-5 rounded-xl hidden shadow-sm">
             <h3 class="text-base font-bold text-blue-900 uppercase mb-4 flex items-center gap-2">
                 ⚙️ CẤU HÌNH TRANG GIỚI THIỆU (LANDING PAGE)
@@ -295,13 +305,8 @@
       </div>
     </div>
 
-    <!-- THƯ VIỆN HỖ TRỢ XUẤT EXCEL -->
-    <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
-
+    <!-- SCRIPT CHÍNH CỦA ỨNG DỤNG -->
     <script>
-    // ⚠️ ĐIỀN ĐƯỜNG DẪN WEB APP CỦA BẠN VÀO ĐÂY (NẾU CHẠY ĐỘC LẬP BÊN NGOÀI APPS SCRIPT)
-    const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbzueg6EhKejP0pN8q5n6ugIwvQbAqVCi9D66cKa05EnNBUDMQ0aOAGtP2N1hpzb7Szh/exec";
-
     let globalData = [];
     let currentFilteredData = [];
     let departmentStructure = {};
@@ -376,6 +381,7 @@
     }
 
     async function loadData() {
+        const schoolNameHeader = document.getElementById('uiSchoolName');
         try {
             let result;
             if (typeof google !== 'undefined' && google.script && google.script.run) {
@@ -383,12 +389,11 @@
                     google.script.run.withSuccessHandler(resolve).withFailureHandler(reject).getInitialData();
                 });
             } else {
-                const res = await fetch(WEB_APP_URL + "?t=" + new Date().getTime());
+                const res = await fetch(WEB_APP_URL + "?action=getClientConfig&t=" + new Date().getTime());
                 result = await res.json();
             }
             
-            if (result.config) {
-                // Kiểm tra điều hướng Landing Page
+            if (result && result.config) {
                 const urlParams = new URLSearchParams(window.location.search);
                 const pageParam = urlParams.get('page');
                 const enableLanding = String(result.config.ENABLE_LANDING || '').toUpperCase() === 'TRUE';
@@ -402,8 +407,8 @@
                     populateLandingConfigForm(result.config.landingConfig);
                 }
 
-                if (result.config.schoolName) {
-                    document.getElementById('uiSchoolName').innerText = result.config.schoolName;
+                if (result.config.schoolName && schoolNameHeader) {
+                    schoolNameHeader.innerText = result.config.schoolName;
                 }
                 if (result.config.logoUrl) {
                     const logoImg = document.getElementById('uiLogo');
@@ -449,7 +454,7 @@
                 }
             }
 
-            globalData = result.data || [];
+            globalData = (result && result.data) ? result.data : [];
             currentFilteredData = globalData;
             currentPage = 1;
             
@@ -459,6 +464,10 @@
 
         } catch (err) { 
             console.error("Lỗi kết nối dữ liệu:", err); 
+        } finally {
+            if (schoolNameHeader && schoolNameHeader.innerText === "Đang tải thông tin...") {
+                schoolNameHeader.innerText = "HỆ THỐNG QUẢN LÝ THI ĐỦA ĐOÀN VIÊN";
+            }
         }
     }
 
@@ -1101,7 +1110,7 @@
     }
     </script>
 
-    <!-- BỘ ĐẾM HÀNG DỌC -->
+    <!-- BỘ ĐẾM TRUY CẬP HÀNG DỌC -->
     <style>
       .counter-widget-vertical {
         position: fixed; bottom: 8px; left: 8px;
@@ -1153,110 +1162,10 @@
       setInterval(updateOnlineUsers, 15000);
     </script>
     
-    <!-- MÃ NHÚNG CHATBASE AI -->
+    <!-- CHATBOT INTEGRATION -->
     <script>
       window.chatbaseConfig = { chatbotId: "cuxqgU3a1vLNmHs3I3o-S" }
     </script>
     <script src="https://www.chatbase.co/embed.min.js" chatbotId="cuxqgU3a1vLNmHs3I3o-S" domain="www.chatbase.co" defer></script>
-    <!-- Các phần HTML của trang index.html ở trên -->
-    
-    <!-- ================= CHÈN ĐOẠN SCRIPT NÀY VÀO ĐÂY ================= -->
-    <script>
-        // ⚠️ THAY BẰNG URL WEB APP GOOGLE APPS SCRIPT CỦA BẠN
-        const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbzueg6EhKejP0pN8q5n6ugIwvQbAqVCi9D66cKa05EnNBUDMQ0aOAGtP2N1hpzb7Szh/exec";
-
-        // Chuẩn hóa tên Khoa / Liên chi đoàn
-        function getStandardFaculty(facultyStr) {
-            if (!facultyStr) return '';
-            let raw = facultyStr.trim();
-            let lower = raw.toLowerCase();
-
-            if (lower.includes('cơ khí') || lower.includes('điện') || lower.includes('cơ - điện')) return 'Cơ - Điện - Xây dựng';
-            if (lower.includes('công nghệ thông tin') || lower.includes('kế toán')) return 'Công nghệ Thông tin - Kế toán';
-            if (lower.includes('sư phạm') || lower.includes('hành chính') || lower.includes('xã hội')) return 'Sư phạm - Hành chính - Xã hội';
-            if (lower.includes('nông') || lower.includes('lâm') || lower.includes('thú y') || lower.includes('thực phẩm')) return 'Nông - Lâm - Thú y - Thực phẩm';
-            if (lower.includes('ô tô') || lower.includes('công nghệ ô tô')) return 'Công nghệ Ô tô';
-
-            return raw;
-        }
-
-        // Tự động chạy khi trang web tải xong
-        window.addEventListener('DOMContentLoaded', () => {
-            loadIndexData();
-        });
-
-        async function loadIndexData() {
-            const loadingHeader = document.getElementById('loadingHeader'); // Hoặc ID thẻ hiển thị dòng "ĐANG TẢI THÔNG TIN..."
-
-            try {
-                let data;
-                // Nhận diện môi trường Google Apps Script Native hoặc gọi Fetch Web App
-                if (typeof google !== 'undefined' && google.script && google.script.run) {
-                    data = await new Promise((resolve, reject) => {
-                        google.script.run
-                            .withSuccessHandler(resolve)
-                            .withFailureHandler(reject)
-                            .getClientConfig();
-                    });
-                } else {
-                    const res = await fetch(WEB_APP_URL + "?action=getClientConfig");
-                    data = await res.json();
-                }
-
-                if (data && data.status === "success" && data.config) {
-                    renderPageUI(data.config);
-                }
-            } catch (err) {
-                console.error("Lỗi tải dữ liệu Client:", err);
-            } finally {
-                // Đổi dòng chữ "ĐANG TẢI THÔNG TIN..." thành Tiêu đề chuẩn
-                if (loadingHeader) {
-                    loadingHeader.innerText = "HỆ THỐNG CỔNG THÔNG TIN THI ĐUA CỦA ĐOÀN VIÊN";
-                }
-            }
-        }
-
-        function renderPageUI(cfg) {
-            // 1. Đổ danh sách Hoạt động vào Dropdown select
-            const actSelect = document.getElementById('selectActivity') || document.querySelector('select[name="activity"]');
-            if (actSelect && Array.isArray(cfg.activities)) {
-                actSelect.innerHTML = '<option value="">-- Chọn Hoạt động (Nếu có) --</option>';
-                cfg.activities.forEach(act => {
-                    const opt = document.createElement('option');
-                    opt.value = act;
-                    opt.textContent = act;
-                    actSelect.appendChild(opt);
-                });
-            }
-
-            // 2. Đổ danh sách Khoa / Liên chi đoàn đã chuẩn hóa vào Dropdown (nếu chưa có sẵn)
-            const facultySelect = document.getElementById('selectFaculty') || document.querySelector('select[name="faculty"]');
-            if (facultySelect && facultySelect.options.length <= 1) {
-                const faculties = [
-                    'Cơ - Điện - Xây dựng',
-                    'Công nghệ Thông tin - Kế toán',
-                    'Sư phạm - Hành chính - Xã hội',
-                    'Nông - Lâm - Thú y - Thực phẩm',
-                    'Công nghệ Ô tô'
-                ];
-                facultySelect.innerHTML = '<option value="">-- Chọn Liên Chi Đoàn / Khoa --</option>';
-                faculties.forEach(f => {
-                    const opt = document.createElement('option');
-                    opt.value = f;
-                    opt.textContent = f;
-                    facultySelect.appendChild(opt);
-                });
-            }
-
-            // 3. Cập nhật Logo & Tiêu đề trường (nếu có phần tử tương ứng)
-            const schoolTitle = document.getElementById('schoolTitle');
-            if (schoolTitle && cfg.schoolName) schoolTitle.innerText = cfg.schoolName;
-
-            const logoImg = document.getElementById('schoolLogo');
-            if (logoImg && cfg.logoUrl) logoImg.src = cfg.logoUrl;
-        }
-    </script>
-</body>
-</html>
 </body>
 </html>
