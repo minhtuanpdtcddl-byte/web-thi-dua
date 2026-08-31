@@ -1021,6 +1021,140 @@
       window.chatbaseConfig = { chatbotId: "cuxqgU3a1vLNmHs3I3o-S" }
     </script>
     <script src="https://www.chatbase.co/embed.min.js" chatbotId="cuxqgU3a1vLNmHs3I3o-S" domain="www.chatbase.co" defer></script>
+ <script>
+// 1. HÀM CHUẨN HÓA VÀ GỘP TÊN LIÊN CHI ĐOÀN / KHOA THÔNG MINH
+function getStandardFaculty(facultyStr, classStr = '') {
+    if (!facultyStr) facultyStr = '';
+    let rawFac = facultyStr.trim().replace(/\s+/g, ' ');
+    let rawClass = (classStr || '').trim().toLowerCase();
+    let lowerFac = rawFac.toLowerCase();
 
+    // Quy tắc 1: Tự động tra cứu Khoa chuẩn dựa theo Lớp (nếu có trong sơ đồ departmentStructure)
+    if (rawClass && typeof departmentStructure === 'object' && departmentStructure) {
+        for (let [officialFac, classList] of Object.entries(departmentStructure)) {
+            if (Array.isArray(classList) && classList.some(c => c.trim().toLowerCase() === rawClass)) {
+                return officialFac;
+            }
+        }
+    }
+
+    // Quy tắc 2: Gộp các Khoa sáp nhập / Khoa thành phần cũ về Liên Chi đoàn mới
+    if (lowerFac.includes('cơ khí') || lowerFac.includes('điện - điện tử') || lowerFac.includes('cơ - điện')) {
+        return 'Cơ - Điện - Xây dựng';
+    }
+    if (lowerFac.includes('công nghệ thông tin') || lowerFac.includes('kế toán')) {
+        return 'Công nghệ Thông tin - Kế toán';
+    }
+    if (lowerFac.includes('sư phạm') || lowerFac.includes('hành chính') || lowerFac.includes('xã hội')) {
+        return 'Sư phạm - Hành chính - Xã hội';
+    }
+    if (lowerFac.includes('nông - lâm') || lowerFac.includes('thú y') || lowerFac.includes('thực phẩm')) {
+        return 'Nông - Lâm - Thú y - Thực phẩm';
+    }
+    if (lowerFac.includes('ô tô') || lowerFac.includes('công nghệ ô tô')) {
+        return 'Công nghệ Ô tô';
+    }
+
+    // Quy tắc 3: So khớp không phân biệt chữ hoa / chữ thường với sơ đồ trường
+    if (typeof departmentStructure === 'object' && departmentStructure) {
+        for (let officialFac of Object.keys(departmentStructure)) {
+            if (officialFac.toLowerCase() === lowerFac) {
+                return officialFac;
+            }
+        }
+    }
+
+    // Quy tắc 4: Chuẩn hóa chữ cái đầu từng từ (Title Case) cho các trường hợp còn lại
+    if (!rawFac) return 'Chưa xác định';
+    return rawFac.toLowerCase().replace(/(^|\s)\S/g, l => l.toUpperCase());
+}
+
+// 2. CẬP NHẬT LẠI HÀM DASHBOARD ĐỂ SỬ DỤNG TÊN KHOA ĐÃ CHUẨN HÓA
+function updateDashboard(data) {
+    data = data || [];
+    const total = data.length;
+    
+    let approved = 0;
+    let pending = 0;
+    let rejected = 0;
+    const studentSet = new Set();
+    const facultyCounts = {};
+
+    data.forEach(row => {
+        const studentId = String(row[0] || '').trim();
+        const studentName = String(row[1] || '').trim();
+        const rawClass = String(row[2] || '').trim();
+        const rawFaculty = String(row[3] || '').trim();
+        const status = String(row[7] || '').trim().toLowerCase();
+
+        // Gọi hàm chuẩn hóa tên Khoa
+        const faculty = getStandardFaculty(rawFaculty, rawClass);
+
+        const studentKey = studentId || studentName;
+        if (studentKey) studentSet.add(studentKey);
+
+        if (status === "đã duyệt" || status === "duyệt") {
+            approved++;
+        } else if (status === "từ chối" || status === "không duyệt") {
+            rejected++;
+        } else {
+            pending++;
+        }
+
+        if (faculty) {
+            facultyCounts[faculty] = (facultyCounts[faculty] || 0) + 1;
+        }
+    });
+
+    if(document.getElementById('kpiTotal')) document.getElementById('kpiTotal').innerText = total;
+    if(document.getElementById('kpiUniqueStudents')) document.getElementById('kpiUniqueStudents').innerText = studentSet.size;
+    if(document.getElementById('kpiApproved')) document.getElementById('kpiApproved').innerText = approved;
+    if(document.getElementById('kpiPending')) document.getElementById('kpiPending').innerText = pending;
+    if(document.getElementById('kpiRejected')) document.getElementById('kpiRejected').innerText = rejected;
+
+    renderCharts({ approved, pending, rejected }, facultyCounts);
+}
+
+// 3. CẬP NHẬT BỘ LỌC VÀ TÌM KIẾM ĐỒNG BỘ THEO DỮ LIỆU ĐÃ CHUẨN HÓA
+function initDashboardFilters(data) {
+    const facultySelect = document.getElementById('filterFaculty');
+    const activitySelect = document.getElementById('filterActivity');
+
+    if (!data || data.length === 0) return;
+
+    // Lấy danh sách Khoa đã được gộp & chuẩn hóa
+    const normalizedFaculties = [...new Set(data.map(r => getStandardFaculty(r[3], r[2])).filter(Boolean))].sort();
+    if (facultySelect) {
+        facultySelect.innerHTML = '<option value="">-- Tất cả Liên Chi đoàn --</option>' +
+            normalizedFaculties.map(f => `<option value="${f}">${f}</option>`).join('');
+    }
+
+    const activities = [...new Set(data.map(r => r[4]).filter(Boolean))].sort();
+    if (activitySelect) {
+        activitySelect.innerHTML = '<option value="">-- Tất cả Hoạt động --</option>' +
+            activities.map(a => `<option value="${a}">${a}</option>`).join('');
+    }
+
+    updateFilterClassDropdown(data);
+}
+
+function filterSubmissions() {
+    const faculty = document.getElementById('filterFaculty')?.value || '';
+    const className = document.getElementById('filterClass')?.value || '';
+    const activity = document.getElementById('filterActivity')?.value || '';
+
+    currentFilteredData = globalData.filter(row => {
+        const rowFaculty = getStandardFaculty(row[3], row[2]);
+        const matchFaculty = !faculty || rowFaculty === faculty;
+        const matchClass = !className || row[2] === className;
+        const matchActivity = !activity || row[4] === activity;
+        return matchFaculty && matchClass && matchActivity;
+    });
+
+    currentPage = 1;
+    renderTable(currentFilteredData);
+    updateDashboard(currentFilteredData);
+}
+    <script> 
 </body>
 </html>
