@@ -37,6 +37,8 @@
       border-radius: 50px;
       transition: all 0.3s ease;
       border: none;
+      text-decoration: none;
+      display: inline-block;
     }
     .btn-entrance:hover {
       background-color: #d97706;
@@ -46,7 +48,7 @@
     }
   </style>
 </head>
-<body class="bg-slate-100 min-vh-100 flex-column justify-content-between">
+<body class="bg-light min-vh-100 d-flex flex-column justify-content-between">
 
   <!-- HERO SECTION -->
   <div class="hero-banner text-center position-relative overflow-hidden">
@@ -54,11 +56,11 @@
       <div class="mb-3">
         <i class="fa-solid fa-graduation-cap fa-3x text-warning"></i>
       </div>
-      <h1 class="display-4 fw-bold mb-3"><?= config.HERO_TITLE ?></h1>
-      <p class="col-md-8 fs-5 mx-auto text-light opacity-90 mb-4"><?= config.HERO_SUBTITLE ?></p>
+      <h1 class="display-4 fw-bold mb-3"><?= config.HERO_TITLE || 'Hệ Thống Quản Lý Đoàn Viên' ?></h1>
+      <p class="col-md-8 fs-5 mx-auto text-light opacity-90 mb-4"><?= config.HERO_SUBTITLE || '' ?></p>
       
       <!-- NÚT TRUY CẬP SANG APP CHÍNH (INDEX.HTML) -->
-      <a href="<?= ScriptApp.getService().getUrl() ?>?page=app" class="btn btn-entrance shadow-lg text-uppercase tracking-wider">
+      <a href="<?= ScriptApp.getService().getUrl() ?>?page=app" class="btn-entrance shadow-lg text-uppercase">
         🚀 Truy cập hệ thống ngay <i class="fa-solid fa-arrow-right ms-2"></i>
       </a>
     </div>
@@ -69,12 +71,12 @@
     <div class="row justify-content-center">
       <div class="col-md-10">
         <div class="card card-custom shadow-sm p-4 p-md-5 bg-white">
-          <div class="d-flex items-center gap-3 border-bottom pb-3 mb-4">
+          <div class="d-flex align-items-center gap-3 border-bottom pb-3 mb-4">
             <i class="fa-solid fa-circle-info fa-2x text-primary"></i>
-            <h3 class="text-primary font-bold m-0 uppercase">Giới thiệu chung</h3>
+            <h3 class="text-primary fw-bold m-0 text-uppercase">Giới thiệu chung</h3>
           </div>
-          <p class="fs-6 text-secondary leading-relaxed m-0" style="line-height: 1.8; text-align: justify;">
-            <?= config.ABOUT_TEXT ?>
+          <p class="fs-6 text-secondary m-0" style="line-height: 1.8; text-align: justify;">
+            <?= config.ABOUT_TEXT || 'Chào mừng bạn đến với hệ thống quản lý đoàn viên.' ?>
           </p>
         </div>
       </div>
@@ -82,12 +84,9 @@
   </div>
 
   <!-- FOOTER -->
-  <footer class="text-center py-4 text-muted text-xs border-top bg-white mt-auto">
+  <footer class="text-center py-4 text-muted small border-top bg-white mt-auto">
     <p class="m-0">Hệ thống Quản lý Đào tạo & Thi đua Đoàn viên</p>
   </footer>
 
-  <a href="index.html?page=app" class="btn btn-warning btn-lg font-weight-bold shadow mt-4 px-4 py-2">
-  🚀 TRUY CẬP HỆ THỐNG NGAY
-</a>
 </body>
 </html>
