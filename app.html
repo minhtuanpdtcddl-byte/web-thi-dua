@@ -275,9 +275,9 @@
     <!-- SCRIPT XỬ LÝ HỆ THỐNG TOÀN CỤC -->
     <script>
     // =========================================================================
-    // ⚠️ ĐÃ ĐỔI LINK GOOGLE APPS SCRIPT CHUẨN (CÓ CHỨA THAM SỐ ?output=json)
+    // ⚠️ ĐÃ CẤU HÌNH LINK GOOGLE APPS SCRIPT
     // =========================================================================
-    const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbz606tkvXnH-lmZiYFIvydHk2Kv2kIHR30QoAVOQ3CmXsHXmFkWt7zaFEg4s72JOv55/exec"; // THAY LINK WEB APP CỦA BẠN VÀO ĐÂY
+    const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbz606tkvXnH-lmZiYFIvydHk2Kv2kIHR30QoAVOQ3CmXsHXmFkWt7zaFEg4s72JOv55/exec";
 
     let globalData = [];
     let currentFilteredData = [];
@@ -360,16 +360,24 @@
     }
 
     async function loadData() {
+        if (!WEB_APP_URL || WEB_APP_URL.includes("DÁN_LINK_WEB_APP")) {
+            console.warn("Chưa cấu hình WEB_APP_URL!");
+            document.getElementById('uiSchoolName').innerText = "HỆ THỐNG QUẢN LÝ THI ĐUA ĐOÀN VIÊN";
+            return;
+        }
+
         try {
-            const res = await fetch(WEB_APP_URL + "?output=json&t=" + new Date().getTime());
+            const res = await fetch(WEB_APP_URL + (WEB_APP_URL.includes('?') ? '&' : '?') + "output=json&t=" + new Date().getTime());
             const result = await res.json();
 
-            // --- BỔ SUNG: KIỂM TRA CHUYỂN HƯỚNG LANDING PAGE ---
+            // --- BỔ SUNG: KIỂM TRA CHUYỂN HƯỚNG LANDING PAGE TRÊN GITHUB PAGES ---
             if (result.config && result.config.landing) {
                 const isEnableLanding = result.config.landing.ENABLE_LANDING === true || result.config.landing.ENABLE_LANDING === "TRUE";
                 const urlParams = new URLSearchParams(window.location.search);
-                if (isEnableLanding && urlParams.get('page') !== 'app') {
-                    window.location.href = "landing.html";
+                
+                // Nếu bật Landing Page và không có tham số ?from=landing thì trỏ về index.html
+                if (isEnableLanding && urlParams.get('from') !== 'landing' && !window.location.pathname.endsWith('app.html')) {
+                    window.location.href = "index.html";
                     return;
                 }
             }
@@ -538,7 +546,6 @@
 
         if (!data || data.length === 0) return;
 
-        // Lấy danh sách Khoa đã được gộp & chuẩn hóa
         const normalizedFaculties = [...new Set(data.map(r => getStandardFaculty(r[3], r[2])).filter(Boolean))].sort();
         if (facultySelect) {
             facultySelect.innerHTML = '<option value="">-- Tất cả Liên Chi đoàn --</option>' +
@@ -824,6 +831,11 @@
     document.getElementById('uploadForm').addEventListener('submit', async function(e) {
         e.preventDefault();
         
+        if (!WEB_APP_URL || WEB_APP_URL.includes("DÁN_LINK_WEB_APP")) {
+            alert("⚠️ Hệ thống chưa được kết nối với Google Apps Script! Vui lòng thay link WEB_APP_URL trong file app.html.");
+            return;
+        }
+
         const submitBtn = document.getElementById('submitBtn');
         const originalBtnText = submitBtn.innerText;
         submitBtn.disabled = true;
@@ -986,23 +998,25 @@
 
         if (format === 'pdf') {
             const win = window.open('', '_blank');
-            win.document.write(`
-                <!DOCTYPE html>
-                <html>
-                <head>
-                    <title>${reportTitle}</title>
-                    <style>
-                        body { font-family: 'Times New Roman', Times, serif; padding: 25px; color: #000; }
-                        @media print { body { padding: 0; } }
-                    </style>
-                </head>
-                <body>
-                    ${fullBodyHtml}
-                    <script>window.onload = function() { window.print(); }<\/script>
-                </body>
-                </html>
-            `);
-            win.document.close();
+            if (win) {
+                win.document.write(`
+                    <!DOCTYPE html>
+                    <html>
+                    <head>
+                        <title>${reportTitle}</title>
+                        <style>
+                            body { font-family: 'Times New Roman', Times, serif; padding: 25px; color: #000; }
+                            @media print { body { padding: 0; } }
+                        </style>
+                    </head>
+                    <body>
+                        ${fullBodyHtml}
+                        <script>window.onload = function() { window.print(); }<\/script>
+                    </body>
+                    </html>
+                `);
+                win.document.close();
+            }
         } else if (format === 'word') {
             const wordDocument = `
                 <html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'>
