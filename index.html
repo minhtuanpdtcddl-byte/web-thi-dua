@@ -59,8 +59,8 @@
       <h1 class="display-4 fw-bold mb-3"><?= config.HERO_TITLE || 'Hệ Thống Quản Lý Đoàn Viên' ?></h1>
       <p class="col-md-8 fs-5 mx-auto text-light opacity-90 mb-4"><?= config.HERO_SUBTITLE || '' ?></p>
       
-      <!-- NÚT TRUY CẬP SANG APP CHÍNH (INDEX.HTML) -->
-      <a href="<?= ScriptApp.getService().getUrl() ?>?page=app" class="btn-entrance shadow-lg text-uppercase">
+      <!-- NÚT TRUY CẬP SANG APP CHÍNH (APP.HTML) -->
+      <a app.html="<?= ScriptApp.getService().getUrl() ?>?page=app" class="btn-entrance shadow-lg text-uppercase">
         🚀 Truy cập hệ thống ngay <i class="fa-solid fa-arrow-right ms-2"></i>
       </a>
     </div>
