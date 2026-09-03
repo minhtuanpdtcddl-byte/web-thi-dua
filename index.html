@@ -1,10 +1,9 @@
 <!DOCTYPE html>
 <html lang="vi">
 <head>
-  <base target="_top">
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title><?= config.HERO_TITLE || 'Giới thiệu Hệ thống' ?></title>
+  <title id="page-title">Giới Thiệu - Hệ Thống Quản Lý Đoàn Viên</title>
   
   <!-- Bootstrap 5 CSS -->
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
@@ -56,11 +55,13 @@
       <div class="mb-3">
         <i class="fa-solid fa-graduation-cap fa-3x text-warning"></i>
       </div>
-      <h1 class="display-4 fw-bold mb-3"><?= config.HERO_TITLE || 'Hệ Thống Quản Lý Đoàn Viên' ?></h1>
-      <p class="col-md-8 fs-5 mx-auto text-light opacity-90 mb-4"><?= config.HERO_SUBTITLE || '' ?></p>
+      <h1 class="display-4 fw-bold mb-3" id="hero-title">Hệ Thống Quản Lý & Thi Đua Đoàn Viên</h1>
+      <p class="col-md-8 fs-5 mx-auto text-light opacity-90 mb-4" id="hero-subtitle">
+        Giải pháp chuyển đổi số trong quản lý danh mục Khoa, Lớp và minh chứng rèn luyện Đoàn viên
+      </p>
       
       <!-- NÚT TRUY CẬP SANG APP CHÍNH (APP.HTML) -->
-      <a app.html="<?=?page=app" class="btn-entrance shadow-lg text-uppercase">
+      <a href="app.html" class="btn-entrance shadow-lg text-uppercase">
         🚀 Truy cập hệ thống ngay <i class="fa-solid fa-arrow-right ms-2"></i>
       </a>
     </div>
@@ -75,8 +76,8 @@
             <i class="fa-solid fa-circle-info fa-2x text-primary"></i>
             <h3 class="text-primary fw-bold m-0 text-uppercase">Giới thiệu chung</h3>
           </div>
-          <p class="fs-6 text-secondary m-0" style="line-height: 1.8; text-align: justify;">
-            <?= config.ABOUT_TEXT || 'Chào mừng bạn đến với hệ thống quản lý đoàn viên.' ?>
+          <p class="fs-6 text-secondary m-0" id="about-text" style="line-height: 1.8; text-align: justify;">
+            Hệ thống hỗ trợ tra cứu Khoa/Lớp, nộp minh chứng hoạt động thi đua và theo dõi tiến độ phê duyệt minh chứng trực tuyến nhanh chóng, minh bạch.
           </p>
         </div>
       </div>
@@ -88,5 +89,27 @@
     <p class="m-0">Hệ thống Quản lý Đào tạo & Thi đua Đoàn viên</p>
   </footer>
 
+  <!-- SCRIPT KẾT NỐI API ĐỂ LẤY CẤU HÌNH ĐỘNG TỪ GOOGLE SHEET (TÙY CHỌN) -->
+  <script>
+    // Thay URL Web App của bạn vào đây nếu muốn đồng bộ dữ liệu tự động với Google Sheet
+    const API_URL = "URL_WEB_APP_GOOGLE_APPS_SCRIPT_CỦA_BẠN";
+
+    if (API_URL && !API_URL.includes("URL_WEB_APP")) {
+      fetch(`${API_URL}?action=getData`)
+        .then(res => res.json())
+        .then(data => {
+          if (data && data.landingConfig) {
+            const cfg = data.landingConfig;
+            if (cfg.HERO_TITLE) {
+              document.getElementById('hero-title').innerText = cfg.HERO_TITLE;
+              document.getElementById('page-title').innerText = cfg.HERO_TITLE;
+            }
+            if (cfg.HERO_SUBTITLE) document.getElementById('hero-subtitle').innerText = cfg.HERO_SUBTITLE;
+            if (cfg.ABOUT_TEXT) document.getElementById('about-text').innerText = cfg.ABOUT_TEXT;
+          }
+        })
+        .catch(err => console.log("Chạy chế độ Landing tĩnh. Lỗi kết nối API:", err));
+    }
+  </script>
 </body>
 </html>
