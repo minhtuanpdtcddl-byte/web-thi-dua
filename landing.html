@@ -1,82 +1,90 @@
 <!DOCTYPE html>
-<html>
+<html lang="vi">
 <head>
   <base target="_top">
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Giới Thiệu Hệ Thống Quản Lý Đoàn Viên</title>
+  <title><?= config.HERO_TITLE || 'Giới thiệu Hệ thống' ?></title>
+  
   <!-- Bootstrap 5 CSS -->
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+  <!-- FontAwesome Icon -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  
   <style>
     .hero-banner {
-      background: linear-gradient(135deg, #0d6efd 0%, #0b5ed7 100%);
+      background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%);
       color: white;
       padding: 90px 20px;
       border-bottom-left-radius: 40px;
       border-bottom-right-radius: 40px;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
     }
     .card-custom {
       border: none;
-      box-shadow: 0 4px 15px rgba(0,0,0,0.08);
-      border-radius: 12px;
-      transition: transform 0.2s;
+      border-radius: 15px;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
     }
     .card-custom:hover {
       transform: translateY(-5px);
+      box-shadow: 0 12px 20px rgba(0, 0, 0, 0.1) !important;
+    }
+    .btn-entrance {
+      background-color: #f59e0b;
+      color: #1e293b;
+      font-weight: 700;
+      padding: 14px 32px;
+      border-radius: 50px;
+      transition: all 0.3s ease;
+      border: none;
+    }
+    .btn-entrance:hover {
+      background-color: #d97706;
+      color: #ffffff;
+      transform: scale(1.05);
+      box-shadow: 0 8px 20px rgba(245, 158, 11, 0.4);
     }
   </style>
 </head>
-<body class="bg-light">
+<body class="bg-slate-100 min-vh-100 flex-column justify-content-between">
 
-  <!-- Header / Hero Section -->
-  <div class="hero-banner text-center">
-    <div class="container">
-      <h1 id="HERO_TITLE" class="display-4 fw-bold">Đang tải...</h1>
-      <p id="HERO_SUBTITLE" class="lead mt-3 mx-auto" style="max-width: 700px;"></p>
-      
-      <div class="mt-4">
-        <button onclick="goToMainApp()" class="btn btn-warning btn-lg px-4 py-2 fw-bold shadow">
-          🚀 Vào Trang Chủ Hệ Thống
-        </button>
+  <!-- HERO SECTION -->
+  <div class="hero-banner text-center position-relative overflow-hidden">
+    <div class="container position-relative z-1">
+      <div class="mb-3">
+        <i class="fa-solid fa-graduation-cap fa-3x text-warning"></i>
       </div>
+      <h1 class="display-4 fw-bold mb-3"><?= config.HERO_TITLE ?></h1>
+      <p class="col-md-8 fs-5 mx-auto text-light opacity-90 mb-4"><?= config.HERO_SUBTITLE ?></p>
+      
+      <!-- NÚT TRUY CẬP SANG APP CHÍNH (INDEX.HTML) -->
+      <a href="<?= ScriptApp.getService().getUrl() ?>?page=app" class="btn btn-entrance shadow-lg text-uppercase tracking-wider">
+        🚀 Truy cập hệ thống ngay <i class="fa-solid fa-arrow-right ms-2"></i>
+      </a>
     </div>
   </div>
 
-  <!-- Thông tin giới thiệu -->
-  <div class="container my-5">
+  <!-- NỘI DUNG GIỚI THIỆU THÔNG TIN -->
+  <div class="container my-5 py-3">
     <div class="row justify-content-center">
-      <div class="col-md-9">
-        <div class="card card-custom p-4">
-          <h3 class="card-title text-primary fw-bold text-center mb-3">Về Hệ Thống</h3>
-          <p id="ABOUT_TEXT" class="text-secondary fs-5 text-center leading-relaxed">
-            Đang tải dữ liệu giới thiệu...
+      <div class="col-md-10">
+        <div class="card card-custom shadow-sm p-4 p-md-5 bg-white">
+          <div class="d-flex items-center gap-3 border-bottom pb-3 mb-4">
+            <i class="fa-solid fa-circle-info fa-2x text-primary"></i>
+            <h3 class="text-primary font-bold m-0 uppercase">Giới thiệu chung</h3>
+          </div>
+          <p class="fs-6 text-secondary leading-relaxed m-0" style="line-height: 1.8; text-align: justify;">
+            <?= config.ABOUT_TEXT ?>
           </p>
         </div>
       </div>
     </div>
   </div>
 
-  <script>
-    // Khi mở trang, gọi backend lấy dữ liệu cấu hình
-    window.onload = function() {
-      google.script.run
-        .withSuccessHandler(renderPage)
-        .withFailureHandler(function(err){ alert('Lỗi tải dữ liệu: ' + err.message); })
-        .getLandingPageConfig();
-    };
+  <!-- FOOTER -->
+  <footer class="text-center py-4 text-muted text-xs border-top bg-white mt-auto">
+    <p class="m-0">Hệ thống Quản lý Đào tạo & Thi đua Đoàn viên</p>
+  </footer>
 
-    function renderPage(config) {
-      if (config) {
-        if(config.HERO_TITLE) document.getElementById('HERO_TITLE').innerText = config.HERO_TITLE;
-        if(config.HERO_SUBTITLE) document.getElementById('HERO_SUBTITLE').innerText = config.HERO_SUBTITLE;
-        if(config.ABOUT_TEXT) document.getElementById('ABOUT_TEXT').innerText = config.ABOUT_TEXT;
-      }
-    }
-
-    function goToMainApp() {
-      // Chuyển sang Trang chủ bằng tham số ?page=home
-      window.location.href = "<?= ScriptApp.getService().getUrl() ?>?page=home";
-    }
-  </script>
 </body>
 </html>
