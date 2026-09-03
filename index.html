@@ -277,7 +277,7 @@
     // =========================================================================
     // ⚠️ ĐÃ ĐỔI LINK GOOGLE APPS SCRIPT CHUẨN (CÓ CHỨA THAM SỐ ?output=json)
     // =========================================================================
-    const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbzMK9Jrlf_hTaYknXtJHBrrcpNnxdtpVaUf_V0OB6RcfjipPhl6OOxbcRvVaLdqqHrW/exec"; 
+    const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbzMK9Jrlf_hTaYknXtJHBrrcpNnxdtpVaUf_V0OB6RcfjipPhl6OOxbcRvVaLdqqHrW/exec"; // THAY LINK WEB APP CỦA BẠN VÀO ĐÂY
 
     let globalData = [];
     let currentFilteredData = [];
@@ -363,7 +363,17 @@
         try {
             const res = await fetch(WEB_APP_URL + "?output=json&t=" + new Date().getTime());
             const result = await res.json();
-            
+
+            // --- BỔ SUNG: KIỂM TRA CHUYỂN HƯỚNG LANDING PAGE ---
+            if (result.config && result.config.landing) {
+                const isEnableLanding = result.config.landing.ENABLE_LANDING === true || result.config.landing.ENABLE_LANDING === "TRUE";
+                const urlParams = new URLSearchParams(window.location.search);
+                if (isEnableLanding && urlParams.get('page') !== 'app') {
+                    window.location.href = "landing.html";
+                    return;
+                }
+            }
+
             if (result.config) {
                 if (result.config.schoolName) {
                     document.getElementById('uiSchoolName').innerText = result.config.schoolName;
@@ -810,7 +820,7 @@
         setActivity.forEach(a => { actSelect.innerHTML += `<option value="${a}">${a}</option>`; });
     }
 
-    // GỬI DUYỆT FORM NỘP MINH CHỨNG (TỐI ƯU CORS KHI TRUYỀN VÀO GOOGLE APPS SCRIPT)
+    // GỬI DUYỆT FORM NỘP MINH CHỨNG
     document.getElementById('uploadForm').addEventListener('submit', async function(e) {
         e.preventDefault();
         
@@ -1066,7 +1076,6 @@
             return;
           }
         } catch (err) {
-          // Tự động chuyển qua bộ đếm LocalStorage nếu API bị ngắt kết nối
           let localCount = parseInt(localStorage.getItem('site_views') || '105');
           localCount++;
           localStorage.setItem('site_views', localCount);
