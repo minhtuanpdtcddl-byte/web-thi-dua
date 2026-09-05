@@ -9,22 +9,6 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- FontAwesome Icon -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
-    <style>
-      .counter-widget-vertical {
-        position: fixed; bottom: 8px; left: 8px;
-        background: rgba(15, 23, 42, 0.9); color: #e2e8f0;
-        padding: 5px 9px; border-radius: 6px;
-        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-        font-size: 11px; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
-        z-index: 99999; display: flex; flex-direction: column; gap: 3px;
-        backdrop-filter: blur(4px); border: 1px solid rgba(255, 255, 255, 0.15);
-        line-height: 1.2; user-select: none; width: fit-content;
-      }
-      .counter-row { display: flex; align-items: center; gap: 6px; white-space: nowrap; }
-      .online-dot { width: 6px; height: 6px; background-color: #22c55e; border-radius: 50%; display: inline-block; box-shadow: 0 0 5px #22c55e; animation: pulse 1.5s infinite; }
-      .counter-val { font-weight: 700; color: #38bdf8; margin-left: auto; }
-      @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
-    </style>
 </head>
 <body class="bg-slate-100 p-3 md:p-8 font-sans min-h-screen flex flex-col justify-between">
     
@@ -62,8 +46,8 @@
             <div class="relative group" onmouseenter="pauseNewsSlider()" onmouseleave="startNewsSlider()">
                 <div id="newsSliderContainer" class="p-5 min-h-[300px]"></div>
 
-                <button type="button" onclick="prevNewsSlide()" class="absolute left-2 top-1/2 -translate-y-1/2 bg-black/40 hover:bg-black/70 text-white p-2 rounded-full opacity-0 group-hover:opacity-100 transition duration-300">❮</button>
-                <button type="button" onclick="nextNewsSlide()" class="absolute right-2 top-1/2 -translate-y-1/2 bg-black/40 hover:bg-black/70 text-white p-2 rounded-full opacity-0 group-hover:opacity-100 transition duration-300">❯</button>
+                <button onclick="prevNewsSlide()" class="absolute left-2 top-1/2 -translate-y-1/2 bg-black/40 hover:bg-black/70 text-white p-2 rounded-full opacity-0 group-hover:opacity-100 transition duration-300">❮</button>
+                <button onclick="nextNewsSlide()" class="absolute right-2 top-1/2 -translate-y-1/2 bg-black/40 hover:bg-black/70 text-white p-2 rounded-full opacity-0 group-hover:opacity-100 transition duration-300">❯</button>
 
                 <div id="newsDotsContainer" class="flex justify-center gap-2 pb-4"></div>
             </div>
@@ -221,11 +205,12 @@
                         <th class="p-3 min-w-[100px]">Chi đoàn</th>
                         <th class="p-3 min-w-[180px]">Liên Chi Đoàn / Khoa</th>
                         <th class="p-3 min-w-[160px]">Hoạt động</th>
+                        <th class="p-3 whitespace-nowrap">Minh chứng</th>
                         <th class="p-3 whitespace-nowrap">Kết quả</th>
                     </tr>
                 </thead>
                 <tbody id="listContainer" class="divide-y">
-                    <tr><td colspan="6" class="p-4 text-center text-gray-500">Đang tải dữ liệu...</td></tr>
+                    <tr><td colspan="7" class="p-4 text-center text-gray-500">Đang tải dữ liệu...</td></tr>
                 </tbody>
             </table>
         </div>
@@ -242,11 +227,11 @@
             </div>
 
             <div class="flex items-center gap-2">
-                <button type="button" id="btnPrevPage" onclick="changePage(-1)" class="px-3 py-1 border border-slate-300 rounded bg-white hover:bg-slate-100 disabled:opacity-40 disabled:cursor-not-allowed transition-colors">
+                <button id="btnPrevPage" onclick="changePage(-1)" class="px-3 py-1 border border-slate-300 rounded bg-white hover:bg-slate-100 disabled:opacity-40 disabled:cursor-not-allowed transition-colors">
                     Trước
                 </button>
                 <span id="pageInfoText" class="font-medium text-slate-700">Trang 1 / 1</span>
-                <button type="button" id="btnNextPage" onclick="changePage(1)" class="px-3 py-1 border border-slate-300 rounded bg-white hover:bg-slate-100 disabled:opacity-40 disabled:cursor-not-allowed transition-colors">
+                <button id="btnNextPage" onclick="changePage(1)" class="px-3 py-1 border border-slate-300 rounded bg-white hover:bg-slate-100 disabled:opacity-40 disabled:cursor-not-allowed transition-colors">
                     Sau
                 </button>
             </div>
@@ -265,40 +250,26 @@
         <p style="font-size:13px; color:#64748b; margin-bottom:18px; font-style:italic;">Vui lòng chọn định dạng file muốn xuất:</p>
         
         <div style="display:flex; flex-direction:column; gap:10px;">
-          <button type="button" onclick="executeReportExport('pdf')" style="background:#ac0d0d; color:#fff; border:none; padding:10px; border-radius:5px; cursor:pointer; font-weight:bold; font-size:13px;">
+          <button onclick="executeReportExport('pdf')" style="background:#ac0d0d; color:#fff; border:none; padding:10px; border-radius:5px; cursor:pointer; font-weight:bold; font-size:13px;">
             📕 File PDF / In báo cáo (.pdf)
           </button>
-          <button type="button" onclick="executeReportExport('word')" style="background:#185abd; color:#fff; border:none; padding:10px; border-radius:5px; cursor:pointer; font-weight:bold; font-size:13px;">
+          <button onclick="executeReportExport('word')" style="background:#185abd; color:#fff; border:none; padding:10px; border-radius:5px; cursor:pointer; font-weight:bold; font-size:13px;">
             📄 File Word (.doc)
           </button>
-          <button type="button" onclick="executeReportExport('excel')" style="background:#107c41; color:#fff; border:none; padding:10px; border-radius:5px; cursor:pointer; font-weight:bold; font-size:13px;">
+          <button onclick="executeReportExport('excel')" style="background:#107c41; color:#fff; border:none; padding:10px; border-radius:5px; cursor:pointer; font-weight:bold; font-size:13px;">
             📊 File Excel (.xlsx)
           </button>
-          <button type="button" onclick="closeFormatModal()" style="background:#e2e8f0; color:#334155; border:none; padding:8px; border-radius:5px; cursor:pointer; font-size:12px; margin-top:5px;">
+          <button onclick="closeFormatModal()" style="background:#e2e8f0; color:#334155; border:none; padding:8px; border-radius:5px; cursor:pointer; font-size:12px; margin-top:5px;">
             Đóng / Hủy
           </button>
         </div>
       </div>
     </div>
 
-    <!-- BỘ ĐẾM HÀNG DỌC -->
-    <div class="counter-widget-vertical">
-      <div class="counter-row">
-        <span class="online-dot"></span>
-        <span>Online:</span>
-        <span id="online-count" class="counter-val">1</span>
-      </div>
-      <div class="counter-row">
-        <span>🌐 Tổng lượt xem:</span>
-        <span id="total-views" class="counter-val">--</span>
-      </div>
-    </div>
-
-    <!-- External Libraries -->
     <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 
     <script>
-    // ⚠️ Hãy dán URL Deployment Google Apps Script của bạn vào đây
+    // ⚠️ HÃY THAY LINK GOOGLE APPS SCRIPT DƯỚI ĐÂY SAU KHI DEPLOY
     const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbxEFbYUVUiavwj8W5gz1A4MDnP73KklqwwHXeu5Yd6B57guMO5L1p9zqRc3FtKtt-8/exec";
 
     let globalData = [];
@@ -620,7 +591,7 @@
         const container = document.getElementById('listContainer');
         
         if (!pageData || pageData.length === 0) {
-            container.innerHTML = `<tr><td colspan="6" class="p-4 text-center text-gray-500">Không tìm thấy dữ liệu.</td></tr>`;
+            container.innerHTML = `<tr><td colspan="7" class="p-4 text-center text-gray-500">Không tìm thấy dữ liệu.</td></tr>`;
         } else {
             let rowsHtml = '';
             pageData.forEach(row => {
@@ -640,6 +611,12 @@
                     statusText = "Từ chối";
                 }
 
+                let fileLink = '-';
+                if (fileUrlStr && fileUrlStr.trim() !== '') {
+                    const cleanUrl = fileUrlStr.trim();
+                    fileLink = `<a href="${cleanUrl}" target="_blank" class="text-blue-600 hover:text-blue-800 font-medium underline flex items-center gap-1"><i class="fa-solid fa-paperclip"></i> Xem file</a>`;
+                }
+
                 rowsHtml += `
                     <tr class="hover:bg-slate-50 transition">
                         <td class="p-3 font-semibold text-blue-900 whitespace-nowrap">${studentId || 'Chưa có'}</td>
@@ -647,6 +624,7 @@
                         <td class="p-3 text-gray-600">${classId || ''}</td>
                         <td class="p-3 text-gray-800 font-semibold">${standardFaculty}</td>
                         <td class="p-3 text-slate-700">${displayActivity}</td>
+                        <td class="p-3 whitespace-nowrap">${fileLink}</td>
                         <td class="p-3 whitespace-nowrap">
                             <span class="${statusColor} px-2.5 py-1 rounded-full text-xs shadow-sm inline-block">
                                 ${statusText}
@@ -740,7 +718,7 @@
             newsDataList.forEach((_, i) => {
                 const activeClass = i === index ? 'bg-blue-600 w-6' : 'bg-slate-300 w-2.5';
                 dotsContainer.innerHTML += `
-                    <button type="button" onclick="goToNewsSlide(${i})" class="h-2.5 rounded-full transition-all duration-300 ${activeClass}"></button>
+                    <button onclick="goToNewsSlide(${i})" class="h-2.5 rounded-full transition-all duration-300 ${activeClass}"></button>
                 `;
             });
         }
@@ -1010,30 +988,62 @@
         a.click();
         document.body.removeChild(a);
     }
+    </script>
 
-    (async function initTotalCounter() {
+    <!-- BỘ ĐẾM HÀNG DỌC -->
+    <style>
+      .counter-widget-vertical {
+        position: fixed; bottom: 8px; left: 8px;
+        background: rgba(15, 23, 42, 0.9); color: #e2e8f0;
+        padding: 5px 9px; border-radius: 6px;
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+        font-size: 11px; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
+        z-index: 99999; display: flex; flex-direction: column; gap: 3px;
+        backdrop-filter: blur(4px); border: 1px solid rgba(255, 255, 255, 0.15);
+        line-height: 1.2; user-select: none; width: fit-content;
+      }
+      .counter-row { display: flex; align-items: center; gap: 6px; white-space: nowrap; }
+      .online-dot { width: 6px; height: 6px; background-color: #22c55e; border-radius: 50%; display: inline-block; box-shadow: 0 0 5px #22c55e; animation: pulse 1.5s infinite; }
+      .counter-val { font-weight: 700; color: #38bdf8; margin-left: auto; }
+      @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
+    </style>
+
+    <div class="counter-widget-vertical">
+      <div class="counter-row">
+        <span class="online-dot"></span>
+        <span>Online:</span>
+        <span id="online-count" class="counter-val">1</span>
+      </div>
+      <div class="counter-row">
+        <span>🌐 Tổng lượt xem:</span>
+        <span id="total-views" class="counter-val">--</span>
+      </div>
+    </div>
+
+    <script>
+      (async function initTotalCounter() {
         const domainKey = window.location.hostname.replace(/[^a-zA-Z0-9]/g, '_') || 'my_local_site';
         try {
-            const res = await fetch(`https://api.counterapi.dev/v1/${domainKey}/views/up`);
-            if (!res.ok) throw new Error("API Counter Error Status " + res.status);
-            const data = await res.json();
-            if (data && data.count) {
-                document.getElementById('total-views').innerText = data.count.toLocaleString('vi-VN'); 
-                return;
-            }
+          const res = await fetch(`https://api.counterapi.dev/v1/${domainKey}/views/up`);
+          if (!res.ok) throw new Error("API Counter Error Status " + res.status);
+          const data = await res.json();
+          if (data && data.count) {
+            document.getElementById('total-views').innerText = data.count.toLocaleString('vi-VN'); 
+            return;
+          }
         } catch (err) {
-            let localCount = parseInt(localStorage.getItem('site_views') || '105');
-            localCount++;
-            localStorage.setItem('site_views', localCount);
-            document.getElementById('total-views').innerText = localCount.toLocaleString('vi-VN');
+          let localCount = parseInt(localStorage.getItem('site_views') || '105');
+          localCount++;
+          localStorage.setItem('site_views', localCount);
+          document.getElementById('total-views').innerText = localCount.toLocaleString('vi-VN');
         }
-    })();
+      })();
 
-    function updateOnlineUsers() {
+      function updateOnlineUsers() {
         document.getElementById('online-count').innerText = Math.floor(Math.random() * 3) + 1;
-    }
-    updateOnlineUsers();
-    setInterval(updateOnlineUsers, 15000);
+      }
+      updateOnlineUsers();
+      setInterval(updateOnlineUsers, 15000);
     </script>
     
     <!-- CHATBASE AI -->
