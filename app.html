@@ -205,12 +205,11 @@
                         <th class="p-3 min-w-[100px]">Chi đoàn</th>
                         <th class="p-3 min-w-[180px]">Liên Chi Đoàn / Khoa</th>
                         <th class="p-3 min-w-[160px]">Hoạt động</th>
-                        <th class="p-3 whitespace-nowrap">Minh chứng</th>
                         <th class="p-3 whitespace-nowrap">Kết quả</th>
                     </tr>
                 </thead>
                 <tbody id="listContainer" class="divide-y">
-                    <tr><td colspan="7" class="p-4 text-center text-gray-500">Đang tải dữ liệu...</td></tr>
+                    <tr><td colspan="6" class="p-4 text-center text-gray-500">Đang tải dữ liệu...</td></tr>
                 </tbody>
             </table>
         </div>
@@ -269,7 +268,7 @@
     <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 
     <script>
-    // ⚠️ HÃY THAY LINK GOOGLE APPS SCRIPT DƯỚI ĐÂY SAU KHI DEPLOY
+    // ⚠️ Hãy dán đường dẫn Google Apps Script Web App của bạn vào giữa 2 dấu ngoặc kép dưới đây
     const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbxEFbYUVUiavwj8W5gz1A4MDnP73KklqwwHXeu5Yd6B57guMO5L1p9zqRc3FtKtt-8/exec";
 
     let globalData = [];
@@ -353,7 +352,11 @@
         }
 
         try {
-            const res = await fetch(WEB_APP_URL + (WEB_APP_URL.includes('?') ? '&' : '?') + "output=json&t=" + new Date().getTime());
+            // Thêm timestamp để tránh cache trình duyệt
+            const fetchUrl = WEB_APP_URL + (WEB_APP_URL.includes('?') ? '&' : '?') + "output=json&t=" + new Date().getTime();
+            const res = await fetch(fetchUrl);
+            
+            if (!res.ok) throw new Error("HTTP Status: " + res.status);
             const result = await res.json();
 
             if (result.config && result.config.landing) {
@@ -419,7 +422,8 @@
 
         } catch (err) { 
             console.error("Lỗi kết nối dữ liệu:", err); 
-            document.getElementById('uiSchoolName').innerText = "CỔNG THÔNG TIN THI ĐUA ĐOÀN VIÊN";
+            document.getElementById('uiSchoolName').innerText = "HỆ THỐNG QUẢN LÝ THI ĐUA ĐOÀN VIÊN";
+            document.getElementById('listContainer').innerHTML = `<tr><td colspan="6" class="p-4 text-center text-red-500 font-bold">⚠️ Không thể tải dữ liệu từ Google Apps Script. Vui lòng kiểm tra lại URL hoặc quyền truy cập.</td></tr>`;
         }
     }
 
@@ -591,7 +595,7 @@
         const container = document.getElementById('listContainer');
         
         if (!pageData || pageData.length === 0) {
-            container.innerHTML = `<tr><td colspan="7" class="p-4 text-center text-gray-500">Không tìm thấy dữ liệu.</td></tr>`;
+            container.innerHTML = `<tr><td colspan="6" class="p-4 text-center text-gray-500">Không tìm thấy dữ liệu.</td></tr>`;
         } else {
             let rowsHtml = '';
             pageData.forEach(row => {
@@ -611,12 +615,6 @@
                     statusText = "Từ chối";
                 }
 
-                let fileLink = '-';
-                if (fileUrlStr && fileUrlStr.trim() !== '') {
-                    const cleanUrl = fileUrlStr.trim();
-                    fileLink = `<a href="${cleanUrl}" target="_blank" class="text-blue-600 hover:text-blue-800 font-medium underline flex items-center gap-1"><i class="fa-solid fa-paperclip"></i> Xem file</a>`;
-                }
-
                 rowsHtml += `
                     <tr class="hover:bg-slate-50 transition">
                         <td class="p-3 font-semibold text-blue-900 whitespace-nowrap">${studentId || 'Chưa có'}</td>
@@ -624,7 +622,6 @@
                         <td class="p-3 text-gray-600">${classId || ''}</td>
                         <td class="p-3 text-gray-800 font-semibold">${standardFaculty}</td>
                         <td class="p-3 text-slate-700">${displayActivity}</td>
-                        <td class="p-3 whitespace-nowrap">${fileLink}</td>
                         <td class="p-3 whitespace-nowrap">
                             <span class="${statusColor} px-2.5 py-1 rounded-full text-xs shadow-sm inline-block">
                                 ${statusText}
@@ -990,7 +987,7 @@
     }
     </script>
 
-    <!-- BỘ ĐẾM HÀNG DỌC -->
+    <!-- BỘ ĐẾM TRUY CẬP AN TOÀN -->
     <style>
       .counter-widget-vertical {
         position: fixed; bottom: 8px; left: 8px;
@@ -1016,27 +1013,16 @@
       </div>
       <div class="counter-row">
         <span>🌐 Tổng lượt xem:</span>
-        <span id="total-views" class="counter-val">--</span>
+        <span id="total-views" class="counter-val">105</span>
       </div>
     </div>
 
     <script>
-      (async function initTotalCounter() {
-        const domainKey = window.location.hostname.replace(/[^a-zA-Z0-9]/g, '_') || 'my_local_site';
-        try {
-          const res = await fetch(`https://api.counterapi.dev/v1/${domainKey}/views/up`);
-          if (!res.ok) throw new Error("API Counter Error Status " + res.status);
-          const data = await res.json();
-          if (data && data.count) {
-            document.getElementById('total-views').innerText = data.count.toLocaleString('vi-VN'); 
-            return;
-          }
-        } catch (err) {
-          let localCount = parseInt(localStorage.getItem('site_views') || '105');
-          localCount++;
-          localStorage.setItem('site_views', localCount);
-          document.getElementById('total-views').innerText = localCount.toLocaleString('vi-VN');
-        }
+      (function initSafeCounter() {
+        let localCount = parseInt(localStorage.getItem('site_views') || '105');
+        localCount++;
+        localStorage.setItem('site_views', localCount);
+        document.getElementById('total-views').innerText = localCount.toLocaleString('vi-VN');
       })();
 
       function updateOnlineUsers() {
