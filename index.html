@@ -111,5 +111,33 @@
         .catch(err => console.log("Chạy chế độ Landing tĩnh. Lỗi kết nối API:", err));
     }
   </script>
+  <!-- File: index.html -->
+<script>
+  // Thay URL Deployment mới nhất của Google Apps Script vào đây
+  const SCRIPT_URL = "https://script.google.com/macros/s/MA_TRIEN_KHAI_CUA_BAN/exec";
+
+  // Hàm gọi API lấy dữ liệu từ Apps Script
+  async function loadData() {
+    try {
+      // BẮT BỘC có ?action=getData ở cuối URL
+      const response = await fetch(`${SCRIPT_URL}?action=getData`);
+      const result = await response.json();
+
+      if (result.status === "success" || result.data) {
+        console.log("Dữ liệu nhận từ Google Sheet:", result);
+        
+        // 1. Cập nhật dữ liệu vào Biểu đồ / Thống kê
+        updateDashboardUI(result);
+      } else {
+        console.error("Lỗi dữ liệu:", result.message);
+      }
+    } catch (error) {
+      console.error("Lỗi khi kết nối Google Apps Script:", error);
+    }
+  }
+
+  // Tự động gọi hàm loadData khi trang web tải xong
+  window.addEventListener("DOMContentLoaded", loadData);
+</script>
 </body>
 </html>
