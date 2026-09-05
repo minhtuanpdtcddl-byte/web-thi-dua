@@ -4,12 +4,8 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title id="page-title">Giới Thiệu - Hệ Thống Quản Lý Đoàn Viên</title>
-  
-  <!-- Bootstrap 5 CSS -->
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
-  <!-- FontAwesome Icon -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  
   <style>
     .hero-banner {
       background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%);
@@ -19,55 +15,34 @@
       border-bottom-right-radius: 40px;
       box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
     }
-    .card-custom {
-      border: none;
-      border-radius: 15px;
-      transition: transform 0.3s ease, box-shadow 0.3s ease;
-    }
-    .card-custom:hover {
-      transform: translateY(-5px);
-      box-shadow: 0 12px 20px rgba(0, 0, 0, 0.1) !important;
-    }
+    .card-custom { border: none; border-radius: 15px; }
     .btn-entrance {
       background-color: #f59e0b;
       color: #1e293b;
       font-weight: 700;
       padding: 14px 32px;
       border-radius: 50px;
-      transition: all 0.3s ease;
-      border: none;
       text-decoration: none;
       display: inline-block;
     }
-    .btn-entrance:hover {
-      background-color: #d97706;
-      color: #ffffff;
-      transform: scale(1.05);
-      box-shadow: 0 8px 20px rgba(245, 158, 11, 0.4);
-    }
+    .btn-entrance:hover { background-color: #d97706; color: #ffffff; }
   </style>
 </head>
 <body class="bg-light min-vh-100 d-flex flex-column justify-content-between">
 
-  <!-- HERO SECTION -->
   <div class="hero-banner text-center position-relative overflow-hidden">
     <div class="container position-relative z-1">
-      <div class="mb-3">
-        <i class="fa-solid fa-graduation-cap fa-3x text-warning"></i>
-      </div>
+      <div class="mb-3"><i class="fa-solid fa-graduation-cap fa-3x text-warning"></i></div>
       <h1 class="display-4 fw-bold mb-3" id="hero-title">Hệ Thống Quản Lý & Thi Đua Đoàn Viên</h1>
       <p class="col-md-8 fs-5 mx-auto text-light opacity-90 mb-4" id="hero-subtitle">
         Giải pháp chuyển đổi số trong quản lý danh mục Khoa, Lớp và minh chứng rèn luyện Đoàn viên
       </p>
-      
-      <!-- NÚT TRUY CẬP SANG APP CHÍNH (APP.HTML) -->
       <a href="app.html" class="btn-entrance shadow-lg text-uppercase">
         🚀 Truy cập hệ thống ngay <i class="fa-solid fa-arrow-right ms-2"></i>
       </a>
     </div>
   </div>
 
-  <!-- NỘI DUNG GIỚI THIỆU THÔNG TIN -->
   <div class="container my-5 py-3">
     <div class="row justify-content-center">
       <div class="col-md-10">
@@ -84,43 +59,30 @@
     </div>
   </div>
 
-  <!-- FOOTER -->
   <footer class="text-center py-4 text-muted small border-top bg-white mt-auto">
     <p class="m-0">Hệ thống Quản lý Đào tạo & Thi đua Đoàn viên</p>
   </footer>
 
-  <!-- SCRIPT KẾT NỐI API ĐỒNG BỘ CẤU HÌNH DỮ LIỆU -->
   <script>
-    // Điền đường dẫn Web App Google Apps Script của bạn vào giữa 2 dấu ngoặc kép bên dưới
+    // Điền URL Web App Deployment từ Google Apps Script của bạn
     const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwD9D9kKMw6LxUTnE40972HpWC_ZYo0J34qNKMthGccWH19OPWSN7Ty99aCPI3TTdkM/exec";
 
-    async function loadLandingConfig() {
-      if (!SCRIPT_URL || SCRIPT_URL.includes("DÁN_URL")) return;
-
+    async function loadConfig() {
+      if (!SCRIPT_URL || SCRIPT_URL.includes("URL_WEB_APP")) return;
       try {
-        const response = await fetch(`${SCRIPT_URL}?action=getData`);
-        const data = await response.json();
-
+        const res = await fetch(`${SCRIPT_URL}?action=getData`);
+        const data = await res.json();
         if (data && data.landingConfig) {
           const cfg = data.landingConfig;
-          if (cfg.heroTitle || cfg.HERO_TITLE) {
-            const title = cfg.heroTitle || cfg.HERO_TITLE;
-            document.getElementById('hero-title').innerText = title;
-            document.getElementById('page-title').innerText = title;
-          }
-          if (cfg.heroSubtitle || cfg.HERO_SUBTITLE) {
-            document.getElementById('hero-subtitle').innerText = cfg.heroSubtitle || cfg.HERO_SUBTITLE;
-          }
-          if (cfg.aboutText || cfg.ABOUT_TEXT) {
-            document.getElementById('about-text').innerText = cfg.aboutText || cfg.ABOUT_TEXT;
-          }
+          if (cfg.heroTitle || cfg.HERO_TITLE) document.getElementById('hero-title').innerText = cfg.heroTitle || cfg.HERO_TITLE;
+          if (cfg.heroSubtitle || cfg.HERO_SUBTITLE) document.getElementById('hero-subtitle').innerText = cfg.heroSubtitle || cfg.HERO_SUBTITLE;
+          if (cfg.aboutText || cfg.ABOUT_TEXT) document.getElementById('about-text').innerText = cfg.aboutText || cfg.ABOUT_TEXT;
         }
       } catch (err) {
-        console.warn("Chạy ở chế độ giao diện tĩnh. Chưa đồng bộ với Google Sheet:", err);
+        console.warn("Lỗi tải cấu hình:", err);
       }
     }
-
-    window.addEventListener("DOMContentLoaded", loadLandingConfig);
+    window.addEventListener("DOMContentLoaded", loadConfig);
   </script>
 </body>
 </html>
