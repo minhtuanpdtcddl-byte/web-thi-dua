@@ -34,7 +34,7 @@
             <p id="uiAnnouncement" class="text-base md:text-lg font-bold text-orange-950 mt-1 pl-7 leading-relaxed"></p>
         </div>
 
-        <!-- 3. BẢNG TIN THÔNG TIN (SLIDER TRÌNH CHIẾU TỰ ĐỘNG) -->
+        <!-- 3. BẢNG TIN THÔNG TIN (SLIDER) -->
         <div id="uiNewsBox" class="hidden mb-8 bg-white border border-blue-200 rounded-xl overflow-hidden shadow-md">
             <div class="bg-blue-900 text-white p-4 font-bold text-base md:text-lg flex items-center justify-between">
                 <div class="flex items-center gap-2">
@@ -108,13 +108,12 @@
             </form>
         </div>
 
-        <!-- 5. DASHBOARD BÁO CÁO TRỰC QUAN -->
+        <!-- 5. DASHBOARD BÁO CÁO -->
         <div class="mb-8">
             <h2 class="text-base font-bold text-slate-800 uppercase mb-4 flex items-center gap-2">
                 📊 BÁO CÁO THỐNG KÊ TỔNG QUAN
             </h2>
 
-            <!-- KHỐI BỘ LỌC THỐNG KÊ -->
             <div class="grid grid-cols-1 md:grid-cols-4 gap-3 w-full text-xs items-end mb-6 bg-slate-50 p-3 rounded-lg border border-slate-200">
                 <div>
                     <label class="block font-semibold mb-1 text-slate-700">Liên Chi đoàn / Khoa:</label>
@@ -144,7 +143,6 @@
                 </div>
             </div>
 
-            <!-- CÁC THẺ KPI CHỈ SỐ -->
             <div class="grid grid-cols-2 md:grid-cols-5 gap-3 mb-6">
                 <div class="bg-blue-50 border-l-4 border-blue-600 p-3.5 rounded-r-lg shadow-sm">
                     <p class="text-[11px] font-bold text-blue-700 uppercase">Tổng số minh chứng</p>
@@ -168,7 +166,6 @@
                 </div>
             </div>
 
-            <!-- HIỂN THỊ BIỂU ĐỒ -->
             <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
                 <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm flex flex-col items-center">
                     <h3 class="text-xs font-bold text-slate-600 uppercase mb-3">Tỷ lệ Trạng thái Duyệt</h3>
@@ -217,7 +214,6 @@
             </table>
         </div>
 
-        <!-- CỤM ĐIỀU KHIỂN PHÂN TRANG -->
         <div class="flex flex-col sm:flex-row justify-between items-center gap-4 mt-4 px-2 text-sm text-slate-600">
             <div class="flex items-center gap-2">
                 <span>Hiển thị:</span>
@@ -269,14 +265,10 @@
       </div>
     </div>
 
-    <!-- THƯ VIỆN HỖ TRỢ XUẤT EXCEL -->
     <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 
-    <!-- SCRIPT XỬ LÝ HỆ THỐNG TOÀN CỤC -->
     <script>
-    // =========================================================================
-    // ⚠️ ĐÃ CẤU HÌNH LINK GOOGLE APPS SCRIPT
-    // =========================================================================
+    // ⚠️ ĐÃ CẤU HÌNH LINK GOOGLE APPS SCRIPT DƯỚI DẠNG THAM SỐ CHUẨN
     const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbwD9D9kKMw6LxUTnE40972HpWC_ZYo0J34qNKMthGccWH19OPWSN7Ty99aCPI3TTdkM/exec";
 
     let globalData = [];
@@ -284,17 +276,14 @@
     let departmentStructure = {};
     let selectedExportType = 'personal';
 
-    // Biến phân trang
     let currentPage = 1;
     let rowsPerPage = 10;
 
-    // Biến slider
     let newsDataList = [];
     let currentSlideIndex = 0;
     let newsSliderTimer = null;
     let slideIntervalTime = 15000;
 
-    // Biến biểu đồ
     let statusChartInstance = null;
     let facultyChartInstance = null;
 
@@ -302,14 +291,12 @@
         loadData();
     });
 
-    // 1. HÀM CHUẨN HÓA VÀ GỘP TÊN LIÊN CHI ĐOÀN / KHOA THÔNG MINH
     function getStandardFaculty(facultyStr, classStr = '') {
         if (!facultyStr) facultyStr = '';
         let rawFac = facultyStr.trim().replace(/\s+/g, ' ');
         let rawClass = (classStr || '').trim().toLowerCase();
         let lowerFac = rawFac.toLowerCase();
 
-        // Tra cứu theo Lớp
         if (rawClass && typeof departmentStructure === 'object' && departmentStructure) {
             for (let [officialFac, classList] of Object.entries(departmentStructure)) {
                 if (Array.isArray(classList) && classList.some(c => c.trim().toLowerCase() === rawClass)) {
@@ -318,7 +305,6 @@
             }
         }
 
-        // Gộp các Khoa thành phần / sáp nhập
         if (lowerFac.includes('cơ khí') || lowerFac.includes('điện - điện tử') || lowerFac.includes('cơ - điện')) {
             return 'Cơ - Điện - Xây dựng';
         }
@@ -335,7 +321,6 @@
             return 'Công nghệ Ô tô';
         }
 
-        // So khớp hoa/thường với sơ đồ
         if (typeof departmentStructure === 'object' && departmentStructure) {
             for (let officialFac of Object.keys(departmentStructure)) {
                 if (officialFac.toLowerCase() === lowerFac) {
@@ -360,7 +345,7 @@
     }
 
     async function loadData() {
-        if (!WEB_APP_URL || WEB_APP_URL.includes("DÁN_LINK_WEB_APP")) {
+        if (!WEB_APP_URL || WEB_APP_URL.includes("DÁN_URL")) {
             console.warn("Chưa cấu hình WEB_APP_URL!");
             document.getElementById('uiSchoolName').innerText = "HỆ THỐNG QUẢN LÝ THI ĐUA ĐOÀN VIÊN";
             return;
@@ -370,12 +355,10 @@
             const res = await fetch(WEB_APP_URL + (WEB_APP_URL.includes('?') ? '&' : '?') + "output=json&t=" + new Date().getTime());
             const result = await res.json();
 
-            // --- BỔ SUNG: KIỂM TRA CHUYỂN HƯỚNG LANDING PAGE TRÊN GITHUB PAGES ---
             if (result.config && result.config.landing) {
                 const isEnableLanding = result.config.landing.ENABLE_LANDING === true || result.config.landing.ENABLE_LANDING === "TRUE";
                 const urlParams = new URLSearchParams(window.location.search);
                 
-                // Nếu bật Landing Page và không có tham số ?from=landing thì trỏ về index.html
                 if (isEnableLanding && urlParams.get('from') !== 'landing' && !window.location.pathname.endsWith('app.html')) {
                     window.location.href = "index.html";
                     return;
@@ -383,9 +366,7 @@
             }
 
             if (result.config) {
-                if (result.config.schoolName) {
-                    document.getElementById('uiSchoolName').innerText = result.config.schoolName;
-                }
+                if (result.config.schoolName) document.getElementById('uiSchoolName').innerText = result.config.schoolName;
                 if (result.config.logoUrl) {
                     const logoImg = document.getElementById('uiLogo');
                     logoImg.src = result.config.logoUrl;
@@ -395,9 +376,7 @@
                     document.getElementById('uiAnnouncement').innerText = result.config.announcement;
                     document.getElementById('uiAnnouncementBox').classList.remove('hidden');
                 }
-                if (result.config.footerInfo) {
-                    document.getElementById('uiFooterInfo').innerHTML = result.config.footerInfo;
-                }
+                if (result.config.footerInfo) document.getElementById('uiFooterInfo').innerHTML = result.config.footerInfo;
                 if (result.config.structure) {
                     departmentStructure = result.config.structure;
                     initFormFacultyDropdown();
@@ -407,9 +386,8 @@
                 } else {
                     populateActivities(result.data || []);
                 }
-                if (result.config.slideInterval) {
-                    slideIntervalTime = parseInt(result.config.slideInterval) * 1000;
-                }
+                if (result.config.slideInterval) slideIntervalTime = parseInt(result.config.slideInterval) * 1000;
+                
                 if (result.config.newsList && result.config.newsList.length > 0) {
                     newsDataList = result.config.newsList;
                 } else if (result.config.newsTitle || result.config.newsContent) {
@@ -444,14 +422,11 @@
         }
     }
 
-    // --- CÁC HÀM XỬ LÝ KHỐI BÁO CÁO & BIỂU ĐỒ (DASHBOARD) ---
     function updateDashboard(data) {
         data = data || [];
         const total = data.length;
         
-        let approved = 0;
-        let pending = 0;
-        let rejected = 0;
+        let approved = 0, pending = 0, rejected = 0;
         const studentSet = new Set();
         const facultyCounts = {};
 
@@ -462,9 +437,7 @@
             const rawFaculty = String(row[3] || '').trim();
             const status = String(row[7] || '').trim().toLowerCase();
 
-            // Gọi hàm chuẩn hóa tên Khoa
             const faculty = getStandardFaculty(rawFaculty, rawClass);
-
             const studentKey = studentId || studentName;
             if (studentKey) studentSet.add(studentKey);
 
@@ -476,9 +449,7 @@
                 pending++;
             }
 
-            if (faculty) {
-                facultyCounts[faculty] = (facultyCounts[faculty] || 0) + 1;
-            }
+            if (faculty) facultyCounts[faculty] = (facultyCounts[faculty] || 0) + 1;
         });
 
         if(document.getElementById('kpiTotal')) document.getElementById('kpiTotal').innerText = total;
@@ -572,9 +543,7 @@
         if (!classSelect) return;
 
         let filtered = data;
-        if (facultyFilter) {
-            filtered = data.filter(r => getStandardFaculty(r[3], r[2]) === facultyFilter);
-        }
+        if (facultyFilter) filtered = data.filter(r => getStandardFaculty(r[3], r[2]) === facultyFilter);
 
         const classes = [...new Set(filtered.map(r => r[2]).filter(Boolean))].sort();
         classSelect.innerHTML = '<option value="">-- Tất cả Chi đoàn --</option>' +
@@ -588,10 +557,9 @@
 
         currentFilteredData = globalData.filter(row => {
             const rowFaculty = getStandardFaculty(row[3], row[2]);
-            const matchFaculty = !faculty || rowFaculty === faculty;
-            const matchClass = !className || row[2] === className;
-            const matchActivity = !activity || row[4] === activity;
-            return matchFaculty && matchClass && matchActivity;
+            return (!faculty || rowFaculty === faculty) &&
+                   (!className || row[2] === className) &&
+                   (!activity || row[4] === activity);
         });
 
         currentPage = 1;
@@ -617,15 +585,14 @@
         if (currentPage < 1) currentPage = 1;
 
         const startIndex = (currentPage - 1) * rowsPerPage;
-        const endIndex = startIndex + rowsPerPage;
-        const pageData = currentFilteredData.slice(startIndex, endIndex);
+        const pageData = currentFilteredData.slice(startIndex, startIndex + rowsPerPage);
 
         const container = document.getElementById('listContainer');
-        container.innerHTML = '';
         
         if (!pageData || pageData.length === 0) {
             container.innerHTML = `<tr><td colspan="6" class="p-4 text-center text-gray-500">Không tìm thấy dữ liệu.</td></tr>`;
         } else {
+            let rowsHtml = '';
             pageData.forEach(row => {
                 const [studentId, name, classId, facultyId, actName, achName, fileUrlStr, status] = row;
                 const displayActivity = actName || achName || '-';
@@ -643,7 +610,7 @@
                     statusText = "Từ chối";
                 }
 
-                container.innerHTML += `
+                rowsHtml += `
                     <tr class="hover:bg-slate-50 transition">
                         <td class="p-3 font-semibold text-blue-900 whitespace-nowrap">${studentId || 'Chưa có'}</td>
                         <td class="p-3 font-medium text-slate-800">${name || ''}</td>
@@ -658,15 +625,12 @@
                     </tr>
                 `;
             });
+            container.innerHTML = rowsHtml;
         }
 
-        const pageInfo = document.getElementById('pageInfoText');
-        const btnPrev = document.getElementById('btnPrevPage');
-        const btnNext = document.getElementById('btnNextPage');
-
-        if (pageInfo) pageInfo.innerText = `Trang ${currentPage} / ${totalPages}`;
-        if (btnPrev) btnPrev.disabled = (currentPage === 1);
-        if (btnNext) btnNext.disabled = (currentPage === totalPages || totalRows === 0);
+        document.getElementById('pageInfoText').innerText = `Trang ${currentPage} / ${totalPages}`;
+        document.getElementById('btnPrevPage').disabled = (currentPage === 1);
+        document.getElementById('btnNextPage').disabled = (currentPage === totalPages || totalRows === 0);
     }
 
     function changePage(direction) {
@@ -772,9 +736,7 @@
 
     function startNewsSlider() {
         stopNewsSlider();
-        if (newsDataList.length > 1) {
-            newsSliderTimer = setInterval(nextNewsSlide, slideIntervalTime);
-        }
+        if (newsDataList.length > 1) newsSliderTimer = setInterval(nextNewsSlide, slideIntervalTime);
     }
 
     function pauseNewsSlider() { stopNewsSlider(); }
@@ -827,12 +789,12 @@
         setActivity.forEach(a => { actSelect.innerHTML += `<option value="${a}">${a}</option>`; });
     }
 
-    // GỬI DUYỆT FORM NỘP MINH CHỨNG
+    // FORM NỘP MINH CHỨNG
     document.getElementById('uploadForm').addEventListener('submit', async function(e) {
         e.preventDefault();
         
-        if (!WEB_APP_URL || WEB_APP_URL.includes("DÁN_LINK_WEB_APP")) {
-            alert("⚠️ Hệ thống chưa được kết nối với Google Apps Script! Vui lòng thay link WEB_APP_URL trong file app.html.");
+        if (!WEB_APP_URL || WEB_APP_URL.includes("DÁN_URL")) {
+            alert("⚠️ Hệ thống chưa được kết nối với Google Apps Script! Vui lòng điền WEB_APP_URL.");
             return;
         }
 
@@ -842,22 +804,17 @@
         submitBtn.innerText = 'ĐANG TẢI VÀ GỬI MINH CHỨNG...';
 
         try {
-            const fileInput = document.getElementById('evidenceFiles');
-            const files = fileInput.files;
-            const filePromises = [];
-
-            for (let i = 0; i < files.length; i++) {
-                filePromises.push(new Promise((resolve, reject) => {
-                    const reader = new FileReader();
-                    reader.onload = e => resolve({
-                        name: files[i].name,
-                        mimeType: files[i].type,
-                        base64: e.target.result.split(',')[1]
-                    });
-                    reader.onerror = reject;
-                    reader.readAsDataURL(files[i]);
-                }));
-            }
+            const files = document.getElementById('evidenceFiles').files;
+            const filePromises = Array.from(files).map(file => new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.onload = e => resolve({
+                    name: file.name,
+                    mimeType: file.type,
+                    base64: e.target.result.split(',')[1]
+                });
+                reader.onerror = reject;
+                reader.readAsDataURL(file);
+            }));
 
             const convertedFiles = await Promise.all(filePromises);
 
@@ -894,11 +851,10 @@
         }
     });
 
-    // ================== HỆ THỐNG XUẤT FILE ==================
+    // XUẤT BÁO CÁO
     function openFormatModal(type) {
         selectedExportType = type;
-        const titleText = type === 'personal' ? 'XUẤT BÁO CÁO CÁ NHÂN' : 'XUẤT BÁO CÁO TẬP THỂ';
-        document.getElementById('modalReportTypeTitle').innerText = titleText;
+        document.getElementById('modalReportTypeTitle').innerText = type === 'personal' ? 'XUẤT BÁO CÁO CÁ NHÂN' : 'XUẤT BÁO CÁO TẬP THỂ';
         document.getElementById('formatSelectModal').style.display = 'flex';
     }
 
@@ -932,7 +888,7 @@
         const templateConfig = {
             unitHeader: "ĐOÀN TỈNH ĐẮK LẮK<br><b>BCH TRƯỜNG CAO ĐẲNG ĐẮK LẮK</b>",
             nationalHeader: "CỘNG HÒA XÃ HỘI CHỦ NGHĨA VIỆT NAM<br><b>Độc lập - Tự do - Hạnh phúc</b>",
-            locationDate: "Đắk Lắk, ngày ..... tháng ..... năm 2026",
+            locationDate: "Đắc Lắk, ngày ..... tháng ..... năm 2026",
             personalTitle: "BÁO CÁO THÀNH TÍCH CÁ NHÂN",
             groupTitle: "BÁO CÁO THÀNH TÍCH TẬP THỂ",
             signerLeft: "<b>XÁC NHẬN CỦA CHI ĐOÀN</b>",
@@ -984,9 +940,7 @@
                         <th style="border: 1px solid #333; padding: 8px;">Trạng thái</th>
                     </tr>
                 </thead>
-                <tbody>
-                    ${tableRowsHtml}
-                </tbody>
+                <tbody>${tableRowsHtml}</tbody>
             </table>
             <table style="width: 100%; margin-top: 40px;">
                 <tr>
@@ -1000,38 +954,18 @@
             const win = window.open('', '_blank');
             if (win) {
                 win.document.write(`
-                    <!DOCTYPE html>
-                    <html>
-                    <head>
-                        <title>${reportTitle}</title>
-                        <style>
-                            body { font-family: 'Times New Roman', Times, serif; padding: 25px; color: #000; }
-                            @media print { body { padding: 0; } }
-                        </style>
-                    </head>
-                    <body>
-                        ${fullBodyHtml}
-                        <script>window.onload = function() { window.print(); }<\/script>
-                    </body>
-                    </html>
+                    <!DOCTYPE html><html><head><title>${reportTitle}</title>
+                    <style>body { font-family: 'Times New Roman', serif; padding: 25px; color: #000; }</style>
+                    </head><body>${fullBodyHtml}<script>window.onload = function() { window.print(); }<\/script></body></html>
                 `);
                 win.document.close();
             }
         } else if (format === 'word') {
-            const wordDocument = `
-                <html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'>
-                <head><meta charset='utf-8'><title>${reportTitle}</title></head>
-                <body style="font-family:'Times New Roman', serif;">${fullBodyHtml}</body>
-                </html>`;
+            const wordDocument = `<html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'><head><meta charset='utf-8'></head><body style="font-family:'Times New Roman', serif;">${fullBodyHtml}</body></html>`;
             downloadBlobFile(wordDocument, 'application/msword', `${fileName}.doc`);
         } else if (format === 'excel') {
             const tempTable = document.createElement('table');
-            tempTable.innerHTML = `
-                <thead>
-                    <tr><th>STT</th><th>Họ và Tên</th><th>Chi đoàn</th><th>Hoạt động / Thành tích</th><th>Ghi chú</th><th>Trạng thái</th></tr>
-                </thead>
-                <tbody>${tableRowsHtml}</tbody>
-            `;
+            tempTable.innerHTML = `<thead><tr><th>STT</th><th>Họ và Tên</th><th>Chi đoàn</th><th>Hoạt động / Thành tích</th><th>Ghi chú</th><th>Trạng thái</th></tr></thead><tbody>${tableRowsHtml}</tbody>`;
             const wb = XLSX.utils.table_to_book(tempTable, { sheet: "Bao Cao" });
             XLSX.writeFile(wb, `${fileName}.xlsx`);
         }
@@ -1048,7 +982,7 @@
     }
     </script>
 
-    <!-- BỘ ĐẾM HÀNG DỌC CÓ AN TOÀN TRÁNH LỖI 410 CỦA COUNTERAPI -->
+    <!-- BỘ ĐẾM HÀNG DỌC -->
     <style>
       .counter-widget-vertical {
         position: fixed; bottom: 8px; left: 8px;
@@ -1098,14 +1032,13 @@
       })();
 
       function updateOnlineUsers() {
-        let baseUsers = Math.floor(Math.random() * 3) + 1;
-        document.getElementById('online-count').innerText = baseUsers;
+        document.getElementById('online-count').innerText = Math.floor(Math.random() * 3) + 1;
       }
       updateOnlineUsers();
       setInterval(updateOnlineUsers, 15000);
     </script>
     
-    <!-- MÃ NHÚNG CHATBASE AI -->
+    <!-- CHATBASE AI -->
     <script>
       window.chatbaseConfig = { chatbotId: "cuxqgU3a1vLNmHs3I3o-S" }
     </script>
