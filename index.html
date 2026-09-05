@@ -89,55 +89,38 @@
     <p class="m-0">Hệ thống Quản lý Đào tạo & Thi đua Đoàn viên</p>
   </footer>
 
-  <!-- SCRIPT KẾT NỐI API ĐỂ LẤY CẤU HÌNH ĐỘNG TỪ GOOGLE SHEET (TÙY CHỌN) -->
+  <!-- SCRIPT KẾT NỐI API ĐỒNG BỘ CẤU HÌNH DỮ LIỆU -->
   <script>
-    // Thay URL Web App của bạn vào đây nếu muốn đồng bộ dữ liệu tự động với Google Sheet
-    const API_URL = "URL_WEB_APP_GOOGLE_APPS_SCRIPT_CỦA_BẠN";
+    // Điền đường dẫn Web App Google Apps Script của bạn vào giữa 2 dấu ngoặc kép bên dưới
+    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwD9D9kKMw6LxUTnE40972HpWC_ZYo0J34qNKMthGccWH19OPWSN7Ty99aCPI3TTdkM/exec";
 
-    if (API_URL && !API_URL.includes("URL_WEB_APP")) {
-      fetch(`${API_URL}?action=getData`)
-        .then(res => res.json())
-        .then(data => {
-          if (data && data.landingConfig) {
-            const cfg = data.landingConfig;
-            if (cfg.HERO_TITLE) {
-              document.getElementById('hero-title').innerText = cfg.HERO_TITLE;
-              document.getElementById('page-title').innerText = cfg.HERO_TITLE;
-            }
-            if (cfg.HERO_SUBTITLE) document.getElementById('hero-subtitle').innerText = cfg.HERO_SUBTITLE;
-            if (cfg.ABOUT_TEXT) document.getElementById('about-text').innerText = cfg.ABOUT_TEXT;
+    async function loadLandingConfig() {
+      if (!SCRIPT_URL || SCRIPT_URL.includes("DÁN_URL")) return;
+
+      try {
+        const response = await fetch(`${SCRIPT_URL}?action=getData`);
+        const data = await response.json();
+
+        if (data && data.landingConfig) {
+          const cfg = data.landingConfig;
+          if (cfg.heroTitle || cfg.HERO_TITLE) {
+            const title = cfg.heroTitle || cfg.HERO_TITLE;
+            document.getElementById('hero-title').innerText = title;
+            document.getElementById('page-title').innerText = title;
           }
-        })
-        .catch(err => console.log("Chạy chế độ Landing tĩnh. Lỗi kết nối API:", err));
-    }
-  </script>
-  <!-- File: index.html -->
-<script>
-  // Thay URL Deployment mới nhất của Google Apps Script vào đây
-  const SCRIPT_URL = "https://script.google.com/macros/s/MA_TRIEN_KHAI_CUA_BAN/exec";
-
-  // Hàm gọi API lấy dữ liệu từ Apps Script
-  async function loadData() {
-    try {
-      // BẮT BỘC có ?action=getData ở cuối URL
-      const response = await fetch(`${SCRIPT_URL}?action=getData`);
-      const result = await response.json();
-
-      if (result.status === "success" || result.data) {
-        console.log("Dữ liệu nhận từ Google Sheet:", result);
-        
-        // 1. Cập nhật dữ liệu vào Biểu đồ / Thống kê
-        updateDashboardUI(result);
-      } else {
-        console.error("Lỗi dữ liệu:", result.message);
+          if (cfg.heroSubtitle || cfg.HERO_SUBTITLE) {
+            document.getElementById('hero-subtitle').innerText = cfg.heroSubtitle || cfg.HERO_SUBTITLE;
+          }
+          if (cfg.aboutText || cfg.ABOUT_TEXT) {
+            document.getElementById('about-text').innerText = cfg.aboutText || cfg.ABOUT_TEXT;
+          }
+        }
+      } catch (err) {
+        console.warn("Chạy ở chế độ giao diện tĩnh. Chưa đồng bộ với Google Sheet:", err);
       }
-    } catch (error) {
-      console.error("Lỗi khi kết nối Google Apps Script:", error);
     }
-  }
 
-  // Tự động gọi hàm loadData khi trang web tải xong
-  window.addEventListener("DOMContentLoaded", loadData);
-</script>
+    window.addEventListener("DOMContentLoaded", loadLandingConfig);
+  </script>
 </body>
 </html>
