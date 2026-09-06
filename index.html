@@ -199,6 +199,15 @@
             }
         }
 
+        // Bảng mã màu đồng bộ với Admin
+        const THEME_PRESETS = {
+            'DEFAULT': { primary: '#8b0000', gold: '#cba235', blue: '#1e3a8a' },
+            'DOAN_26_3': { primary: '#0052cc', gold: '#ffab00', blue: '#003994' },
+            'TET': { primary: '#c62828', gold: '#fbc02d', blue: '#8e24aa' },
+            'LE_LON': { primary: '#b71c1c', gold: '#ffd600', blue: '#1a237e' },
+            'NGAY_NHA_GIAO': { primary: '#1565c0', gold: '#ffa000', blue: '#4a148c' }
+        };
+
         // Hàm áp dụng Cấu hình từ Server/Apps Script
         function applyServerConfig(cfg) {
             if (!cfg) return;
@@ -236,41 +245,23 @@
                 document.getElementById('viewHeroImage').src = cfg.heroFile.base64;
             }
 
-            // 4. Cập nhật Màu sắc Nút chủ đạo nếu có
-          // Bảng mã màu đồng bộ với Admin
-    const THEME_PRESETS = {
-        'DEFAULT': { primary: '#8b0000', gold: '#cba235', blue: '#1e3a8a' },
-        'DOAN_26_3': { primary: '#0052cc', gold: '#ffab00', blue: '#003994' },
-        'TET': { primary: '#c62828', gold: '#fbc02d', blue: '#8e24aa' },
-        'LE_LON': { primary: '#b71c1c', gold: '#ffd600', blue: '#1a237e' },
-        'NGAY_NHA_GIAO': { primary: '#1565c0', gold: '#ffa000', blue: '#4a148c' }
-    };
+            // 4. Cập nhật Màu sắc Giao diện chuẩn
+            let primaryColor = cfg.primaryColor || '#8b0000';
+            if (!primaryColor.startsWith('#')) {
+                primaryColor = '#' + primaryColor;
+            }
 
-   // Lấy màu chủ đạo (mặc định #8b0000 nếu trống)
-    let primaryColor = config.primaryColor || '#8b0000';
-    if (!primaryColor.startsWith('#')) {
-        primaryColor = '#' + primaryColor;
-    }
+            // Ưu tiên màu lấy theo Preset đã chọn (nếu có)
+            let themeConfig = THEME_PRESETS[cfg.selectedTheme] || {
+                primary: primaryColor,
+                gold: '#ffa000',
+                blue: primaryColor
+            };
 
-    // 1. Cập nhật biến CSS toàn trang
-    document.documentElement.style.setProperty('--primary-color', primaryColor);
-
-    // 2. Áp dụng màu trực tiếp cho các nút bấm / header chính
-    const primaryButtons = document.querySelectorAll('.btn-primary, .bg-primary-theme');
-    primaryButtons.forEach(btn => {
-        btn.style.backgroundColor = primaryColor;
-    });
-
-    // 3. Đổi màu chữ các tiêu đề điểm nhấn
-    const themeTexts = document.querySelectorAll('.text-primary-theme');
-    themeTexts.forEach(el => {
-        el.style.color = primaryColor;
-    });
-
-    // Áp dụng trực tiếp vào biến CSS giao diện
-    document.documentElement.style.setProperty('--school-red', primary);
-    document.documentElement.style.setProperty('--school-gold', gold);
-    document.documentElement.style.setProperty('--union-blue', blue);
+            // Gán trực tiếp vào các biến CSS
+            document.documentElement.style.setProperty('--school-red', themeConfig.primary);
+            document.documentElement.style.setProperty('--school-gold', themeConfig.gold);
+            document.documentElement.style.setProperty('--union-blue', themeConfig.blue);
 
             // 5. Cập nhật Thông báo chạy
             if (cfg.announcement && cfg.announcement.trim() !== "") {
@@ -327,7 +318,7 @@
                         applyServerConfig(cfg);
                     })
                     .getConfig();
-            } else if (WEB_APP_URL && WEB_APP_URL !== "web của tôi") {
+            } else if (WEB_APP_URL && WEB_APP_URL !== "mã app") {
                 fetch(WEB_APP_URL + "?action=getConfig")
                     .then(res => res.json())
                     .then(data => {
