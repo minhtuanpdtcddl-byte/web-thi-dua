@@ -187,7 +187,8 @@
 
     <!-- JAVASCRIPT XỬ LÝ CẤU HÌNH SERVER & LOCALSTORAGE -->
     <script>
-        const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbzqBySudE2c0qfHy3SCP_3f_btpdLyBGMLCNMcg22Fb_QisPFuxobsvk0-lqgYnoYYF/exec"; // Thay bằng URL Web App Apps Script nếu xài Fetch
+        // Điền Web App Exec URL của bạn vào đây
+        const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbzqBySudE2c0qfHy3SCP_3f_btpdLyBGMLCNMcg22Fb_QisPFuxobsvk0-lqgYnoYYF/exec"; 
         const ADMIN_PASSWORD = "123456";
 
         function accessAdmin() {
@@ -199,7 +200,6 @@
             }
         }
 
-        // Bảng mã màu đồng bộ với Admin
         const THEME_PRESETS = {
             'DEFAULT': { primary: '#8b0000', gold: '#cba235', blue: '#1e3a8a' },
             'DOAN_26_3': { primary: '#0052cc', gold: '#ffab00', blue: '#003994' },
@@ -208,27 +208,25 @@
             'NGAY_NHA_GIAO': { primary: '#1565c0', gold: '#ffa000', blue: '#4a148c' }
         };
 
-        // Hàm áp dụng Cấu hình từ Server/Apps Script
+        // Hàm xử lý áp dụng cấu hình gửi từ Apps Script về
         function applyServerConfig(cfg) {
             if (!cfg) return;
 
-            // 1. Kiểm tra Ẩn/Hiện Trang Giới Thiệu theo cấu hình Admin
+            // 1. CHỈ ẨN TRANG GIỚI THIỆU KHI CHỦ ĐỘNG ĐẶT LÀ "FALSE" (Còn lại mặc định hiển thị)
             const landingSection = document.getElementById('landingPageSection');
-            const isLandingActive = String(cfg.enableLanding).toUpperCase() === "TRUE";
-
             if (landingSection) {
-                if (isLandingActive) {
-                    landingSection.classList.remove('hidden');
-                } else {
+                if (String(cfg.enableLanding).toUpperCase() === "FALSE") {
                     landingSection.classList.add('hidden');
+                } else {
+                    landingSection.classList.remove('hidden');
                 }
             }
 
             // 2. Cập nhật thông tin Tiêu đề & Nội dung
-            if (cfg.schoolName) {
-                document.getElementById('viewHeaderSubtitle').innerText = cfg.schoolName;
-            }
-            if (cfg.logoUrl) {
+            if (cfg.schoolName) document.getElementById('viewHeaderSubtitle').innerText = cfg.schoolName;
+            
+            // Xử lý Logo trường
+            if (cfg.logoUrl && cfg.logoUrl.trim() !== "") {
                 document.getElementById('viewLogoSchool').src = cfg.logoUrl;
             } else if (cfg.logoFile && cfg.logoFile.base64) {
                 document.getElementById('viewLogoSchool').src = cfg.logoFile.base64;
@@ -238,32 +236,28 @@
             if (cfg.heroSubtitle) document.getElementById('viewBadge').innerText = cfg.heroSubtitle;
             if (cfg.aboutText) document.getElementById('viewHeroDesc').innerText = cfg.aboutText;
 
-            // 3. Cập nhật Banner/Hero Image
-            if (cfg.heroImage) {
+            // Xử lý Ảnh Hero Banner
+            if (cfg.heroImage && cfg.heroImage.trim() !== "") {
                 document.getElementById('viewHeroImage').src = cfg.heroImage;
             } else if (cfg.heroFile && cfg.heroFile.base64) {
                 document.getElementById('viewHeroImage').src = cfg.heroFile.base64;
             }
 
-            // 4. Cập nhật Màu sắc Giao diện chuẩn
+            // 3. Cập nhật Màu sắc Giao diện
             let primaryColor = cfg.primaryColor || '#8b0000';
-            if (!primaryColor.startsWith('#')) {
-                primaryColor = '#' + primaryColor;
-            }
+            if (!primaryColor.startsWith('#')) primaryColor = '#' + primaryColor;
 
-            // Ưu tiên màu lấy theo Preset đã chọn (nếu có)
             let themeConfig = THEME_PRESETS[cfg.selectedTheme] || {
                 primary: primaryColor,
                 gold: '#ffa000',
                 blue: primaryColor
             };
 
-            // Gán trực tiếp vào các biến CSS
             document.documentElement.style.setProperty('--school-red', themeConfig.primary);
             document.documentElement.style.setProperty('--school-gold', themeConfig.gold);
             document.documentElement.style.setProperty('--union-blue', themeConfig.blue);
 
-            // 5. Cập nhật Thông báo chạy
+            // 4. Cập nhật Thông báo chạy
             if (cfg.announcement && cfg.announcement.trim() !== "") {
                 const annBar = document.getElementById('announcementBar');
                 const annText = document.getElementById('announcementText');
@@ -274,7 +268,7 @@
             }
         }
 
-        // Hàm đọc LocalStorage dự phòng
+        // Đọc cấu hình tạm từ LocalStorage
         function applyLocalConfig() {
             const data = JSON.parse(localStorage.getItem('LANDING_PAGE_CONFIG'));
             if (!data) return;
@@ -292,33 +286,22 @@
             if (data.heroHeading) document.getElementById('viewHeroHeading').innerText = data.heroHeading;
             if (data.heroDesc) document.getElementById('viewHeroDesc').innerText = data.heroDesc;
             if (data.guideLink) document.getElementById('viewGuideLink').href = data.guideLink;
-
-            if (data.f1Title) document.getElementById('viewF1Title').innerText = data.f1Title;
-            if (data.f1Desc) document.getElementById('viewF1Desc').innerText = data.f1Desc;
-            if (data.f2Title) document.getElementById('viewF2Title').innerText = data.f2Title;
-            if (data.f2Desc) document.getElementById('viewF2Desc').innerText = data.f2Desc;
-            if (data.f3Title) document.getElementById('viewF3Title').innerText = data.f3Title;
-            if (data.f3Desc) document.getElementById('viewF3Desc').innerText = data.f3Desc;
-
-            if (data.footerOrg) document.getElementById('viewFooterOrg').innerText = data.footerOrg;
-            if (data.footerAddress) document.getElementById('viewFooterAddress').innerHTML = `<i class="fa-solid fa-location-dot w-4"></i> ${data.footerAddress}`;
-            if (data.footerEmail) document.getElementById('viewFooterEmail').innerHTML = `<i class="fa-solid fa-envelope w-4"></i> Email: ${data.footerEmail}`;
-            if (data.facebookUrl) document.getElementById('viewFacebookUrl').href = data.facebookUrl;
         }
 
-        // Khởi chạy khi tải xong trang
+        // Khởi chạy khi trang sẵn sàng
         document.addEventListener("DOMContentLoaded", function() {
-            // Nạp cấu hình Local trước để giao diện hiện lập tức
             applyLocalConfig();
 
-            // Lấy dữ liệu mới nhất từ Google Apps Script
+            // Nếu chạy trong môi trường Apps Script HTML Service
             if (typeof google !== 'undefined' && google.script && google.script.run) {
                 google.script.run
                     .withSuccessHandler(function(cfg) {
                         applyServerConfig(cfg);
                     })
                     .getConfig();
-            } else if (WEB_APP_URL && WEB_APP_URL !== "mã app") {
+            } 
+            // Nếu dùng Fetch API kết nối đến Web App URL bên ngoài
+            else if (WEB_APP_URL && WEB_APP_URL !== "MÃ_APP_SCRIPT_CỦA_BẠN") {
                 fetch(WEB_APP_URL + "?action=getConfig")
                     .then(res => res.json())
                     .then(data => {
@@ -326,7 +309,7 @@
                             applyServerConfig(data.config);
                         }
                     })
-                    .catch(err => console.log("Không thể kết nối máy chủ:", err));
+                    .catch(err => console.error("Lỗi lấy cấu hình từ server:", err));
             }
         });
     </script>
