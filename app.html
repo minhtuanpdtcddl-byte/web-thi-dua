@@ -241,6 +241,43 @@
         <p id="uiFooterInfo">Hệ thống Quản lý Thi đua Đoàn viên</p>
     </footer>
 
+    <script>
+async function exportDocxFromTemplate(templateUrl, data, fileName) {
+    try {
+        // 1. Tải file mẫu .docx về bộ nhớ
+        const response = await fetch(templateUrl);
+        const arrayBuffer = await response.arrayBuffer();
+
+        // 2. Khởi tạo đọc file nén docx
+        const zip = new PizZip(arrayBuffer);
+        const doc = new window.docxtemplater(zip, {
+            paragraphLoop: true,
+            linebreaks: true,
+        });
+
+        // 3. Đổ dữ liệu từ Web vào các thẻ biến {TEN_BIEN} trong file Word
+        doc.render(data);
+
+        // 4. Tạo file Word mới và cho người dùng tải về
+        const out = doc.getZip().generate({
+            type: "blob",
+            mimeType: "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+        });
+
+        // Tải file về máy
+        const a = document.createElement("a");
+        a.href = URL.createObjectURL(out);
+        a.download = `${fileName}.docx`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+
+    } catch (error) {
+        console.error("Lỗi khi xuất file từ mẫu Docx:", error);
+        alert("⚠️ Không thể xuất file theo mẫu. Vui lòng kiểm tra lại đường dẫn file mẫu!");
+    }
+}
+        <script>
     <!-- MODAL CHỌN ĐỊNH DẠNG XUẤT BÁO CÁO -->
     <div id="formatSelectModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); z-index:99999; justify-content:center; align-items:center;">
       <div style="background:#fff; padding:22px; border-radius:8px; width:330px; text-align:center; box-shadow:0 10px 25px rgba(0,0,0,0.3); font-family:'Times New Roman', serif;">
