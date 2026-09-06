@@ -200,7 +200,7 @@
         </div>
     </div>
 
-    <!-- KHUNG MODAL CHỈNH SỬA / THÊM TIN TỨC (POPUP) -->
+    <!-- KHUNG MODAL CHỈNH SỬA / THÊM TIN TỨC -->
     <div id="newsModal" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-slate-900/40 backdrop-blur-sm p-4">
         <div class="bg-white rounded-xl shadow-xl border border-slate-200 w-full max-w-lg overflow-hidden">
             <div class="flex items-center justify-between px-5 py-3 border-b border-slate-100 bg-slate-50">
@@ -240,7 +240,6 @@
 
     <!-- SCRIPT XỬ LÝ HỆ THỐNG -->
     <script>
-        // ⚠️ THAY ĐƯỜNG DẪN APPS SCRIPT WEB APP CỦA BẠN VÀO ĐÂY NẾU DÙNG ĐỘC LẬP
         const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbxTUubzTQB1IJ-7wEsb9FChEgIWMUHzlM7_AqM5x7ZijHIEx3k-DI3g_l854RnZdrWo/exec";
 
         let currentPassword = "";
@@ -250,7 +249,6 @@
         let logoFileBase64 = null;
         let modalNewsFileBase64 = null;
 
-        // Chuẩn hóa tên Khoa / Liên chi đoàn
         function getStandardFaculty(facultyStr, classStr = '') {
             if (!facultyStr) facultyStr = '';
             let rawFac = facultyStr.trim().replace(/\s+/g, ' ');
@@ -373,7 +371,6 @@
 
             document.getElementById('cfgAnnouncement').value = cfg.announcement || '';
             
-            // Landing Page Config
             document.getElementById('cfgEnableLanding').checked = String(cfg.enableLanding).toLowerCase() === 'true';
             document.getElementById('cfgHeroTitle').value = cfg.heroTitle || '';
             document.getElementById('cfgHeroSubtitle').value = cfg.heroSubtitle || '';
@@ -706,7 +703,6 @@
             document.getElementById('loginBox').classList.remove('hidden');
         }
 
-        // Tự động khôi phục đăng nhập nếu có session
         window.addEventListener('DOMContentLoaded', () => {
             const savedPass = sessionStorage.getItem('admin_pass');
             if (savedPass) {
