@@ -482,10 +482,44 @@
         const studentSet = new Set();
         const facultyCounts = {};
 
+        // 1. Hàm chuẩn hóa chữ hoa/thường (VD: công nghệ thông tin -> Công Nghệ Thông Tin)
+        function formatProperCase(str) {
+            if (!str) return 'Chưa xác định';
+            return str.trim().toLowerCase().replace(/(^|[\s-])(\S)/g, function(match, sep, char) {
+                return sep + char.toUpperCase();
+            });
+        }
+
+        // 2. Hàm quy chiếu Chi đoàn -> Liên Chi đoàn mới nhất
+        function resolveFaculty(className, originalFaculty) {
+            const searchClass = (className || '').trim().toLowerCase();
+            const searchFac = (originalFaculty || '').trim().toLowerCase();
+            
+            // Ưu tiên 1: Dò tìm Liên Chi đoàn dựa trên Chi đoàn hiện tại có trong Danh mục cấu trúc
+            if (searchClass) {
+                for (const [fac, classes] of Object.entries(departmentStructure)) {
+                    if (classes.some(c => String(c).trim().toLowerCase() === searchClass)) {
+                        return fac; // Trả về chuẩn xác tên Liên Chi đoàn trong Danh mục
+                    }
+                }
+            }
+            
+            // Ưu tiên 2: Nếu không tìm thấy bằng Chi đoàn, dò bằng tên LCĐ cũ không phân biệt hoa/thường
+            for (const fac of Object.keys(departmentStructure)) {
+                if (fac.trim().toLowerCase() === searchFac) {
+                    return fac;
+                }
+            }
+            
+            // Ưu tiên 3: Nếu dữ liệu quá cũ không khớp danh mục, tự động chuẩn hóa dạng Chữ Hoa Chữ Đầu để gộp
+            return formatProperCase(originalFaculty);
+        }
+
         data.forEach(row => {
             const studentId = String(row[0] || '').trim();
             const studentName = String(row[1] || '').trim();
-            const faculty = String(row[3] || 'Chưa xác định').trim();
+            const className = String(row[2] || '').trim();
+            const originalFaculty = String(row[3] || '').trim();
             const status = String(row[7] || '').trim().toLowerCase();
 
             const studentKey = studentId || studentName;
@@ -499,7 +533,11 @@
                 pending++;
             }
 
-            if (faculty) facultyCounts[faculty] = (facultyCounts[faculty] || 0) + 1;
+            // Lấy Liên Chi đoàn đã được chuẩn hóa và gộp tự động
+            const finalFaculty = resolveFaculty(className, originalFaculty);
+            if (finalFaculty && finalFaculty !== 'Chưa xác định') {
+                facultyCounts[finalFaculty] = (facultyCounts[finalFaculty] || 0) + 1;
+            }
         });
 
         if(document.getElementById('kpiTotal')) document.getElementById('kpiTotal').innerText = total;
@@ -510,7 +548,6 @@
 
         renderCharts({ approved, pending, rejected }, facultyCounts);
     }
-
     function renderCharts(statusStats, facultyCounts) {
         if (typeof Chart === 'undefined') return;
 
