@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title id="siteTitle">Cổng thông tin hoạt động và Quản lý Thi đua</title>
     
-    <!-- 1. Nhúng Google Font 'Inter' hỗ trợ Tiếng Việt -->
+    <!-- Google Font 'Inter' -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
@@ -57,10 +57,12 @@
 <body class="bg-slate-50 text-slate-800 flex flex-col min-h-screen">
 
     <!-- HEADER -->
-    <header class="bg-white border-b-4 border-[var(--school-gold)] sticky top-0 z-50 shadow-md">
+    <header id="mainHeader" class="bg-white border-b-4 border-[var(--school-gold)] sticky top-0 z-50 shadow-md">
         <div class="max-w-7xl mx-auto px-4 h-24 flex items-center justify-between">
             <div class="flex items-center gap-4">
+                <!-- Logo 1: Logo Trường -->
                 <img id="viewLogoSchool" src="logo-truong.png" alt="Logo Trường" class="h-16 w-auto object-contain">
+                <!-- Logo 2: Logo Đoàn -->
                 <img id="viewLogoUnion" src="SnapBG.ai_1788189434240.png" alt="Logo Đoàn" class="h-14 w-auto object-contain">
                 <div class="h-12 w-[2px] bg-slate-300"></div>
                 <div>
@@ -70,7 +72,7 @@
             </div>
 
             <nav class="hidden md:flex items-center gap-3">
-                <a href="#" class="bg-[var(--union-blue)] text-white font-semibold px-4 py-2 rounded-lg text-sm shadow">Trang chủ</a>
+                <a href="#" id="navHomeBtn" class="bg-[var(--union-blue)] text-white font-semibold px-4 py-2 rounded-lg text-sm shadow">Trang chủ</a>
                 <a href="#features" class="text-slate-700 hover:bg-slate-100 font-medium px-4 py-2 rounded-lg text-sm">Tính năng</a>
                 <a href="app.html" class="btn-school-primary font-bold px-5 py-2.5 rounded-lg text-sm shadow">Vào hệ thống</a>
                 <button onclick="accessAdmin()" class="bg-slate-800 hover:bg-slate-900 text-white font-bold px-4 py-2.5 rounded-lg text-sm shadow flex items-center gap-2">
@@ -86,7 +88,7 @@
         <i class="fa-solid fa-bullhorn mr-2"></i><span id="announcementText"></span>
     </div>
 
-    <!-- TOÀN BỘ KHU VỰC TRANG GIỚI THIỆU (LANDING PAGE SECTION) -->
+    <!-- TOÀN BỘ KHU VỰC TRANG GIỚI THIỆU -->
     <div id="landingPageSection">
         
         <!-- HERO BANNER -->
@@ -117,7 +119,7 @@
                     </div>
                 </div>
 
-                <!-- KHUNG BÌNH ẢNH BANNER / HERO VÀ MÔ PHỎNG KHUNG -->
+                <!-- KHUNG BÌNH ẢNH BANNER / HERO -->
                 <div class="md:col-span-5 flex justify-center">
                     <div class="relative w-full max-w-lg bg-slate-900 p-4 rounded-3xl shadow-2xl border-[6px] border-slate-700">
                         <div class="bg-slate-100 rounded-lg overflow-hidden border border-slate-800">
@@ -127,7 +129,6 @@
                                 <div class="w-3 h-3 rounded-full bg-green-500"></div>
                                 <span class="text-[10px] text-slate-300 font-mono ml-2">web-thi-dua-xi.vercel.app</span>
                             </div>
-                            <!-- Khung xem trước hình ảnh Banner từ Admin -->
                             <div id="heroImageContainer" class="p-2 bg-slate-50 flex items-center justify-center">
                                 <img id="viewHeroImage" src="hero banner.png" alt="Hero Banner" class="w-full h-56 object-cover rounded border border-slate-200 shadow-sm">
                             </div>
@@ -141,7 +142,7 @@
         <section id="features" class="py-14 bg-white border-b border-slate-100">
             <div class="max-w-7xl mx-auto px-4">
                 <div class="text-center max-w-3xl mx-auto mb-10">
-                    <h3 class="text-3xl font-black text-[var(--union-blue)] uppercase">Tính năng cốt lõi</h3>
+                    <h3 id="viewFeatureHeading" class="text-3xl font-black text-[var(--union-blue)] uppercase">Tính năng cốt lõi</h3>
                 </div>
                 <div class="grid grid-cols-1 sm:grid-cols-3 gap-6">
                     <div class="feature-card p-6 rounded-2xl space-y-2">
@@ -187,7 +188,6 @@
 
     <!-- JAVASCRIPT XỬ LÝ CẤU HÌNH SERVER & LOCALSTORAGE -->
     <script>
-        // Điền Web App Exec URL của bạn vào đây
         const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbzqBySudE2c0qfHy3SCP_3f_btpdLyBGMLCNMcg22Fb_QisPFuxobsvk0-lqgYnoYYF/exec"; 
         const ADMIN_PASSWORD = "123456";
 
@@ -208,11 +208,60 @@
             'NGAY_NHA_GIAO': { primary: '#1565c0', gold: '#ffa000', blue: '#4a148c' }
         };
 
-        // Hàm xử lý áp dụng cấu hình gửi từ Apps Script về
+        // Hàm cập nhật trực tiếp màu sắc lên các thẻ HTML
+        function applyDynamicColors(colorHex, themePresetKey) {
+            let primary = colorHex || '#8b0000';
+            if (primary && !primary.startsWith('#')) primary = '#' + primary;
+
+            let gold = '#cba235';
+            let blue = '#1e3a8a';
+
+            if (themePresetKey && THEME_PRESETS[themePresetKey]) {
+                primary = THEME_PRESETS[themePresetKey].primary;
+                gold = THEME_PRESETS[themePresetKey].gold;
+                blue = THEME_PRESETS[themePresetKey].blue;
+            } else if (primary) {
+                blue = primary;
+            }
+
+            // Gán biến CSS Root
+            document.documentElement.style.setProperty('--school-red', primary);
+            document.documentElement.style.setProperty('--school-gold', gold);
+            document.documentElement.style.setProperty('--union-blue', blue);
+
+            // Ép trực tiếp màu bằng inline style để không bị lỗi Tailwind
+            const primaryBtns = document.querySelectorAll('.btn-school-primary');
+            primaryBtns.forEach(btn => {
+                btn.style.backgroundColor = primary;
+            });
+
+            const headerSubtitle = document.getElementById('viewHeaderSubtitle');
+            if (headerSubtitle) headerSubtitle.style.color = primary;
+
+            const footerOrg = document.getElementById('viewFooterOrg');
+            if (footerOrg) footerOrg.style.color = primary;
+
+            const heroHeading = document.getElementById('viewHeroHeading');
+            if (heroHeading) heroHeading.style.color = blue;
+
+            const featureHeading = document.getElementById('viewFeatureHeading');
+            if (featureHeading) featureHeading.style.color = blue;
+
+            const headerTitle = document.getElementById('viewHeaderTitle');
+            if (headerTitle) headerTitle.style.color = blue;
+
+            const navHome = document.getElementById('navHomeBtn');
+            if (navHome) navHome.style.backgroundColor = blue;
+
+            const mainHeader = document.getElementById('mainHeader');
+            if (mainHeader) mainHeader.style.borderColor = gold;
+        }
+
+        // Áp dụng cấu hình từ Apps Script
         function applyServerConfig(cfg) {
             if (!cfg) return;
 
-            // 1. CHỈ ẨN TRANG GIỚI THIỆU KHI CHỦ ĐỘNG ĐẶT LÀ "FALSE" (Còn lại mặc định hiển thị)
+            // 1. Kiểm tra Ẩn/Hiện Landing Page
             const landingSection = document.getElementById('landingPageSection');
             if (landingSection) {
                 if (String(cfg.enableLanding).toUpperCase() === "FALSE") {
@@ -222,42 +271,37 @@
                 }
             }
 
-            // 2. Cập nhật thông tin Tiêu đề & Nội dung
+            // 2. Cập nhật Tiêu đề & Nội dung
             if (cfg.schoolName) document.getElementById('viewHeaderSubtitle').innerText = cfg.schoolName;
-            
-            // Xử lý Logo trường
-            if (cfg.logoUrl && cfg.logoUrl.trim() !== "") {
-                document.getElementById('viewLogoSchool').src = cfg.logoUrl;
-            } else if (cfg.logoFile && cfg.logoFile.base64) {
-                document.getElementById('viewLogoSchool').src = cfg.logoFile.base64;
-            }
-
             if (cfg.heroTitle) document.getElementById('viewHeroHeading').innerText = cfg.heroTitle;
             if (cfg.heroSubtitle) document.getElementById('viewBadge').innerText = cfg.heroSubtitle;
             if (cfg.aboutText) document.getElementById('viewHeroDesc').innerText = cfg.aboutText;
 
-            // Xử lý Ảnh Hero Banner
+            // 3. Xử lý TÁCH BIỆT Logo Trường và Logo Đoàn
+            if (cfg.logoSchoolUrl && cfg.logoSchoolUrl.trim() !== "") {
+                document.getElementById('viewLogoSchool').src = cfg.logoSchoolUrl;
+            } else if (cfg.logoSchoolFile && cfg.logoSchoolFile.base64) {
+                document.getElementById('viewLogoSchool').src = cfg.logoSchoolFile.base64;
+            }
+
+            if (cfg.logoUnionUrl && cfg.logoUnionUrl.trim() !== "") {
+                document.getElementById('viewLogoUnion').src = cfg.logoUnionUrl;
+            } else if (cfg.logoUnionFile && cfg.logoUnionFile.base64) {
+                document.getElementById('viewLogoUnion').src = cfg.logoUnionFile.base64;
+            }
+
+            // 4. Xử lý Ảnh Hero Banner
             if (cfg.heroImage && cfg.heroImage.trim() !== "") {
                 document.getElementById('viewHeroImage').src = cfg.heroImage;
             } else if (cfg.heroFile && cfg.heroFile.base64) {
                 document.getElementById('viewHeroImage').src = cfg.heroFile.base64;
             }
 
-            // 3. Cập nhật Màu sắc Giao diện
-            let primaryColor = cfg.primaryColor || '#8b0000';
-            if (!primaryColor.startsWith('#')) primaryColor = '#' + primaryColor;
+            // 5. Đổi màu giao diện
+            const primaryColorHex = cfg.primaryColor || cfg.hexColor || cfg.themeColor;
+            applyDynamicColors(primaryColorHex, cfg.selectedTheme);
 
-            let themeConfig = THEME_PRESETS[cfg.selectedTheme] || {
-                primary: primaryColor,
-                gold: '#ffa000',
-                blue: primaryColor
-            };
-
-            document.documentElement.style.setProperty('--school-red', themeConfig.primary);
-            document.documentElement.style.setProperty('--school-gold', themeConfig.gold);
-            document.documentElement.style.setProperty('--union-blue', themeConfig.blue);
-
-            // 4. Cập nhật Thông báo chạy
+            // 6. Thông báo Quản trị viên
             if (cfg.announcement && cfg.announcement.trim() !== "") {
                 const annBar = document.getElementById('announcementBar');
                 const annText = document.getElementById('announcementText');
@@ -268,18 +312,14 @@
             }
         }
 
-        // Đọc cấu hình tạm từ LocalStorage
+        // Cấu hình dự phòng LocalStorage
         function applyLocalConfig() {
             const data = JSON.parse(localStorage.getItem('LANDING_PAGE_CONFIG'));
             if (!data) return;
 
-            if (data.colorPrimary) document.documentElement.style.setProperty('--school-red', data.colorPrimary);
-            if (data.colorSecondary) document.documentElement.style.setProperty('--school-gold', data.colorSecondary);
-            if (data.colorAccent) document.documentElement.style.setProperty('--union-blue', data.colorAccent);
-
+            if (data.colorPrimary) applyDynamicColors(data.colorPrimary, null);
             if (data.logoSchool) document.getElementById('viewLogoSchool').src = data.logoSchool;
             if (data.logoUnion) document.getElementById('viewLogoUnion').src = data.logoUnion;
-
             if (data.headerTitle) document.getElementById('viewHeaderTitle').innerText = data.headerTitle;
             if (data.headerSubtitle) document.getElementById('viewHeaderSubtitle').innerText = data.headerSubtitle;
             if (data.heroBadge) document.getElementById('viewBadge').innerText = data.heroBadge;
@@ -288,28 +328,27 @@
             if (data.guideLink) document.getElementById('viewGuideLink').href = data.guideLink;
         }
 
-        // Khởi chạy khi trang sẵn sàng
+        // Khởi chạy khi tải trang
         document.addEventListener("DOMContentLoaded", function() {
             applyLocalConfig();
 
-            // Nếu chạy trong môi trường Apps Script HTML Service
             if (typeof google !== 'undefined' && google.script && google.script.run) {
                 google.script.run
                     .withSuccessHandler(function(cfg) {
                         applyServerConfig(cfg);
                     })
                     .getConfig();
-            } 
-            // Nếu dùng Fetch API kết nối đến Web App URL bên ngoài
-            else if (WEB_APP_URL && WEB_APP_URL !== "MÃ_APP_SCRIPT_CỦA_BẠN") {
+            } else if (WEB_APP_URL && WEB_APP_URL !== "MÃ_APP_SCRIPT_CỦA_BẠN") {
                 fetch(WEB_APP_URL + "?action=getConfig")
                     .then(res => res.json())
                     .then(data => {
                         if (data && data.config) {
                             applyServerConfig(data.config);
+                        } else if (data) {
+                            applyServerConfig(data);
                         }
                     })
-                    .catch(err => console.error("Lỗi lấy cấu hình từ server:", err));
+                    .catch(err => console.error("Lỗi kết nối Apps Script:", err));
             }
         });
     </script>
