@@ -726,77 +726,81 @@
         }
 
         async function saveConfig() {
-            const btn = document.getElementById('btnSave');
-            if (btn) {
-                btn.disabled = true;
-                btn.innerText = "⏳ Đang tải ảnh & lưu cấu hình...";
-            }
+    const btn = document.getElementById('btnSave');
+    const btnLanding = document.querySelector('#tabLanding button[onclick="saveConfig()"]');
+    
+    // Khóa nút bấm để tránh bấm liên tục
+    if (btn) { btn.disabled = true; btn.innerText = "⏳ Đang lưu..."; }
+    if (btnLanding) { btnLanding.disabled = true; btnLanding.innerText = "⏳ Đang lưu cấu hình..."; }
 
-            const newPass = document.getElementById('cfgNewPassword').value.trim();
-            const activitiesText = document.getElementById('cfgActivities').value;
-            const activitiesArray = activitiesText.split('\n').map(a => a.trim()).filter(a => a !== '');
+    const newPass = document.getElementById('cfgNewPassword')?.value.trim() || '';
+    const activitiesText = document.getElementById('cfgActivities')?.value || '';
+    const activitiesArray = activitiesText.split('\n').map(a => a.trim()).filter(a => a !== '');
 
-            const updatedConfig = {
-                schoolName: document.getElementById('cfgSchoolName').value.trim(),
-                logoUrl: document.getElementById('cfgLogoUrl').value.trim(),
-                logoFile: logoFileBase64,
-                heroFile: heroFileBase64,
-                announcement: document.getElementById('cfgAnnouncement').value.trim(),
-                enableLanding: document.getElementById('cfgEnableLanding').checked ? "TRUE" : "FALSE",
-                heroTitle: document.getElementById('cfgHeroTitle').value.trim(),
-                heroSubtitle: document.getElementById('cfgHeroSubtitle').value.trim(),
-                aboutText: document.getElementById('cfgAboutText').value.trim(),
-                heroImage: document.getElementById('cfgHeroImage')?.value.trim() || '',
-                primaryColor: document.getElementById('cfgPrimaryColor')?.value.trim() || '',
-                activities: activitiesArray,
-                newsList: currentNewsList
-            };
+    // Lấy giá trị checkbox Kích hoạt Landing Page (Trả về "TRUE" hoặc "FALSE")
+    const isLandingChecked = document.getElementById('cfgEnableLanding')?.checked ? "TRUE" : "FALSE";
 
-            if (newPass !== "") updatedConfig.admin_password = newPass;
+    const updatedConfig = {
+        schoolName: document.getElementById('cfgSchoolName')?.value.trim() || '',
+        logoUrl: document.getElementById('cfgLogoUrl')?.value.trim() || '',
+        logoFile: logoFileBase64,
+        heroFile: heroFileBase64,
+        announcement: document.getElementById('cfgAnnouncement')?.value.trim() || '',
+        
+        // Gửi trạng thái Kích hoạt Landing Page
+        enableLanding: isLandingChecked,
+        heroTitle: document.getElementById('cfgHeroTitle')?.value.trim() || '',
+        heroSubtitle: document.getElementById('cfgHeroSubtitle')?.value.trim() || '',
+        aboutText: document.getElementById('cfgAboutText')?.value.trim() || '',
+        heroImage: document.getElementById('cfgHeroImage')?.value.trim() || '',
+        primaryColor: document.getElementById('cfgPrimaryColor')?.value.trim() || '',
+        
+        activities: activitiesArray,
+        newsList: currentNewsList
+    };
 
-            try {
-                let data;
-                if (typeof google !== 'undefined' && google.script && google.script.run) {
-                    data = await new Promise((resolve, reject) => {
-                        google.script.run
-                            .withSuccessHandler(resolve)
-                            .withFailureHandler(reject)
-                            .updateConfig({ password: currentPassword, newConfig: updatedConfig });
-                    });
-                } else {
-                    const res = await fetch(WEB_APP_URL, {
-                        method: 'POST',
-                        body: JSON.stringify({
-                            action: "updateConfig",
-                            password: currentPassword,
-                            newConfig: updatedConfig
-                        })
-                    });
-                    data = await res.json();
-                }
+    if (newPass !== "") updatedConfig.admin_password = newPass;
 
-                if (data.status === "success") {
-                    alert("🎉 " + data.message);
-                    if (newPass !== "") {
-                        currentPassword = newPass;
-                        sessionStorage.setItem('admin_pass', newPass);
-                    }
-                    document.getElementById('cfgNewPassword').value = "";
-                    logoFileBase64 = null;
-                    heroFileBase64 = null;
-                } else {
-                    alert("❌ " + data.message);
-                }
-            } catch (err) {
-                alert("❌ Lỗi khi lưu cấu hình: " + err);
-            } finally {
-                if (btn) {
-                    btn.disabled = false;
-                    btn.innerHTML = '<i class="fa-solid fa-floppy-disk mr-2"></i> LƯU THAY ĐỔI CẤU HÌNH';
-                }
-            }
+    try {
+        let data;
+        if (typeof google !== 'undefined' && google.script && google.script.run) {
+            data = await new Promise((resolve, reject) => {
+                google.script.run
+                    .withSuccessHandler(resolve)
+                    .withFailureHandler(reject)
+                    .updateConfig({ password: currentPassword, newConfig: updatedConfig });
+            });
+        } else {
+            const res = await fetch(WEB_APP_URL, {
+                method: 'POST',
+                body: JSON.stringify({
+                    action: "updateConfig",
+                    password: currentPassword,
+                    newConfig: updatedConfig
+                })
+            });
+            data = await res.json();
         }
 
+        if (data.status === "success") {
+            alert("🎉 Đã lưu cấu hình thành công! Hãy tải lại trang chủ để kiểm tra.");
+            if (newPass !== "") {
+                currentPassword = newPass;
+                sessionStorage.setItem('admin_pass', newPass);
+            }
+            if (document.getElementById('cfgNewPassword')) document.getElementById('cfgNewPassword').value = "";
+            logoFileBase64 = null;
+            heroFileBase64 = null;
+        } else {
+            alert("❌ " + data.message);
+        }
+    } catch (err) {
+        alert("❌ Lỗi khi lưu cấu hình: " + err);
+    } finally {
+        if (btn) { btn.disabled = false; btn.innerHTML = '<i class="fa-solid fa-floppy-disk mr-2"></i> LƯU THAY ĐỔI CẤU HÌNH'; }
+        if (btnLanding) { btnLanding.disabled = false; btnLanding.innerHTML = '<i class="fa-solid fa-floppy-disk"></i> LƯU CẤU HÌNH TRANG GIỚI THIỆU'; }
+    }
+}
         function switchTab(tabName) {
             const tabSub = document.getElementById('tabSubmissions');
             const tabLanding = document.getElementById('tabLanding');
