@@ -3,120 +3,163 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Giao diện Landing Page - Trường Cao đẳng Đắk Lắk</title>
+    <title>Cổng Thông Tin Hoạt Động và Quản lý Thi Đua Đoàn viên - Trường Cao đẳng Đắk Lắk</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <style>
-        .hero-bg {
-            background: linear-gradient(135deg, #e0f2fe 0%, #bae6fd 50%, #fef3c7 100%);
+        /* CHỈNH SỬA MÀU SẮC NHÀ TRƯỜNG: Đỏ đô (Red), Vàng kim (Gold), Xanh đậm (Union Blue) */
+        :root {
+            --school-red: #8b0000; /* Đỏ đô đặc trưng */
+            --school-red-dark: #660000;
+            --school-gold: #cba235; /* Vàng kim */
+            --school-gold-light: #f1e6c3;
+            --union-blue: #1e3a8a; /* Xanh đậm Đoàn */
         }
-        .text-glow {
-            text-shadow: 0 2px 4px rgba(30, 58, 138, 0.15);
+        
+        body { font-family: 'Inter', 'Roboto', sans-serif; }
+
+        /* Background Hero sinh động: Phối Gradient đỏ - vàng - trắng */
+        .hero-bg {
+            background: linear-gradient(135deg, #ffffff 0%, var(--school-gold-light) 50%, #f1f5f9 100%);
+            position: relative;
+            overflow: hidden;
+        }
+        .hero-bg::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background-image: url('https://www.transparenttextures.com/patterns/connected.png');
+            opacity: 0.1;
+        }
+
+        /* Chữ có đổ bóng để sinh động hơn */
+        .text-shadow {
+            text-shadow: 0 2px 5px rgba(139, 0, 0, 0.2);
+        }
+
+        /* Button Đỏ đô phong cách nhà trường */
+        .btn-school-red {
+            background-color: var(--school-red);
+            color: white;
+            transition: all 0.3s;
+        }
+        .btn-school-red:hover {
+            background-color: var(--school-red-dark);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(139, 0, 0, 0.3);
+        }
+
+        /* Thẻ tính năng phong cách vocational - dạy nghề */
+        .feature-card {
+            background: white;
+            border: 1px solid #e2e8f0;
+            border-bottom: 4px solid #e2e8f0;
+            transition: all 0.3s ease;
+        }
+        .feature-card:hover {
+            border-bottom-color: var(--school-gold);
+            transform: translateY(-5px);
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.05);
         }
     </style>
 </head>
-<body class="bg-slate-50 font-sans text-slate-800">
+<body class="bg-slate-50 text-slate-800 flex flex-col min-h-screen">
 
-    <!-- 1. HEADER -->
-    <header class="bg-white border-b border-slate-200 sticky top-0 z-50 shadow-sm">
-        <div class="max-w-7xl mx-auto px-4 h-20 flex items-center justify-between">
-            <!-- Cụm Logo thực tế -->
-            <div class="flex items-center gap-3">
-                <img src="https://lh3.googleusercontent.com/d/1" alt="Logo Trường CĐ Đắk Lắk" class="h-14 w-auto object-contain" id="imgSchool">
-                <img src="https://lh3.googleusercontent.com/d/2" alt="Logo Đoàn" class="h-12 w-auto object-contain" id="imgUnion">
-                <div class="h-10 w-[2px] bg-slate-300"></div>
+    <!-- 1. HEADER (Cố định, chuyên nghiệp, gãy gọn) -->
+    <header class="bg-white border-b-4 border-[var(--school-gold)] sticky top-0 z-50 shadow-md">
+        <div class="max-w-7xl mx-auto px-4 h-24 flex items-center justify-between">
+            
+            <!-- Cụm Logo & Tên đơn vị -->
+            <div class="flex items-center gap-4">
+                <img id="cfgLogoSchool" src="Logo_caodangdaklak.jpg" alt="Logo Trường CĐ Đắk Lắk" class="h-16 w-auto object-contain">
+                <img id="cfgLogoUnion" src="logo doan.png" alt="Logo Đoàn" class="h-14 w-auto object-contain">
+                <div class="h-12 w-[2px] bg-slate-300"></div>
                 <div>
-                    <h1 class="text-blue-900 font-black text-base uppercase leading-tight tracking-tight">HỆ THỐNG QUẢN LÝ & THI ĐƯA ĐOÀN VIÊN</h1>
-                    <p class="text-red-700 font-bold text-xs uppercase tracking-wide">TRƯỜNG CAO ĐẲNG ĐẮK LẮK</p>
+                    <h1 id="cfgHeaderTitle" class="text-[var(--union-blue)] font-black text-xl uppercase leading-tight tracking-tight shadow-text">HỆ THỐNG QUẢN LÝ & THI ĐƯA ĐOÀN VIÊN</h1>
+                    <p id="cfgHeaderSubtitle" class="text-[var(--school-red)] font-extrabold text-sm uppercase tracking-wide">TRƯỜNG CAO ĐẲNG ĐẮK LẮK</p>
                 </div>
             </div>
 
-            <!-- Menu -->
-            <nav class="flex items-center gap-3">
-                <a href="#" class="bg-blue-600 text-white font-semibold px-4 py-2 rounded-lg text-sm shadow">Trang chủ</a>
+            <!-- Menu Điều Hướng -->
+            <nav class="hidden md:flex items-center gap-2">
+                <a href="#" class="bg-[var(--union-blue)] text-white font-semibold px-5 py-2.5 rounded-lg text-sm shadow">Trang chủ</a>
                 <a href="#" class="text-slate-700 hover:bg-slate-100 font-medium px-4 py-2 rounded-lg text-sm">Giới thiệu</a>
                 <a href="#" class="text-slate-700 hover:bg-slate-100 font-medium px-4 py-2 rounded-lg text-sm">Tiêu chuẩn</a>
-                <a href="#" class="bg-red-600 hover:bg-red-700 text-white font-bold px-5 py-2 rounded-lg text-sm shadow">Đăng nhập</a>
+                <a href="app_2.html" class="btn-school-red hover:bg-red-800 text-white font-bold px-6 py-2.5 rounded-lg text-sm shadow transition-all">Đăng nhập</a>
             </nav>
         </div>
     </header>
 
-    <!-- 2. HERO BANNER -->
-    <section class="hero-bg py-12 border-b border-blue-100">
-        <div class="max-w-7xl mx-auto px-4 grid grid-cols-12 gap-8 items-center">
+    <!-- 2. HERO BANNER (Khu vực chính: Gradient mới, ảnh Laptop sinh động hơn) -->
+    <section id="trang-chu" class="hero-bg py-12 border-b border-slate-200">
+        <div class="max-w-7xl mx-auto px-4 grid grid-cols-1 md:grid-cols-12 gap-8 items-center">
             
-            <!-- Cột trái: Văn bản -->
-            <div class="col-span-7 space-y-6">
-                <div class="inline-block bg-red-100 border border-red-200 text-red-700 text-xs font-bold px-3 py-1.5 rounded-full uppercase">
-                    🚀 Cổ vũ phong trào thi đua số hóa Đoàn trường
+            <!-- Cột trái: Văn bản & CTA (Màu đỏ và xanh phối hợp sinh động) -->
+            <div class="md:col-span-7 space-y-6">
+                
+                <div class="inline-block bg-[var(--school-gold-light)] border border-[var(--school-gold)] text-[var(--school-red-dark)] text-xs font-black px-4 py-2 rounded-full uppercase tracking-wider shadow-sm">
+                    ⚡ Chuyển đổi số - Vững nghề nghiệp - Sáng tương lai
                 </div>
                 
-                <h2 class="text-3xl lg:text-4xl font-extrabold text-blue-950 uppercase leading-snug text-glow">
-                    MÔ HÌNH QUẢN LÝ THI ĐƯA & ĐÁNH GIÁ ĐOÀN VIÊN ĐIỆN TỬ
+                <h2 id="cfgHeroMainHeading" class="text-3xl lg:text-4xl font-extrabold text-[var(--union-blue)] uppercase leading-snug text-shadow">
+                    MÔ HÌNH QUẢN LÝ THI ĐUA ĐOÀN VIÊN ĐIỆN TỬ
                 </h2>
 
-                <div class="bg-white/90 backdrop-blur p-5 rounded-2xl border border-white shadow-md text-slate-700 text-sm leading-relaxed">
-                    Nhằm nâng cao hiệu quả ứng dụng công nghệ thông tin trong công tác Đoàn và phong trào thanh niên, <b>Hệ thống Quản lý Thi đua Đoàn viên Trường Cao đẳng Đắk Lắk</b> giúp tự động hóa quá trình theo dõi, quản lý minh chứng và xét chọn các danh hiệu thi đua chính xác, minh bạch.
+                <div class="bg-white/95 backdrop-blur-sm p-6 rounded-2xl border border-white shadow-xl text-slate-700 text-base leading-relaxed">
+                    <p>Chào mừng bạn đến với Cổng thông tin hoạt động của Đoàn trường và Quản lý thi đua Đoàn viên Trường Cao đẳng Đắk Lắk. Nền tảng do <b class="text-[var(--school-red)]">Đoàn trường</b> xây dựng nhằm số hóa công tác thi đua, giúp Đoàn viên <b class="text-[var(--union-blue)]">theo dõi kết quả học nghề, rèn luyện</b> và <b class="text-[var(--union-blue)]">xuất báo cáo thành tích</b> nhanh chóng, minh bạch.</p>
                 </div>
 
-                <!-- 3 Thẻ tính năng -->
-                <div class="grid grid-cols-3 gap-3">
-                    <div class="bg-white p-3.5 rounded-xl border border-slate-100 shadow-sm text-center">
-                        <i class="fa-solid fa-folder-closed text-blue-600 text-xl mb-1"></i>
-                        <h3 class="font-bold text-xs text-slate-800">Lưu minh chứng</h3>
-                        <p class="text-[11px] text-slate-500 mt-0.5">Tải lên & phân loại tập trung</p>
-                    </div>
-                    <div class="bg-white p-3.5 rounded-xl border border-slate-100 shadow-sm text-center">
-                        <i class="fa-solid fa-chart-line text-amber-500 text-xl mb-1"></i>
-                        <h3 class="font-bold text-xs text-slate-800">Theo dõi tiến độ</h3>
-                        <p class="text-[11px] text-slate-500 mt-0.5">Cập nhật điểm thi đua tự động</p>
-                    </div>
-                    <div class="bg-white p-3.5 rounded-xl border border-slate-100 shadow-sm text-center">
-                        <i class="fa-solid fa-file-word text-emerald-600 text-xl mb-1"></i>
-                        <h3 class="font-bold text-xs text-slate-800">Xuất báo cáo</h3>
-                        <p class="text-[11px] text-slate-500 mt-0.5">Tự động xuất file Word mẫu</p>
-                    </div>
-                </div>
-
-                <!-- Nút bấm -->
-                <div class="flex items-center gap-3 pt-1">
-                    <button class="bg-blue-600 hover:bg-blue-700 text-white font-bold px-7 py-3 rounded-xl shadow-md flex items-center gap-2 text-sm">
+                <!-- Cụm Nút Đăng nhập & Tải xuống (Màu sinh động) -->
+                <div class="flex items-center gap-4 pt-2">
+                    <a id="cfgLoginBtnUrl" href="app_2.html" class="btn-school-red text-white font-bold px-10 py-4 rounded-xl shadow-lg transition-all flex items-center gap-2">
                         <span>Vào hệ thống</span>
-                        <i class="fa-solid fa-arrow-right"></i>
-                    </button>
-                    <button class="bg-white hover:bg-slate-50 text-slate-700 font-bold px-5 py-3 rounded-xl border border-slate-200 shadow-sm text-sm">
+                        <i class="fa-solid fa-right-to-bracket"></i>
+                    </a>
+                    <a id="cfgDownloadGuideUrl" href="#" target="_blank" class="bg-white hover:bg-slate-50 text-slate-700 font-semibold px-6 py-4 rounded-xl border border-slate-200 shadow transition flex items-center justify-center gap-2" title="Tải hướng dẫn">
+                        <i class="fa-solid fa-file-pdf text-red-600"></i>
                         Hướng dẫn sử dụng
-                    </button>
+                    </a>
                 </div>
+
             </div>
 
-            <!-- Cột phải: Mô phỏng laptop -->
-            <div class="col-span-5 flex justify-center">
-                <div class="relative w-full max-w-md bg-slate-900 p-3 rounded-2xl shadow-2xl border-4 border-slate-700">
-                    <!-- Màn hình laptop giả lập -->
+            <!-- Cột Phải: Hình ảnh Laptop (Ghép Dashboard thực tế, có các họa tiết dạy nghề) -->
+            <div id="gioi-thieu" class="md:col-span-5 flex justify-center relative">
+                <!-- Vòng tròn nền vàng kim mờ tăng sự sinh động -->
+                <div class="absolute w-72 h-72 bg-[var(--school-gold)] opacity-10 rounded-full blur-3xl top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2"></div>
+                
+                <div class="relative w-full max-w-lg bg-slate-900 p-4 rounded-3xl shadow-2xl border-[6px] border-slate-700 drop-shadow-xl">
+                    <!-- Giả lập màn hình Laptop sinh động -->
                     <div class="bg-slate-100 rounded-lg overflow-hidden border border-slate-800">
-                        <div class="bg-blue-900 px-3 py-1.5 flex items-center gap-1.5">
-                            <div class="w-2.5 h-2.5 rounded-full bg-red-500"></div>
-                            <div class="w-2.5 h-2.5 rounded-full bg-yellow-500"></div>
-                            <div class="w-2.5 h-2.5 rounded-full bg-green-500"></div>
-                            <span class="text-[10px] text-slate-300 ml-2 font-mono">dashboard.cddaklak.edu.vn</span>
+                        <!-- Toolbar Trình duyệt -->
+                        <div class="bg-slate-700 px-3 py-1.5 flex items-center gap-1.5 border-b border-slate-800">
+                            <div class="w-3 h-3 rounded-full bg-red-500"></div>
+                            <div class="w-3 h-3 rounded-full bg-yellow-400"></div>
+                            <div class="w-3 h-3 rounded-full bg-green-500"></div>
+                            <div class="flex-1 mx-2 bg-slate-800 rounded-full px-3 py-0.5 text-[10px] text-slate-400 font-mono flex items-center gap-1.5">
+                                <i class="fa-solid fa-lock text-[9px] text-emerald-500"></i>
+                                dashboard.cddaklak.edu.vn
+                            </div>
                         </div>
-                        <div class="p-4 space-y-3">
-                            <div class="h-4 bg-blue-200 rounded w-3/4"></div>
+                        <!-- Nội dung Màn hình giả lập (Ghép Dashboard cũ có biểu đồ, con số sinh động) -->
+                        <div class="p-4 bg-slate-50 space-y-3">
+                            <div class="h-4 bg-[var(--school-gold-light)] rounded-full w-2/3"></div>
                             <div class="grid grid-cols-2 gap-2">
-                                <div class="h-16 bg-white rounded border border-slate-200 p-2 shadow-sm">
-                                    <div class="h-2 bg-slate-200 rounded w-1/2 mb-2"></div>
-                                    <div class="h-4 bg-blue-500 rounded w-1/3"></div>
+                                <div class="bg-white rounded-lg border p-3 shadow-sm space-y-2 border-emerald-100">
+                                    <div class="h-2 bg-emerald-100 rounded-full w-1/2 mb-1"></div>
+                                    <div class="h-5 bg-emerald-500 rounded-md w-1/3"></div>
                                 </div>
-                                <div class="h-16 bg-white rounded border border-slate-200 p-2 shadow-sm">
-                                    <div class="h-2 bg-slate-200 rounded w-1/2 mb-2"></div>
-                                    <div class="h-4 bg-emerald-500 rounded w-2/3"></div>
+                                <div class="bg-white rounded-lg border p-3 shadow-sm space-y-2 border-red-100">
+                                    <div class="h-2 bg-red-100 rounded-full w-1/2 mb-1"></div>
+                                    <div class="h-5 bg-red-600 rounded-md w-1/3"></div>
                                 </div>
                             </div>
-                            <div class="h-20 bg-white rounded border border-slate-200 p-2">
-                                <div class="h-2 bg-slate-200 rounded w-full mb-1.5"></div>
-                                <div class="h-2 bg-slate-200 rounded w-4/5 mb-1.5"></div>
-                                <div class="h-2 bg-slate-200 rounded w-2/3"></div>
+                            <div class="h-24 bg-white rounded-lg border border-blue-100 p-3 shadow-sm flex items-end gap-1">
+                                <div class="w-1/6 h-20 bg-blue-100 rounded"></div>
+                                <div class="w-1/6 h-12 bg-blue-300 rounded"></div>
+                                <div class="w-1/6 h-24 bg-[var(--union-blue)] rounded"></div>
+                                <div class="w-1/6 h-16 bg-blue-400 rounded"></div>
+                                <div class="w-1/6 h-8 bg-blue-100 rounded"></div>
                             </div>
                         </div>
                     </div>
@@ -126,22 +169,79 @@
         </div>
     </section>
 
-    <!-- 3. FOOTER -->
-    <footer class="bg-white border-t border-slate-200 py-6">
-        <div class="max-w-7xl mx-auto px-4 flex justify-between items-center text-xs text-slate-600">
-            <div>
-                <p class="font-bold text-blue-900">ĐOÀN THÀNH NIÊN CỘNG SẢN HỒ CHÍ MINH TRƯỜNG CAO ĐẲNG ĐẮK LẮK</p>
-                <p class="mt-0.5">Địa chỉ: Tỉnh Đắk Lắk | Email: doantruong@cddaklak.edu.vn</p>
+    <!-- 3. KHU VỰC TÍNH NĂNG (Features Section: Đậm chất dạy nghề, SVG icon Vàng) -->
+    <section id="features" class="py-16 bg-white border-b border-slate-100">
+        <div class="max-w-7xl mx-auto px-4">
+            <div class="text-center max-w-3xl mx-auto mb-12">
+                <h3 class="text-3xl font-black text-[var(--union-blue)] uppercase text-shadow">Tính năng cốt lõi</h3>
+                <p class="text-slate-600 text-lg mt-3">Hệ thống được thiết kế tối ưu, gãy gọn, giúp Đoàn viên vừa học nghề giỏi, vừa rèn luyện xuất sắc.</p>
             </div>
-            <p>© 2026 Hệ thống Quản lý Thi đua Đoàn viên</p>
+
+            <!-- 3 Thẻ Tính năng (Feature Cards mới) -->
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-6">
+                <div class="feature-card p-7 rounded-2xl space-y-3">
+                    <div class="w-14 h-14 bg-[var(--school-gold-light)] rounded-xl flex items-center justify-center border border-[var(--school-gold)]">
+                        <!-- Icon folder mỏ màu Vàng kim -->
+                        <svg class="w-8 h-8 text-[var(--school-gold)]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                    </div>
+                    <h4 class="font-extrabold text-lg text-slate-900 pt-2">Lưu minh chứng kỹ năng</h4>
+                    <p class="text-slate-600 text-sm leading-relaxed">Đoàn viên dễ dàng tải lên & phân loại minh chứng cho cả <b class="text-[var(--school-red)]">kỹ năng nghề nghiệp</b> và hoạt động Đoàn.</p>
+                </div>
+
+                <div class="feature-card p-7 rounded-2xl space-y-3">
+                    <div class="w-14 h-14 bg-red-50 rounded-xl flex items-center justify-center border border-red-200">
+                        <!-- Icon đồ thị màu Đỏ đô -->
+                        <svg class="w-8 h-8 text-[var(--school-red)]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 12l3-3 3 3 4-4M8 21l4-4 4 4M3 4h18M4 4h16v12a1 1 0 01-1 1H5a1 1 0 01-1-1V4z"></path></svg>
+                    </div>
+                    <h4 class="font-extrabold text-lg text-slate-900 pt-2">Theo dõi điểm thi đua</h4>
+                    <p class="text-slate-600 text-sm leading-relaxed">Cập nhật và theo dõi điểm thi đua thực tế, kết quả phê duyệt minh chứng trực tiếp trên Dashboard.</p>
+                </div>
+
+                <div class="feature-card p-7 rounded-2xl space-y-3">
+                    <div class="w-14 h-14 bg-blue-50 rounded-xl flex items-center justify-center border border-blue-100">
+                        <!-- Icon file Word màu Xanh Union -->
+                        <svg class="w-8 h-8 text-[var(--union-blue)]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
+                    </div>
+                    <h4 class="font-extrabold text-lg text-slate-900 pt-2">Xuất báo cáo tự động</h4>
+                    <p class="text-slate-600 text-sm leading-relaxed">Hệ thống hỗ trợ xuất báo cáo thành tích cá nhân theo mẫu <b class="text-[var(--union-blue)]">chuẩn file Word</b> của Đoàn trường.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 4. CHÂN TRANG (Footer: Sâu màu hơn, có sọc Vàng làm điểm nhấn) -->
+    <footer class="bg-white border-t border-slate-200 py-10 mt-auto">
+        <div class="max-w-7xl mx-auto px-4 grid grid-cols-1 md:grid-cols-12 gap-8 items-start">
+            
+            <!-- Cột Trái: Thông tin Đơn vị -->
+            <div class="md:col-span-8 space-y-3">
+                <div class="flex items-center gap-3">
+                    <img src="Logo_caodangdaklak.jpg" alt="Logo Footer" class="h-10 w-auto opacity-70">
+                    <h4 class="font-bold text-[var(--school-red)] text-base uppercase">ĐOÀN TRƯỜNG CAO ĐẲNG ĐẮK LẮK</h4>
+                </div>
+                <p class="text-xs text-slate-600">Nền tảng số hóa công tác quản lý thi đua và rèn luyện Đoàn viên.</p>
+                
+                <div class="text-xs text-slate-600 space-y-1.5 pt-2 font-medium">
+                    <p><i class="fa-solid fa-location-dot text-slate-400 w-5"></i> Địa chỉ: Số 594 Lê Duẩn, P. Ea Kao, Tp. Buôn Ma Thuột, Tỉnh Đắk Lắk</p>
+                    <p><i class="fa-solid fa-envelope text-slate-400 w-5"></i> Email: <a href="mailto:doantruong@cddaklak.edu.vn" class="text-[var(--union-blue)] hover:underline">doantruong@cddaklak.edu.vn</a></p>
+                </div>
+            </div>
+
+            <!-- Cột Phải: Kết nối Facebook (Đậm sắc) -->
+            <div class="md:col-span-4 space-y-3 md:text-right">
+                <h4 class="font-black text-slate-800 text-xs uppercase tracking-wider">Kết nối trên MXH</h4>
+                <a href="https://www.facebook.com/caodangdaklak.edu.vn" target="_blank" class="inline-flex items-center gap-2 text-sm text-[var(--union-blue)] hover:text-blue-800 font-extrabold transition-all bg-blue-50 px-4 py-2 rounded-lg border border-blue-100 shadow-sm">
+                    <i class="fa-brands fa-square-facebook text-xl"></i>
+                    <span>Facebook Đoàn trường</span>
+                </a>
+            </div>
+        </div>
+
+        <div class="max-w-7xl mx-auto px-4 mt-8 pt-4 border-t border-slate-100 flex flex-col sm:flex-row justify-between items-center text-[10px] text-slate-500 gap-2 font-medium">
+            <p>© 2026 Hệ thống được phát triển bởi Ban Chấp hành Đoàn Trường Cao đẳng Đắk Lắk</p>
+            <p>Hệ thống Quản lý Thi đua Đoàn viên CDDL</p>
         </div>
     </footer>
 
-    <!-- Nhúng logo người dùng cung cấp -->
-    <script>
-        // Tự động gán ảnh logo
-        document.getElementById('imgUnion').src = "logo doan.png";
-        document.getElementById('imgSchool').src = "Logo_caodangdaklak.jpg";
-    </script>
 </body>
 </html>
