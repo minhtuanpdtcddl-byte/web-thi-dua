@@ -246,16 +246,26 @@
         'NGAY_NHA_GIAO': { primary: '#1565c0', gold: '#ffa000', blue: '#4a148c' }
     };
 
-    // Lấy tông màu được chọn
-    let primary = cfg.primaryColor || '#8b0000';
-    let gold = '#cba235';
-    let blue = '#1e3a8a';
-
-    if (cfg.selectedTheme && THEME_PRESETS[cfg.selectedTheme]) {
-        primary = THEME_PRESETS[cfg.selectedTheme].primary;
-        gold = THEME_PRESETS[cfg.selectedTheme].gold;
-        blue = THEME_PRESETS[cfg.selectedTheme].blue;
+   // Lấy màu chủ đạo (mặc định #8b0000 nếu trống)
+    let primaryColor = config.primaryColor || '#8b0000';
+    if (!primaryColor.startsWith('#')) {
+        primaryColor = '#' + primaryColor;
     }
+
+    // 1. Cập nhật biến CSS toàn trang
+    document.documentElement.style.setProperty('--primary-color', primaryColor);
+
+    // 2. Áp dụng màu trực tiếp cho các nút bấm / header chính
+    const primaryButtons = document.querySelectorAll('.btn-primary, .bg-primary-theme');
+    primaryButtons.forEach(btn => {
+        btn.style.backgroundColor = primaryColor;
+    });
+
+    // 3. Đổi màu chữ các tiêu đề điểm nhấn
+    const themeTexts = document.querySelectorAll('.text-primary-theme');
+    themeTexts.forEach(el => {
+        el.style.color = primaryColor;
+    });
 
     // Áp dụng trực tiếp vào biến CSS giao diện
     document.documentElement.style.setProperty('--school-red', primary);
