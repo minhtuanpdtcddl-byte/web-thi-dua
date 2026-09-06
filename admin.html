@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Quản Trị Hệ Thống Cổng Thông Tin Thi Đua Đoàn Trường</title>
     
-    <!-- 1. THÊM MỚI: GOOGLE FONT INTER CHUẨN TIẾNG VIỆT (SỬA LỖI VỠ FONT) -->
+    <!-- GOOGLE FONT INTER CHUẨN TIẾNG VIỆT -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
@@ -56,12 +56,11 @@
             </button>
         </div>
 
-        <!-- THANH CHUYỂN TAB (ĐÃ THÊM NÚT TAB TRANG GIỚI THIỆU) -->
+        <!-- THANH CHUYỂN TAB -->
         <div class="bg-slate-200 p-2 flex flex-wrap gap-2 border-x border-slate-300">
             <button id="tabBtnSubmissions" onclick="switchTab('submissions')" class="px-4 py-2 text-sm font-bold rounded-lg bg-blue-900 text-white shadow">
                 <i class="fa-solid fa-list-check mr-2"></i> Duyệt Minh Chứng Đoàn Viên
             </button>
-            <!-- THÊM MỚI: TAB QUẢN LÝ LANDING PAGE -->
             <button id="tabBtnLanding" onclick="switchTab('landing')" class="px-4 py-2 text-sm font-bold rounded-lg text-slate-700 hover:bg-slate-300">
                 <i class="fa-solid fa-window-restore mr-2"></i> Quản Lý Trang Giới Thiệu
             </button>
@@ -114,7 +113,7 @@
                 </div>
             </div>
 
-            <!-- TAB 2 (THÊM MỚI): MỤC QUẢN LÝ TRANG GIỚI THIỆU (LANDING PAGE TÁCH RIÊNG) -->
+            <!-- TAB 2: QUẢN LÝ TRANG GIỚI THIỆU -->
             <div id="tabLanding" class="hidden space-y-6">
                 <div class="p-5 bg-blue-50/50 rounded-xl border border-blue-100 space-y-5">
                     <div class="flex items-center justify-between border-b border-blue-200 pb-3">
@@ -129,7 +128,6 @@
                         </div>
                     </div>
 
-                    <!-- NỘI DUNG VĂN BẢN HỆ THỐNG CŨ -->
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div>
                             <label class="block text-xs font-bold uppercase mb-1 text-slate-700">Tiêu đề Hero (Hero Title)</label>
@@ -146,15 +144,23 @@
                         <textarea id="cfgAboutText" rows="3" class="w-full p-2.5 border rounded-lg text-sm focus:ring-2 focus:ring-blue-500 outline-none bg-white" placeholder="Mô tả giới thiệu chi tiết..."></textarea>
                     </div>
 
-                    <!-- THÊM MỚI: TÙY CHỈNH ẢNH BANNER & MÀU SẮC TRANG GIỚI THIỆU -->
+                    <!-- THÊM MỚI: TẢI ẢNH BANNER VÀ MÀU SẮC TRANG GIỚI THIỆU -->
                     <div class="pt-3 border-t border-blue-200 space-y-4">
                         <h4 class="font-bold text-slate-800 text-sm flex items-center gap-1.5"><i class="fa-solid fa-palette text-amber-600"></i> Tùy Chỉnh Hình Ảnh & Màu Sắc Giao Diện</h4>
                         
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <!-- BỔ SUNG: KHUNG TẢI FILE ẢNH BANNER/HERO (PNG, JPG) -->
                             <div>
-                                <label class="block text-xs font-bold uppercase mb-1 text-slate-700">Ảnh Banner/Hero Trang Giới Thiệu (URL)</label>
-                                <input type="text" id="cfgHeroImage" class="w-full p-2.5 border rounded-lg text-sm focus:ring-2 focus:ring-blue-500 outline-none bg-white" placeholder="Dán Link URL ảnh minh họa Landing Page...">
+                                <label class="block text-xs font-bold uppercase mb-1 text-slate-700">Ảnh Banner/Hero Trang Giới Thiệu</label>
+                                <div class="flex items-start gap-3 bg-white p-2.5 border rounded-lg">
+                                    <img id="heroImagePreview" class="w-16 h-12 object-cover border rounded bg-slate-50 hidden" />
+                                    <div class="flex-1 space-y-1.5">
+                                        <input type="file" accept="image/png, image/jpeg, image/jpg, image/webp, image/gif" onchange="handleHeroFileSelect(event)" class="block w-full text-xs text-slate-500 file:mr-2 file:py-1 file:px-2.5 file:rounded file:border-0 file:text-xs file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 cursor-pointer">
+                                        <input type="text" id="cfgHeroImage" oninput="previewHeroUrl(this.value)" class="w-full p-1.5 border rounded text-xs focus:ring-2 focus:ring-blue-500 outline-none" placeholder="Hoặc dán Link URL ảnh tại đây...">
+                                    </div>
+                                </div>
                             </div>
+
                             <div>
                                 <label class="block text-xs font-bold uppercase mb-1 text-slate-700">Màu Nút Bấm Chủ Đạo (Hex Color)</label>
                                 <div class="flex gap-2">
@@ -166,13 +172,12 @@
                     </div>
                 </div>
 
-                <!-- NÚT LƯU CHO TAB LANDING PAGE -->
                 <button type="button" onclick="saveConfig()" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3 rounded-lg shadow transition flex items-center justify-center gap-2">
                     <i class="fa-solid fa-floppy-disk"></i> LƯU CẤU HÌNH TRANG GIỚI THIỆU
                 </button>
             </div>
 
-            <!-- TAB 3: CẤU HÌNH HỆ THỐNG & BẢNG TIN GIỮ NGUYÊN -->
+            <!-- TAB 3: CẤU HÌNH HỆ THỐNG (ĐÃ BỔ SUNG TẢI FILE LOGO ĐƠN VỊ PNG/JPG) -->
             <div id="tabConfig" class="hidden space-y-6">
                 
                 <!-- THÔNG TIN ĐƠN VỊ -->
@@ -183,13 +188,15 @@
                             <label class="block text-xs font-bold uppercase mb-1">Tên Trường / Đoàn Trường</label>
                             <input type="text" id="cfgSchoolName" class="w-full p-2.5 border rounded-lg text-sm focus:ring-2 focus:ring-blue-500 outline-none">
                         </div>
+                        
+                        <!-- BỔ SUNG: BỘ TẢI FILE LOGO ĐƠN VỊ TỪ MÁY TÍNH HỖ TRỢ PNG, JPG, WEBP -->
                         <div>
-                            <label class="block text-xs font-bold uppercase mb-1">Logo Trường / Đơn vị</label>
-                            <div class="flex items-center gap-3">
-                                <img id="logoPreview" class="w-12 h-12 object-contain border rounded bg-slate-50 hidden" />
-                                <div class="flex-1 space-y-1">
-                                    <input type="file" accept="image/*" onchange="handleLogoSelect(event)" class="block w-full text-xs text-slate-500 file:mr-2 file:py-1 file:px-2.5 file:rounded file:border-0 file:text-xs file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 cursor-pointer">
-                                    <input type="text" id="cfgLogoUrl" class="w-full p-2 border rounded-lg text-xs focus:ring-2 focus:ring-blue-500 outline-none" placeholder="Hoặc dán URL ảnh Logo...">
+                            <label class="block text-xs font-bold uppercase mb-1">Logo Trường / Đơn vị (Tải file PNG, JPG hoặc Dán URL)</label>
+                            <div class="flex items-start gap-3 bg-slate-50 p-2 border rounded-lg">
+                                <img id="logoPreview" class="w-12 h-12 object-contain border rounded bg-white shadow-sm hidden" />
+                                <div class="flex-1 space-y-1.5">
+                                    <input type="file" id="logoFileInput" accept="image/png, image/jpeg, image/jpg, image/webp, image/gif" onchange="handleLogoSelect(event)" class="block w-full text-xs text-slate-500 file:mr-2 file:py-1.5 file:px-3 file:rounded-md file:border-0 file:text-xs file:font-semibold file:bg-blue-600 file:text-white hover:file:bg-blue-700 cursor-pointer">
+                                    <input type="text" id="cfgLogoUrl" oninput="previewLogoUrl(this.value)" class="w-full p-1.5 border rounded text-xs focus:ring-2 focus:ring-blue-500 outline-none bg-white" placeholder="Hoặc dán Link URL ảnh Logo...">
                                 </div>
                             </div>
                         </div>
@@ -272,11 +279,11 @@
                 </div>
 
                 <div>
-                    <label class="block font-semibold text-slate-700 mb-1">ẢNH MINH HỌA (Chọn tệp hoặc Dán Link)</label>
+                    <label class="block font-semibold text-slate-700 mb-1">ẢNH MINH HỌA (Chọn tệp PNG/JPG hoặc Dán Link)</label>
                     <div class="flex items-center gap-3">
                         <img id="newsModalPreview" class="w-12 h-12 object-cover border rounded bg-slate-50 hidden" />
                         <div class="flex-1 space-y-1">
-                            <input type="file" accept="image/*" onchange="handleModalNewsFileSelect(event)" class="block w-full text-xs text-slate-500 file:mr-2 file:py-1 file:px-2.5 file:rounded file:border-0 file:text-xs file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 cursor-pointer">
+                            <input type="file" accept="image/png, image/jpeg, image/jpg, image/webp" onchange="handleModalNewsFileSelect(event)" class="block w-full text-xs text-slate-500 file:mr-2 file:py-1 file:px-2.5 file:rounded file:border-0 file:text-xs file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 cursor-pointer">
                             <input id="newsImageInput" type="text" class="w-full px-3 py-1.5 border border-slate-300 rounded-lg outline-none focus:border-blue-500" placeholder="Hoặc dán Link URL ảnh tại đây...">
                         </div>
                     </div>
@@ -290,7 +297,7 @@
         </div>
     </div>
 
-    <!-- SCRIPT XỬ LÝ HỆ THỐNG CỦ (ĐÃ BỔ SUNG XỬ LÝ TAB MỚI) -->
+    <!-- SCRIPT XỬ LÝ HỆ THỐNG -->
     <script>
         const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbz1WZYAqjsKI-IQDJ0qp1zi_nKxm95pdWx5HsljwKGZfC5GaXK5FB4EOJ7_-1lmUfdT/exec";
 
@@ -299,6 +306,7 @@
         let currentNewsList = [];
         let editingNewsIndex = -1;
         let logoFileBase64 = null;
+        let heroFileBase64 = null;
         let modalNewsFileBase64 = null;
 
         function getStandardFaculty(facultyStr, classStr = '') {
@@ -338,6 +346,7 @@
             });
         }
 
+        // BỔ SUNG: XỬ LÝ ĐỌC FILE LOGO KHI TẢI TỪ MÁY TÍNH (PNG/JPG)
         async function handleLogoSelect(e) {
             const file = e.target.files[0];
             if (file) {
@@ -346,6 +355,43 @@
                 if (preview) {
                     preview.src = logoFileBase64.base64;
                     preview.classList.remove('hidden');
+                }
+            }
+        }
+
+        function previewLogoUrl(url) {
+            const preview = document.getElementById('logoPreview');
+            if (preview) {
+                if (url && url.trim() !== '') {
+                    preview.src = url.trim();
+                    preview.classList.remove('hidden');
+                } else if (!logoFileBase64) {
+                    preview.classList.add('hidden');
+                }
+            }
+        }
+
+        // BỔ SUNG: XỬ LÝ TẢI FILE BANNER HERO
+        async function handleHeroFileSelect(e) {
+            const file = e.target.files[0];
+            if (file) {
+                heroFileBase64 = await readFileAsBase64(file);
+                const preview = document.getElementById('heroImagePreview');
+                if (preview) {
+                    preview.src = heroFileBase64.base64;
+                    preview.classList.remove('hidden');
+                }
+            }
+        }
+
+        function previewHeroUrl(url) {
+            const preview = document.getElementById('heroImagePreview');
+            if (preview) {
+                if (url && url.trim() !== '') {
+                    preview.src = url.trim();
+                    preview.classList.remove('hidden');
+                } else if (!heroFileBase64) {
+                    preview.classList.add('hidden');
                 }
             }
         }
@@ -428,9 +474,14 @@
             document.getElementById('cfgHeroSubtitle').value = cfg.heroSubtitle || '';
             document.getElementById('cfgAboutText').value = cfg.aboutText || '';
 
-            // BỔ SUNG: LOAD HÌNH ẢNH BANNER VÀ MÀU SẮC LANDING PAGE
             const heroImgEl = document.getElementById('cfgHeroImage');
             if (heroImgEl) heroImgEl.value = cfg.heroImage || '';
+
+            const heroPreview = document.getElementById('heroImagePreview');
+            if (heroPreview && cfg.heroImage) {
+                heroPreview.src = cfg.heroImage;
+                heroPreview.classList.remove('hidden');
+            }
 
             const primaryColorEl = document.getElementById('cfgPrimaryColor');
             if (primaryColorEl) primaryColorEl.value = cfg.primaryColor || '';
@@ -689,6 +740,7 @@
                 schoolName: document.getElementById('cfgSchoolName').value.trim(),
                 logoUrl: document.getElementById('cfgLogoUrl').value.trim(),
                 logoFile: logoFileBase64,
+                heroFile: heroFileBase64,
                 announcement: document.getElementById('cfgAnnouncement').value.trim(),
                 enableLanding: document.getElementById('cfgEnableLanding').checked ? "TRUE" : "FALSE",
                 heroTitle: document.getElementById('cfgHeroTitle').value.trim(),
@@ -731,6 +783,7 @@
                     }
                     document.getElementById('cfgNewPassword').value = "";
                     logoFileBase64 = null;
+                    heroFileBase64 = null;
                 } else {
                     alert("❌ " + data.message);
                 }
@@ -744,7 +797,6 @@
             }
         }
 
-        // BỔ SUNG: NÂNG CẤP HÀM CHUYỂN TAB 3 TRẠNG THÁI
         function switchTab(tabName) {
             const tabSub = document.getElementById('tabSubmissions');
             const tabLanding = document.getElementById('tabLanding');
