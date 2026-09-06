@@ -4,10 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Hệ thống Quản lý Thi đua Đoàn viên</title>
-    <!-- Chart.js & Tailwind CSS -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- FontAwesome Icon -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
 </head>
 <body class="bg-slate-100 p-3 md:p-8 font-sans min-h-screen flex flex-col justify-between">
@@ -45,10 +43,8 @@
             
             <div class="relative group" onmouseenter="pauseNewsSlider()" onmouseleave="startNewsSlider()">
                 <div id="newsSliderContainer" class="p-5 min-h-[300px]"></div>
-
                 <button onclick="prevNewsSlide()" class="absolute left-2 top-1/2 -translate-y-1/2 bg-black/40 hover:bg-black/70 text-white p-2 rounded-full opacity-0 group-hover:opacity-100 transition duration-300">❮</button>
                 <button onclick="nextNewsSlide()" class="absolute right-2 top-1/2 -translate-y-1/2 bg-black/40 hover:bg-black/70 text-white p-2 rounded-full opacity-0 group-hover:opacity-100 transition duration-300">❯</button>
-
                 <div id="newsDotsContainer" class="flex justify-center gap-2 pb-4"></div>
             </div>
         </div>
@@ -268,7 +264,6 @@
     <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
 
     <script>
-    // ⚠️ Hãy dán đường dẫn Google Apps Script Web App của bạn vào giữa 2 dấu ngoặc kép dưới đây
     const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbxTUubzTQB1IJ-7wEsb9FChEgIWMUHzlM7_AqM5x7ZijHIEx3k-DI3g_l854RnZdrWo/exec";
 
     let globalData = [];
@@ -345,25 +340,24 @@
     }
 
     async function loadData() {
-        if (!WEB_APP_URL || WEB_APP_URL.includes("DÁN_URL")) {
+        if (!WEB_APP_URL || WEB_APP_URL.includes("YOUR_GOOGLE_APPS_SCRIPT")) {
             console.warn("Chưa cấu hình WEB_APP_URL!");
             document.getElementById('uiSchoolName').innerText = "HỆ THỐNG QUẢN LÝ THI ĐUA ĐOÀN VIÊN";
             return;
         }
 
         try {
-            // Thêm timestamp để tránh cache trình duyệt
             const fetchUrl = WEB_APP_URL + (WEB_APP_URL.includes('?') ? '&' : '?') + "output=json&t=" + new Date().getTime();
             const res = await fetch(fetchUrl);
             
             if (!res.ok) throw new Error("HTTP Status: " + res.status);
             const result = await res.json();
 
-            if (result.config && result.config.landing) {
-                const isEnableLanding = result.config.landing.ENABLE_LANDING === true || result.config.landing.ENABLE_LANDING === "TRUE";
+            if (result.config && result.config.enableLanding) {
+                const isEnableLanding = String(result.config.enableLanding).toLowerCase() === "true";
                 const urlParams = new URLSearchParams(window.location.search);
                 
-                if (isEnableLanding && urlParams.get('from') !== 'landing' && !window.location.pathname.endsWith('app.html')) {
+                if (isEnableLanding && urlParams.get('from') !== 'landing') {
                     window.location.href = "index.html";
                     return;
                 }
@@ -394,12 +388,6 @@
                 
                 if (result.config.newsList && result.config.newsList.length > 0) {
                     newsDataList = result.config.newsList;
-                } else if (result.config.newsTitle || result.config.newsContent) {
-                    newsDataList = [{
-                        title: result.config.newsTitle || '',
-                        content: result.config.newsContent || '',
-                        imageUrl: result.config.newsImageUrl || ''
-                    }];
                 }
 
                 if (newsDataList.length > 0) {
@@ -693,7 +681,7 @@
         if (!newsDataList || newsDataList.length === 0) return;
 
         const item = newsDataList[index];
-        const imgUrl = formatDriveUrl(item.imageUrl);
+        const imgUrl = formatDriveUrl(item.imageUrl || item.img);
 
         counter.innerText = `${index + 1} / ${newsDataList.length}`;
 
@@ -704,8 +692,8 @@
                     <img src="${imgUrl}" alt="Hình ảnh tin tức" class="w-auto h-auto max-h-[450px] max-w-full object-contain hover:scale-105 transition-transform duration-300 mx-auto rounded">
                 </div>` : ''}
                 <div class="w-full">
-                    <h3 class="font-extrabold text-blue-900 text-xl md:text-2xl mb-2 leading-snug">${item.title || ''}</h3>
-                    <p class="text-slate-700 text-sm md:text-base leading-relaxed whitespace-pre-line">${item.content || ''}</p>
+                    <h3 class="font-extrabold text-blue-900 text-xl md:text-2xl mb-2 leading-snug">${item.title || item.t || ''}</h3>
+                    <p class="text-slate-700 text-sm md:text-base leading-relaxed whitespace-pre-line">${item.content || item.summary || item.c || ''}</p>
                 </div>
             </div>
         `;
@@ -794,11 +782,10 @@
         setActivity.forEach(a => { actSelect.innerHTML += `<option value="${a}">${a}</option>`; });
     }
 
-    // FORM NỘP MINH CHỨNG
     document.getElementById('uploadForm').addEventListener('submit', async function(e) {
         e.preventDefault();
         
-        if (!WEB_APP_URL || WEB_APP_URL.includes("DÁN_URL")) {
+        if (!WEB_APP_URL || WEB_APP_URL.includes("YOUR_GOOGLE_APPS_SCRIPT")) {
             alert("⚠️ Hệ thống chưa được kết nối với Google Apps Script! Vui lòng điền WEB_APP_URL.");
             return;
         }
@@ -856,7 +843,6 @@
         }
     });
 
-    // XUẤT BÁO CÁO
     function openFormatModal(type) {
         selectedExportType = type;
         document.getElementById('modalReportTypeTitle').innerText = type === 'personal' ? 'XUẤT BÁO CÁO CÁ NHÂN' : 'XUẤT BÁO CÁO TẬP THỂ';
