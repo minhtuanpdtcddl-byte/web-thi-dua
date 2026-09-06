@@ -4,10 +4,27 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Quản Trị Hệ Thống Cổng Thông Tin Thi Đua Đoàn Trường</title>
+    
+    <!-- 1. THÊM MỚI: GOOGLE FONT INTER CHUẨN TIẾNG VIỆT (SỬA LỖI VỠ FONT) -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+    
     <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                },
+            },
+        }
+    </script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
 </head>
-<body class="bg-slate-100 text-slate-800 min-h-screen">
+<body class="bg-slate-100 text-slate-800 min-h-screen font-sans antialiased">
 
     <!-- 1. BẢNG ĐĂNG NHẬP -->
     <div id="loginBox" class="flex justify-center items-center min-h-screen px-4">
@@ -19,11 +36,11 @@
             </div>
             <form id="loginForm" onsubmit="handleLogin(event)">
                 <div class="mb-4">
-                    <label for="adminPassword" class="block text-sm font-semibold mb-2">Mật khẩu Quản trị</label>
+                    <label class="block text-sm font-semibold mb-2">Mật khẩu Quản trị</label>
                     <input type="password" id="adminPassword" class="w-full p-3 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none" placeholder="Nhập mật khẩu quản trị..." required>
                 </div>
-                <button type="submit" id="btnLogin" class="w-full bg-blue-900 hover:bg-blue-950 text-white font-bold py-3 rounded-lg transition flex items-center justify-center gap-2">
-                    <span>ĐĂNG NHẬP</span>
+                <button type="submit" id="btnLogin" class="w-full bg-blue-900 hover:bg-blue-950 text-white font-bold py-3 rounded-lg transition">
+                    ĐĂNG NHẬP
                 </button>
             </form>
         </div>
@@ -33,19 +50,23 @@
     <div id="adminPanel" class="hidden container mx-auto p-4 max-w-6xl my-6">
         <!-- HEADER ADMIN -->
         <div class="bg-blue-900 text-white p-4 rounded-t-xl flex justify-between items-center shadow">
-            <h1 class="font-bold text-lg flex items-center gap-2"><i class="fa-solid fa-sliders"></i> BẢNG QUẢN TRỊ HỆ THỐNG</h1>
-            <button onclick="logout()" class="bg-red-600 hover:bg-red-700 px-3 py-1.5 rounded text-xs font-semibold transition flex items-center gap-1">
-                <i class="fa-solid fa-right-from-bracket"></i> Đăng xuất
+            <h1 class="font-bold text-lg"><i class="fa-solid fa-sliders mr-2"></i> BẢNG QUẢN TRỊ HỆ THỐNG</h1>
+            <button onclick="logout()" class="bg-red-600 hover:bg-red-700 px-3 py-1.5 rounded text-xs font-semibold transition">
+                <i class="fa-solid fa-right-from-bracket mr-1"></i> Đăng xuất
             </button>
         </div>
 
-        <!-- THANH CHUYỂN TAB CỐ ĐỊNH -->
-        <div class="bg-slate-200 p-2 flex gap-2 border-x border-slate-300">
-            <button id="tabBtnSubmissions" onclick="switchTab('submissions')" class="px-4 py-2 text-sm font-bold rounded-lg bg-blue-900 text-white shadow flex items-center gap-2">
-                <i class="fa-solid fa-list-check"></i> Duyệt Minh Chứng Đoàn Viên
+        <!-- THANH CHUYỂN TAB (ĐÃ THÊM NÚT TAB TRANG GIỚI THIỆU) -->
+        <div class="bg-slate-200 p-2 flex flex-wrap gap-2 border-x border-slate-300">
+            <button id="tabBtnSubmissions" onclick="switchTab('submissions')" class="px-4 py-2 text-sm font-bold rounded-lg bg-blue-900 text-white shadow">
+                <i class="fa-solid fa-list-check mr-2"></i> Duyệt Minh Chứng Đoàn Viên
             </button>
-            <button id="tabBtnConfig" onclick="switchTab('config')" class="px-4 py-2 text-sm font-bold rounded-lg text-slate-700 hover:bg-slate-300 flex items-center gap-2">
-                <i class="fa-solid fa-gear"></i> Cấu Hình Hệ Thống & Bảng Tin
+            <!-- THÊM MỚI: TAB QUẢN LÝ LANDING PAGE -->
+            <button id="tabBtnLanding" onclick="switchTab('landing')" class="px-4 py-2 text-sm font-bold rounded-lg text-slate-700 hover:bg-slate-300">
+                <i class="fa-solid fa-window-restore mr-2"></i> Quản Lý Trang Giới Thiệu
+            </button>
+            <button id="tabBtnConfig" onclick="switchTab('config')" class="px-4 py-2 text-sm font-bold rounded-lg text-slate-700 hover:bg-slate-300">
+                <i class="fa-solid fa-gear mr-2"></i> Cấu Hình Hệ Thống & Bảng Tin
             </button>
         </div>
 
@@ -55,7 +76,7 @@
             <div id="tabSubmissions" class="space-y-4">
                 <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-3 bg-slate-50 p-3.5 rounded-xl border border-slate-200">
                     <div class="flex items-center gap-2">
-                        <h3 class="font-bold text-blue-900 text-base flex items-center gap-1.5"><i class="fa-solid fa-file-invoice"></i> Tra Cứu & Xét Duyệt Minh Chứng</h3>
+                        <h3 class="font-bold text-blue-900 text-base"><i class="fa-solid fa-file-invoice mr-1"></i> Tra Cứu & Xét Duyệt Minh Chứng</h3>
                         <span id="totalSubmissions" class="text-xs bg-blue-100 text-blue-800 font-bold px-2.5 py-1 rounded-full">Tổng: 0</span>
                     </div>
                     
@@ -93,58 +114,89 @@
                 </div>
             </div>
 
-            <!-- TAB 2: CẤU HÌNH HỆ THỐNG -->
+            <!-- TAB 2 (THÊM MỚI): MỤC QUẢN LÝ TRANG GIỚI THIỆU (LANDING PAGE TÁCH RIÊNG) -->
+            <div id="tabLanding" class="hidden space-y-6">
+                <div class="p-5 bg-blue-50/50 rounded-xl border border-blue-100 space-y-5">
+                    <div class="flex items-center justify-between border-b border-blue-200 pb-3">
+                        <h3 class="font-bold text-blue-900 text-base flex items-center gap-2">
+                            <i class="fa-solid fa-window-restore text-blue-700"></i> Quản Lý Trang Giới Thiệu (Landing Page)
+                        </h3>
+                        <div class="flex items-center gap-2">
+                            <input type="checkbox" id="cfgEnableLanding" class="w-4 h-4 text-blue-600 rounded cursor-pointer">
+                            <label for="cfgEnableLanding" class="text-xs font-bold text-slate-800 cursor-pointer">
+                                Kích hoạt giao diện Landing Page khi mở Trang chủ
+                            </label>
+                        </div>
+                    </div>
+
+                    <!-- NỘI DUNG VĂN BẢN HỆ THỐNG CŨ -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-xs font-bold uppercase mb-1 text-slate-700">Tiêu đề Hero (Hero Title)</label>
+                            <input type="text" id="cfgHeroTitle" class="w-full p-2.5 border rounded-lg text-sm focus:ring-2 focus:ring-blue-500 outline-none bg-white" placeholder="VD: MÔ HÌNH QUẢN LÝ THI ĐƯA ĐOÀN VIÊN ĐIỆN TỬ">
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold uppercase mb-1 text-slate-700">Phụ đề Hero (Hero Subtitle)</label>
+                            <input type="text" id="cfgHeroSubtitle" class="w-full p-2.5 border rounded-lg text-sm focus:ring-2 focus:ring-blue-500 outline-none bg-white" placeholder="VD: CHUYỂN ĐỔI SỐ - VỮNG NGHỀ NGHỆP - SÁNG TƯƠNG LAI">
+                        </div>
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-bold uppercase mb-1 text-slate-700">Nội dung Giới thiệu (About Text)</label>
+                        <textarea id="cfgAboutText" rows="3" class="w-full p-2.5 border rounded-lg text-sm focus:ring-2 focus:ring-blue-500 outline-none bg-white" placeholder="Mô tả giới thiệu chi tiết..."></textarea>
+                    </div>
+
+                    <!-- THÊM MỚI: TÙY CHỈNH ẢNH BANNER & MÀU SẮC TRANG GIỚI THIỆU -->
+                    <div class="pt-3 border-t border-blue-200 space-y-4">
+                        <h4 class="font-bold text-slate-800 text-sm flex items-center gap-1.5"><i class="fa-solid fa-palette text-amber-600"></i> Tùy Chỉnh Hình Ảnh & Màu Sắc Giao Diện</h4>
+                        
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-xs font-bold uppercase mb-1 text-slate-700">Ảnh Banner/Hero Trang Giới Thiệu (URL)</label>
+                                <input type="text" id="cfgHeroImage" class="w-full p-2.5 border rounded-lg text-sm focus:ring-2 focus:ring-blue-500 outline-none bg-white" placeholder="Dán Link URL ảnh minh họa Landing Page...">
+                            </div>
+                            <div>
+                                <label class="block text-xs font-bold uppercase mb-1 text-slate-700">Màu Nút Bấm Chủ Đạo (Hex Color)</label>
+                                <div class="flex gap-2">
+                                    <input type="color" id="cfgPrimaryColorPicker" onchange="document.getElementById('cfgPrimaryColor').value = this.value" class="h-10 w-12 border rounded cursor-pointer p-1 bg-white">
+                                    <input type="text" id="cfgPrimaryColor" class="w-full p-2.5 border rounded-lg text-sm focus:ring-2 focus:ring-blue-500 outline-none bg-white" placeholder="#1E3A8A hoặc #8B0000">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- NÚT LƯU CHO TAB LANDING PAGE -->
+                <button type="button" onclick="saveConfig()" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3 rounded-lg shadow transition flex items-center justify-center gap-2">
+                    <i class="fa-solid fa-floppy-disk"></i> LƯU CẤU HÌNH TRANG GIỚI THIỆU
+                </button>
+            </div>
+
+            <!-- TAB 3: CẤU HÌNH HỆ THỐNG & BẢNG TIN GIỮ NGUYÊN -->
             <div id="tabConfig" class="hidden space-y-6">
                 
                 <!-- THÔNG TIN ĐƠN VỊ -->
                 <div class="border-b pb-4">
-                    <h3 class="font-bold text-blue-900 text-base mb-3 flex items-center gap-1.5"><i class="fa-solid fa-building"></i> Thông tin Đơn vị</h3>
+                    <h3 class="font-bold text-blue-900 text-base mb-3"><i class="fa-solid fa-building mr-1"></i> Thông tin Đơn vị</h3>
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-3">
                         <div>
-                            <label for="cfgSchoolName" class="block text-xs font-bold uppercase mb-1">Tên Trường / Đoàn Trường</label>
+                            <label class="block text-xs font-bold uppercase mb-1">Tên Trường / Đoàn Trường</label>
                             <input type="text" id="cfgSchoolName" class="w-full p-2.5 border rounded-lg text-sm focus:ring-2 focus:ring-blue-500 outline-none">
                         </div>
                         <div>
-                            <label for="cfgLogoUrl" class="block text-xs font-bold uppercase mb-1">Logo Trường / Đơn vị</label>
+                            <label class="block text-xs font-bold uppercase mb-1">Logo Trường / Đơn vị</label>
                             <div class="flex items-center gap-3">
-                                <img id="logoPreview" alt="Logo đơn vị" class="w-12 h-12 object-contain border rounded bg-slate-50 hidden" />
+                                <img id="logoPreview" class="w-12 h-12 object-contain border rounded bg-slate-50 hidden" />
                                 <div class="flex-1 space-y-1">
                                     <input type="file" accept="image/*" onchange="handleLogoSelect(event)" class="block w-full text-xs text-slate-500 file:mr-2 file:py-1 file:px-2.5 file:rounded file:border-0 file:text-xs file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 cursor-pointer">
-                                    <input type="text" id="cfgLogoUrl" oninput="handleLogoUrlChange(event)" class="w-full p-2 border rounded-lg text-xs focus:ring-2 focus:ring-blue-500 outline-none" placeholder="Hoặc dán URL ảnh Logo...">
+                                    <input type="text" id="cfgLogoUrl" class="w-full p-2 border rounded-lg text-xs focus:ring-2 focus:ring-blue-500 outline-none" placeholder="Hoặc dán URL ảnh Logo...">
                                 </div>
                             </div>
                         </div>
                     </div>
                     <div>
-                        <label for="cfgAnnouncement" class="block text-xs font-bold uppercase mb-1">Thông báo chạy ở trang chủ</label>
+                        <label class="block text-xs font-bold uppercase mb-1">Thông báo chạy ở trang chủ</label>
                         <textarea id="cfgAnnouncement" rows="2" class="w-full p-2.5 border rounded-lg text-sm focus:ring-2 focus:ring-blue-500 outline-none"></textarea>
-                    </div>
-                </div>
-
-                <!-- QUẢN LÝ LANDING PAGE GIỚI THIỆU -->
-                <div class="p-5 bg-blue-50/50 rounded-xl border border-blue-100 space-y-4">
-                    <h3 class="font-bold text-blue-900 text-base flex items-center gap-2">
-                        <i class="fa-solid fa-window-restore text-blue-700"></i> Quản Lý Trang Giới Thiệu (Landing Page)
-                    </h3>
-                    <div class="flex items-center gap-2 border-b border-blue-200 pb-3">
-                        <input type="checkbox" id="cfgEnableLanding" class="w-4 h-4 text-blue-600 rounded cursor-pointer">
-                        <label for="cfgEnableLanding" class="text-xs font-bold text-slate-800 cursor-pointer">
-                            Kích hoạt giao diện Landing Page khi mở Trang chủ
-                        </label>
-                    </div>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div>
-                            <label for="cfgHeroTitle" class="block text-xs font-bold uppercase mb-1 text-slate-700">Tiêu đề Hero (Hero Title)</label>
-                            <input type="text" id="cfgHeroTitle" class="w-full p-2.5 border rounded-lg text-sm focus:ring-2 focus:ring-blue-500 outline-none bg-white">
-                        </div>
-                        <div>
-                            <label for="cfgHeroSubtitle" class="block text-xs font-bold uppercase mb-1 text-slate-700">Phụ đề Hero (Hero Subtitle)</label>
-                            <input type="text" id="cfgHeroSubtitle" class="w-full p-2.5 border rounded-lg text-sm focus:ring-2 focus:ring-blue-500 outline-none bg-white">
-                        </div>
-                    </div>
-                    <div>
-                        <label for="cfgAboutText" class="block text-xs font-bold uppercase mb-1 text-slate-700">Nội dung Giới thiệu (About Text)</label>
-                        <textarea id="cfgAboutText" rows="3" class="w-full p-2.5 border rounded-lg text-sm focus:ring-2 focus:ring-blue-500 outline-none bg-white"></textarea>
                     </div>
                 </div>
 
@@ -179,20 +231,20 @@
 
                 <!-- DANH SÁCH HOẠT ĐỘNG -->
                 <div class="border-b pb-4">
-                    <h3 class="font-bold text-blue-900 text-base mb-2 flex items-center gap-1.5"><i class="fa-solid fa-list-check"></i> Danh sách Hoạt động Đoàn</h3>
+                    <h3 class="font-bold text-blue-900 text-base mb-2"><i class="fa-solid fa-list-check mr-1"></i> Danh sách Hoạt động Đoàn</h3>
                     <p class="text-xs text-slate-500 mb-2">Mỗi tên Hoạt động nằm trên <strong>01 dòng riêng biệt</strong>:</p>
                     <textarea id="cfgActivities" rows="5" class="w-full p-2.5 border rounded-lg text-sm font-mono focus:ring-2 focus:ring-blue-500 outline-none" placeholder="Nhập danh sách hoạt động..."></textarea>
                 </div>
 
                 <!-- BẢO MẬT -->
                 <div class="border-b pb-4">
-                    <h3 class="font-bold text-blue-900 text-base mb-2 flex items-center gap-1.5"><i class="fa-solid fa-key"></i> Đổi mật khẩu Admin</h3>
+                    <h3 class="font-bold text-blue-900 text-base mb-2"><i class="fa-solid fa-key mr-1"></i> Đổi mật khẩu Admin</h3>
                     <input type="password" id="cfgNewPassword" class="w-full p-2.5 border rounded-lg text-sm focus:ring-2 focus:ring-blue-500 outline-none" placeholder="Để trống nếu không muốn đổi mật khẩu">
                 </div>
 
                 <div class="pt-2">
-                    <button type="button" onclick="saveConfig()" id="btnSave" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3 rounded-lg shadow transition flex items-center justify-center gap-2">
-                        <i class="fa-solid fa-floppy-disk"></i> <span>LƯU THAY ĐỔI CẤU HÌNH</span>
+                    <button type="button" onclick="saveConfig()" id="btnSave" class="w-full bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3 rounded-lg shadow transition">
+                        <i class="fa-solid fa-floppy-disk mr-2"></i> LƯU THAY ĐỔI CẤU HÌNH
                     </button>
                 </div>
             </div>
@@ -201,31 +253,31 @@
     </div>
 
     <!-- KHUNG MODAL CHỈNH SỬA / THÊM TIN TỨC -->
-    <div id="newsModal" onclick="handleModalBackdropClick(event)" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-slate-900/40 backdrop-blur-sm p-4">
+    <div id="newsModal" class="hidden fixed inset-0 z-50 flex items-center justify-center bg-slate-900/40 backdrop-blur-sm p-4">
         <div class="bg-white rounded-xl shadow-xl border border-slate-200 w-full max-w-lg overflow-hidden">
             <div class="flex items-center justify-between px-5 py-3 border-b border-slate-100 bg-slate-50">
                 <h3 id="newsModalTitle" class="text-sm font-bold text-slate-800">Thêm / Chỉnh sửa Tin tức</h3>
-                <button onclick="closeNewsModal()" type="button" class="text-slate-400 hover:text-slate-600 text-lg">&times;</button>
+                <button onclick="closeNewsModal()" type="button" class="text-slate-400 hover:text-slate-600 text-lg">✕</button>
             </div>
 
             <form onsubmit="handleNewsSubmit(event)" class="p-5 space-y-4 text-xs">
                 <div>
-                    <label for="newsTitleInput" class="block font-semibold text-slate-700 mb-1">TIÊU ĐỀ TIN TỨC</label>
+                    <label class="block font-semibold text-slate-700 mb-1">TIÊU ĐỀ TIN TỨC</label>
                     <input id="newsTitleInput" type="text" required class="w-full px-3 py-2 border border-slate-300 rounded-lg outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500" placeholder="Nhập tiêu đề bài viết...">
                 </div>
 
                 <div>
-                    <label for="newsSummaryInput" class="block font-semibold text-slate-700 mb-1">NỘI DUNG TÓM TẮT</label>
+                    <label class="block font-semibold text-slate-700 mb-1">NỘI DUNG TÓM TẮT</label>
                     <textarea id="newsSummaryInput" rows="3" required class="w-full px-3 py-2 border border-slate-300 rounded-lg outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500" placeholder="Nhập nội dung ngắn..."></textarea>
                 </div>
 
                 <div>
-                    <label for="newsImageInput" class="block font-semibold text-slate-700 mb-1">ẢNH MINH HỌA (Chọn tệp hoặc Dán Link)</label>
+                    <label class="block font-semibold text-slate-700 mb-1">ẢNH MINH HỌA (Chọn tệp hoặc Dán Link)</label>
                     <div class="flex items-center gap-3">
-                        <img id="newsModalPreview" alt="Xem trước tin tức" class="w-12 h-12 object-cover border rounded bg-slate-50 hidden" />
+                        <img id="newsModalPreview" class="w-12 h-12 object-cover border rounded bg-slate-50 hidden" />
                         <div class="flex-1 space-y-1">
-                            <input type="file" id="newsFileInput" accept="image/*" onchange="handleModalNewsFileSelect(event)" class="block w-full text-xs text-slate-500 file:mr-2 file:py-1 file:px-2.5 file:rounded file:border-0 file:text-xs file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 cursor-pointer">
-                            <input id="newsImageInput" type="text" oninput="handleModalNewsUrlChange(event)" class="w-full px-3 py-1.5 border border-slate-300 rounded-lg outline-none focus:border-blue-500" placeholder="Hoặc dán Link URL ảnh tại đây...">
+                            <input type="file" accept="image/*" onchange="handleModalNewsFileSelect(event)" class="block w-full text-xs text-slate-500 file:mr-2 file:py-1 file:px-2.5 file:rounded file:border-0 file:text-xs file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 cursor-pointer">
+                            <input id="newsImageInput" type="text" class="w-full px-3 py-1.5 border border-slate-300 rounded-lg outline-none focus:border-blue-500" placeholder="Hoặc dán Link URL ảnh tại đây...">
                         </div>
                     </div>
                 </div>
@@ -238,7 +290,7 @@
         </div>
     </div>
 
-    <!-- SCRIPT XỬ LÝ HỆ THỐNG -->
+    <!-- SCRIPT XỬ LÝ HỆ THỐNG CỦ (ĐÃ BỔ SUNG XỬ LÝ TAB MỚI) -->
     <script>
         const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbz1WZYAqjsKI-IQDJ0qp1zi_nKxm95pdWx5HsljwKGZfC5GaXK5FB4EOJ7_-1lmUfdT/exec";
 
@@ -264,7 +316,7 @@
         }
 
         function escapeHtml(str) {
-            if (str === null || str === undefined) return '';
+            if (!str) return '';
             return String(str)
                 .replace(/&/g, "&amp;")
                 .replace(/</g, "&lt;")
@@ -275,14 +327,10 @@
 
         function readFileAsBase64(file) {
             return new Promise((resolve, reject) => {
-                if (!file) {
-                    reject(new Error("File không tồn tại."));
-                    return;
-                }
                 const reader = new FileReader();
                 reader.onload = () => resolve({
-                    name: file.name || 'file',
-                    mimeType: file.type || 'application/octet-stream',
+                    name: file.name,
+                    mimeType: file.type,
                     base64: reader.result
                 });
                 reader.onerror = error => reject(error);
@@ -291,73 +339,35 @@
         }
 
         async function handleLogoSelect(e) {
-            const file = e.target?.files?.[0];
+            const file = e.target.files[0];
             if (file) {
-                try {
-                    logoFileBase64 = await readFileAsBase64(file);
-                    const preview = document.getElementById('logoPreview');
-                    if (preview) {
-                        preview.src = logoFileBase64.base64;
-                        preview.classList.remove('hidden');
-                    }
-                } catch (err) {
-                    console.error("Lỗi đọc file logo:", err);
-                }
-            }
-        }
-
-        function handleLogoUrlChange(e) {
-            const url = e.target.value.trim();
-            const preview = document.getElementById('logoPreview');
-            if (preview) {
-                if (url) {
-                    preview.src = url;
+                logoFileBase64 = await readFileAsBase64(file);
+                const preview = document.getElementById('logoPreview');
+                if (preview) {
+                    preview.src = logoFileBase64.base64;
                     preview.classList.remove('hidden');
-                } else if (!logoFileBase64) {
-                    preview.classList.add('hidden');
                 }
             }
         }
 
         async function handleModalNewsFileSelect(e) {
-            const file = e.target?.files?.[0];
+            const file = e.target.files[0];
             if (file) {
-                try {
-                    modalNewsFileBase64 = await readFileAsBase64(file);
-                    const preview = document.getElementById('newsModalPreview');
-                    if (preview) {
-                        preview.src = modalNewsFileBase64.base64;
-                        preview.classList.remove('hidden');
-                    }
-                } catch (err) {
-                    console.error("Lỗi đọc file tin tức:", err);
-                }
-            }
-        }
-
-        function handleModalNewsUrlChange(e) {
-            const url = e.target.value.trim();
-            const preview = document.getElementById('newsModalPreview');
-            if (preview) {
-                if (url) {
-                    preview.src = url;
+                modalNewsFileBase64 = await readFileAsBase64(file);
+                const preview = document.getElementById('newsModalPreview');
+                if (preview) {
+                    preview.src = modalNewsFileBase64.base64;
                     preview.classList.remove('hidden');
-                } else if (!modalNewsFileBase64) {
-                    preview.classList.add('hidden');
                 }
             }
         }
 
         async function handleLogin(e) {
-            if (e) e.preventDefault();
-            const passInput = document.getElementById('adminPassword');
-            const pass = passInput ? passInput.value.trim() : '';
+            if(e) e.preventDefault();
+            const pass = document.getElementById('adminPassword').value.trim();
             const btn = document.getElementById('btnLogin');
-            
-            if (btn) {
-                btn.disabled = true;
-                btn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Đang xác thực...`;
-            }
+            btn.disabled = true;
+            btn.innerText = "⏳ Đang xác thực...";
 
             try {
                 let data;
@@ -371,13 +381,12 @@
                 } else {
                     const res = await fetch(WEB_APP_URL, {
                         method: 'POST',
-                        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
                         body: JSON.stringify({ action: "adminLogin", password: pass })
                     });
                     data = await res.json();
                 }
 
-                if (data && data.status === "success") {
+                if (data.status === "success") {
                     currentPassword = pass;
                     sessionStorage.setItem('admin_pass', pass);
                     loadConfigToForm(data.config);
@@ -385,33 +394,26 @@
                     submissionsList = data.submissions || [];
                     filterSubmissions();
 
-                    document.getElementById('loginBox')?.classList.add('hidden');
-                    document.getElementById('adminPanel')?.classList.remove('hidden');
+                    document.getElementById('loginBox').classList.add('hidden');
+                    document.getElementById('adminPanel').classList.remove('hidden');
                     
                     switchTab('submissions');
                 } else {
-                    alert("❌ " + (data?.message || "Mật khẩu không đúng!"));
+                    alert("❌ " + data.message);
                 }
             } catch (err) {
-                alert("❌ Lỗi kết nối máy chủ: " + err.message);
+                alert("❌ Lỗi kết nối máy chủ: " + err);
             } finally {
-                if (btn) {
-                    btn.disabled = false;
-                    btn.innerHTML = `<span>ĐĂNG NHẬP</span>`;
-                }
+                btn.disabled = false;
+                btn.innerText = "ĐĂNG NHẬP";
             }
         }
 
         function loadConfigToForm(cfg) {
             if (!cfg) return;
 
-            const setVal = (id, val) => {
-                const el = document.getElementById(id);
-                if (el) el.value = val || '';
-            };
-
-            setVal('cfgSchoolName', cfg.schoolName);
-            setVal('cfgLogoUrl', cfg.logoUrl);
+            document.getElementById('cfgSchoolName').value = cfg.schoolName || '';
+            document.getElementById('cfgLogoUrl').value = cfg.logoUrl || '';
             
             const logoPreview = document.getElementById('logoPreview');
             if (logoPreview && cfg.logoUrl) {
@@ -419,19 +421,25 @@
                 logoPreview.classList.remove('hidden');
             }
 
-            setVal('cfgAnnouncement', cfg.announcement);
+            document.getElementById('cfgAnnouncement').value = cfg.announcement || '';
             
-            const chkLanding = document.getElementById('cfgEnableLanding');
-            if (chkLanding) chkLanding.checked = String(cfg.enableLanding).toLowerCase() === 'true';
+            document.getElementById('cfgEnableLanding').checked = String(cfg.enableLanding).toLowerCase() === 'true';
+            document.getElementById('cfgHeroTitle').value = cfg.heroTitle || '';
+            document.getElementById('cfgHeroSubtitle').value = cfg.heroSubtitle || '';
+            document.getElementById('cfgAboutText').value = cfg.aboutText || '';
 
-            setVal('cfgHeroTitle', cfg.heroTitle);
-            setVal('cfgHeroSubtitle', cfg.heroSubtitle);
-            setVal('cfgAboutText', cfg.aboutText);
+            // BỔ SUNG: LOAD HÌNH ẢNH BANNER VÀ MÀU SẮC LANDING PAGE
+            const heroImgEl = document.getElementById('cfgHeroImage');
+            if (heroImgEl) heroImgEl.value = cfg.heroImage || '';
+
+            const primaryColorEl = document.getElementById('cfgPrimaryColor');
+            if (primaryColorEl) primaryColorEl.value = cfg.primaryColor || '';
+
+            const pickerEl = document.getElementById('cfgPrimaryColorPicker');
+            if (pickerEl && cfg.primaryColor) pickerEl.value = cfg.primaryColor;
 
             if (Array.isArray(cfg.activities)) {
-                setVal('cfgActivities', cfg.activities.join('\n'));
-            } else {
-                setVal('cfgActivities', '');
+                document.getElementById('cfgActivities').value = cfg.activities.join('\n');
             }
 
             currentNewsList = Array.isArray(cfg.newsList) ? cfg.newsList : [];
@@ -483,7 +491,7 @@
                 if (item.fileUrls) {
                     const links = item.fileUrls.split(' | ');
                     filesHtml = links.map((link, idx) => 
-                        `<a href="${escapeHtml(link)}" target="_blank" rel="noopener noreferrer" class="inline-block bg-blue-50 text-blue-700 border border-blue-200 px-2 py-0.5 rounded text-xs hover:underline mr-1 mb-1">
+                        `<a href="${escapeHtml(link)}" target="_blank" class="inline-block bg-blue-50 text-blue-700 border border-blue-200 px-2 py-0.5 rounded text-xs hover:underline mr-1 mb-1">
                             <i class="fa-solid fa-paperclip mr-1"></i>File ${idx + 1}
                          </a>`
                     ).join('');
@@ -539,7 +547,6 @@
                 } else {
                     const res = await fetch(WEB_APP_URL, {
                         method: 'POST',
-                        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
                         body: JSON.stringify({
                             action: "updateStatus",
                             password: currentPassword,
@@ -550,14 +557,14 @@
                     data = await res.json();
                 }
 
-                if (data && data.status === "success") {
+                if (data.status === "success") {
                     submissionsList = data.submissions || [];
                     filterSubmissions();
                 } else {
-                    alert("❌ " + (data?.message || "Cập nhật thất bại!"));
+                    alert("❌ " + data.message);
                 }
             } catch (err) {
-                alert("❌ Lỗi khi cập nhật: " + err.message);
+                alert("❌ Lỗi khi cập nhật: " + err);
             }
         }
 
@@ -568,7 +575,7 @@
             tbody.innerHTML = '';
 
             if (!list || list.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="5" class="p-5 text-center text-slate-400">Chưa có tin tức nào. Bấm "+ Thêm Tin Tức Mới" để tạo.</td></tr>`;
+                tbody.innerHTML = `<tr><td colSpan="5" class="p-5 text-center text-slate-400">Chưa có tin tức nào. Bấm "+ Thêm Tin Tức Mới" để tạo.</td></tr>`;
                 return;
             }
 
@@ -582,7 +589,7 @@
 
                 let imgHtml = `<div class="w-8 h-8 bg-slate-100 rounded border border-slate-200 flex items-center justify-center text-[10px] text-slate-400 mx-auto">Chưa có</div>`;
                 if (img) {
-                    imgHtml = `<img src="${escapeHtml(img)}" alt="Ảnh tin tức" class="w-8 h-8 object-cover rounded border border-slate-200 mx-auto" />`;
+                    imgHtml = `<img src="${escapeHtml(img)}" class="w-8 h-8 object-cover rounded border border-slate-200 mx-auto" />`;
                 }
 
                 tr.innerHTML = `
@@ -604,10 +611,6 @@
         function openNewsModal(index = -1) {
             editingNewsIndex = index;
             modalNewsFileBase64 = null;
-            
-            const fileInput = document.getElementById('newsFileInput');
-            if (fileInput) fileInput.value = '';
-
             const preview = document.getElementById('newsModalPreview');
 
             if (index >= 0 && currentNewsList[index]) {
@@ -632,19 +635,11 @@
                 if (preview) preview.classList.add('hidden');
             }
 
-            document.getElementById('newsModal')?.classList.remove('hidden');
-            document.body.classList.add('overflow-hidden');
+            document.getElementById('newsModal').classList.remove('hidden');
         }
 
         function closeNewsModal() {
-            document.getElementById('newsModal')?.classList.add('hidden');
-            document.body.classList.remove('overflow-hidden');
-        }
-
-        function handleModalBackdropClick(e) {
-            if (e.target.id === 'newsModal') {
-                closeNewsModal();
-            }
+            document.getElementById('newsModal').classList.add('hidden');
         }
 
         function handleNewsSubmit(e) {
@@ -683,7 +678,7 @@
             const btn = document.getElementById('btnSave');
             if (btn) {
                 btn.disabled = true;
-                btn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> <span>Đang tải ảnh & lưu cấu hình...</span>`;
+                btn.innerText = "⏳ Đang tải ảnh & lưu cấu hình...";
             }
 
             const newPass = document.getElementById('cfgNewPassword').value.trim();
@@ -699,6 +694,8 @@
                 heroTitle: document.getElementById('cfgHeroTitle').value.trim(),
                 heroSubtitle: document.getElementById('cfgHeroSubtitle').value.trim(),
                 aboutText: document.getElementById('cfgAboutText').value.trim(),
+                heroImage: document.getElementById('cfgHeroImage')?.value.trim() || '',
+                primaryColor: document.getElementById('cfgPrimaryColor')?.value.trim() || '',
                 activities: activitiesArray,
                 newsList: currentNewsList
             };
@@ -717,7 +714,6 @@
                 } else {
                     const res = await fetch(WEB_APP_URL, {
                         method: 'POST',
-                        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
                         body: JSON.stringify({
                             action: "updateConfig",
                             password: currentPassword,
@@ -727,7 +723,7 @@
                     data = await res.json();
                 }
 
-                if (data && data.status === "success") {
+                if (data.status === "success") {
                     alert("🎉 " + data.message);
                     if (newPass !== "") {
                         currentPassword = newPass;
@@ -736,57 +732,63 @@
                     document.getElementById('cfgNewPassword').value = "";
                     logoFileBase64 = null;
                 } else {
-                    alert("❌ " + (data?.message || "Lưu cấu hình thất bại!"));
+                    alert("❌ " + data.message);
                 }
             } catch (err) {
-                alert("❌ Lỗi khi lưu cấu hình: " + err.message);
+                alert("❌ Lỗi khi lưu cấu hình: " + err);
             } finally {
                 if (btn) {
                     btn.disabled = false;
-                    btn.innerHTML = `<i class="fa-solid fa-floppy-disk"></i> <span>LƯU THAY ĐỔI CẤU HÌNH</span>`;
+                    btn.innerHTML = '<i class="fa-solid fa-floppy-disk mr-2"></i> LƯU THAY ĐỔI CẤU HÌNH';
                 }
             }
         }
 
+        // BỔ SUNG: NÂNG CẤP HÀM CHUYỂN TAB 3 TRẠNG THÁI
         function switchTab(tabName) {
             const tabSub = document.getElementById('tabSubmissions');
+            const tabLanding = document.getElementById('tabLanding');
             const tabCfg = document.getElementById('tabConfig');
+
             const btnSub = document.getElementById('tabBtnSubmissions');
+            const btnLanding = document.getElementById('tabBtnLanding');
             const btnCfg = document.getElementById('tabBtnConfig');
+
+            const activeClass = "px-4 py-2 text-sm font-bold rounded-lg bg-blue-900 text-white shadow";
+            const inactiveClass = "px-4 py-2 text-sm font-bold rounded-lg text-slate-700 hover:bg-slate-300";
+
+            tabSub?.classList.add('hidden');
+            tabLanding?.classList.add('hidden');
+            tabCfg?.classList.add('hidden');
+
+            if (btnSub) btnSub.className = inactiveClass;
+            if (btnLanding) btnLanding.className = inactiveClass;
+            if (btnCfg) btnCfg.className = inactiveClass;
 
             if (tabName === 'submissions') {
                 tabSub?.classList.remove('hidden');
-                tabCfg?.classList.add('hidden');
-                if (btnSub) btnSub.className = "px-4 py-2 text-sm font-bold rounded-lg bg-blue-900 text-white shadow flex items-center gap-2";
-                if (btnCfg) btnCfg.className = "px-4 py-2 text-sm font-bold rounded-lg text-slate-700 hover:bg-slate-300 flex items-center gap-2";
+                if (btnSub) btnSub.className = activeClass;
+            } else if (tabName === 'landing') {
+                tabLanding?.classList.remove('hidden');
+                if (btnLanding) btnLanding.className = activeClass;
             } else {
-                tabSub?.classList.add('hidden');
                 tabCfg?.classList.remove('hidden');
-                if (btnCfg) btnCfg.className = "px-4 py-2 text-sm font-bold rounded-lg bg-blue-900 text-white shadow flex items-center gap-2";
-                if (btnSub) btnSub.className = "px-4 py-2 text-sm font-bold rounded-lg text-slate-700 hover:bg-slate-300 flex items-center gap-2";
+                if (btnCfg) btnCfg.className = activeClass;
             }
         }
 
         function logout() {
             sessionStorage.removeItem('admin_pass');
             currentPassword = "";
-            const passInput = document.getElementById('adminPassword');
-            if (passInput) passInput.value = "";
-            document.getElementById('adminPanel')?.classList.add('hidden');
-            document.getElementById('loginBox')?.classList.remove('hidden');
+            document.getElementById('adminPassword').value = "";
+            document.getElementById('adminPanel').classList.add('hidden');
+            document.getElementById('loginBox').classList.remove('hidden');
         }
-
-        document.addEventListener('keydown', (e) => {
-            if (e.key === 'Escape') {
-                closeNewsModal();
-            }
-        });
 
         window.addEventListener('DOMContentLoaded', () => {
             const savedPass = sessionStorage.getItem('admin_pass');
             if (savedPass) {
-                const passInput = document.getElementById('adminPassword');
-                if (passInput) passInput.value = savedPass;
+                document.getElementById('adminPassword').value = savedPass;
                 handleLogin();
             }
         });
