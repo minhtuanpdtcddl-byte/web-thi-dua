@@ -237,9 +237,30 @@
             }
 
             // 4. Cập nhật Màu sắc Nút chủ đạo nếu có
-            if (cfg.primaryColor) {
-                document.documentElement.style.setProperty('--school-red', cfg.primaryColor);
-            }
+          // Bảng mã màu đồng bộ với Admin
+    const THEME_PRESETS = {
+        'DEFAULT': { primary: '#8b0000', gold: '#cba235', blue: '#1e3a8a' },
+        'DOAN_26_3': { primary: '#0052cc', gold: '#ffab00', blue: '#003994' },
+        'TET': { primary: '#c62828', gold: '#fbc02d', blue: '#8e24aa' },
+        'LE_LON': { primary: '#b71c1c', gold: '#ffd600', blue: '#1a237e' },
+        'NGAY_NHA_GIAO': { primary: '#1565c0', gold: '#ffa000', blue: '#4a148c' }
+    };
+
+    // Lấy tông màu được chọn
+    let primary = cfg.primaryColor || '#8b0000';
+    let gold = '#cba235';
+    let blue = '#1e3a8a';
+
+    if (cfg.selectedTheme && THEME_PRESETS[cfg.selectedTheme]) {
+        primary = THEME_PRESETS[cfg.selectedTheme].primary;
+        gold = THEME_PRESETS[cfg.selectedTheme].gold;
+        blue = THEME_PRESETS[cfg.selectedTheme].blue;
+    }
+
+    // Áp dụng trực tiếp vào biến CSS giao diện
+    document.documentElement.style.setProperty('--school-red', primary);
+    document.documentElement.style.setProperty('--school-gold', gold);
+    document.documentElement.style.setProperty('--union-blue', blue);
 
             // 5. Cập nhật Thông báo chạy
             if (cfg.announcement && cfg.announcement.trim() !== "") {
