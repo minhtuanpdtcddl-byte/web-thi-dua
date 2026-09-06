@@ -3,8 +3,24 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title id="siteTitle">Hệ thống Quản lý Thi đua Đoàn viên - Trường Cao đẳng Đắk Lắk</title>
+    <title id="siteTitle">Cổng thông tin hoạt động Đoàn và Quản lý Thi đua Đoàn viên - Trường Cao đẳng Đắk Lắk</title>
+    <!-- 1. Nhúng Google Font 'Inter' hỗ trợ Tiếng Việt hoàn hảo -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        // Cấu hình Tailwind nhận Font Inter làm font mặc định
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                },
+            },
+        }
+    </script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <style>
         :root {
