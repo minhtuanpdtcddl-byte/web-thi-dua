@@ -1,89 +1,270 @@
 <!DOCTYPE html>
 <html lang="vi">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title id="page-title">Giới Thiệu - Hệ Thống Quản Lý Đoàn Viên</title>
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  <style>
-    .hero-banner {
-      background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%);
-      color: white;
-      padding: 90px 20px;
-      border-bottom-left-radius: 40px;
-      border-bottom-right-radius: 40px;
-      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
-    }
-    .card-custom { border: none; border-radius: 15px; }
-    .btn-entrance {
-      background-color: #f59e0b;
-      color: #1e293b;
-      font-weight: 700;
-      padding: 14px 32px;
-      border-radius: 50px;
-      text-decoration: none;
-      display: inline-block;
-      transition: all 0.3s ease;
-    }
-    .btn-entrance:hover { background-color: #d97706; color: #ffffff; transform: translateY(-2px); }
-  </style>
-</head>
-<body class="bg-light min-vh-100 d-flex flex-column justify-content-between">
-
-  <div class="hero-banner text-center position-relative overflow-hidden">
-    <div class="container position-relative z-1">
-      <div class="mb-3"><i class="fa-solid fa-graduation-cap fa-3x text-warning"></i></div>
-      <h1 class="display-4 fw-bold mb-3" id="hero-title">Hệ Thống Quản Lý & Thi Đua Đoàn Viên</h1>
-      <p class="col-md-8 fs-5 mx-auto text-light opacity-90 mb-4" id="hero-subtitle">
-        Giải pháp chuyển đổi số trong quản lý danh mục Khoa, Lớp và minh chứng rèn luyện Đoàn viên
-      </p>
-      <a href="app.html?from=landing" class="btn-entrance shadow-lg text-uppercase">
-        🚀 Truy cập hệ thống ngay <i class="fa-solid fa-arrow-right ms-2"></i>
-      </a>
-    </div>
-  </div>
-
-  <div class="container my-5 py-3">
-    <div class="row justify-content-center">
-      <div class="col-md-10">
-        <div class="card card-custom shadow-sm p-4 p-md-5 bg-white">
-          <div class="d-flex align-items-center gap-3 border-bottom pb-3 mb-4">
-            <i class="fa-solid fa-circle-info fa-2x text-primary"></i>
-            <h3 class="text-primary fw-bold m-0 text-uppercase">Giới thiệu chung</h3>
-          </div>
-          <p class="fs-6 text-secondary m-0" id="about-text" style="line-height: 1.8; text-align: justify;">
-            Hệ thống hỗ trợ tra cứu Khoa/Lớp, nộp minh chứng hoạt động thi đua và theo dõi tiến độ phê duyệt minh chứng trực tuyến nhanh chóng, minh bạch.
-          </p>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <footer class="text-center py-4 text-muted small border-top bg-white mt-auto">
-    <p class="m-0">Hệ thống Quản lý Đào tạo & Thi đua Đoàn viên</p>
-  </footer>
-
-  <script>
-    // Điền URL Web App Deployment Google Apps Script tại đây
-    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbz1WZYAqjsKI-IQDJ0qp1zi_nKxm95pdWx5HsljwKGZfC5GaXK5FB4EOJ7_-1lmUfdT/exec";
-
-    async function loadConfig() {
-      if (!SCRIPT_URL || SCRIPT_URL.includes("YOUR_GOOGLE_APPS_SCRIPT")) return;
-      try {
-        const res = await fetch(`${SCRIPT_URL}?action=getData&t=${Date.now()}`);
-        const data = await res.json();
-        if (data && data.config) {
-          const cfg = data.config;
-          if (cfg.heroTitle) document.getElementById('hero-title').innerText = cfg.heroTitle;
-          if (cfg.heroSubtitle) document.getElementById('hero-subtitle').innerText = cfg.heroSubtitle;
-          if (cfg.aboutText) document.getElementById('about-text').innerText = cfg.aboutText;
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hệ Thống Hỗ Trợ Sinh Viên 5 Tốt - Trường Cao Đẳng Đắk Lắk</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        .bg-custom-hero {
+            background: linear-gradient(135deg, #e0f2fe 0%, #bae6fd 50%, #93c5fd 100%);
         }
-      } catch (err) {
-        console.warn("Lỗi tải cấu hình:", err);
-      }
-    }
-    window.addEventListener("DOMContentLoaded", loadConfig);
-  </script>
+        .text-outline-blue {
+            text-shadow: -2px -2px 0 #1e3a8a, 2px -2px 0 #1e3a8a, -2px 2px 0 #1e3a8a, 2px 2px 0 #1e3a8a;
+        }
+        .custom-card-shadow {
+            box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.05);
+        }
+    </style>
+</head>
+<body class="bg-slate-50 font-sans text-slate-800 flex flex-col min-h-screen">
+
+    <!-- 1. THANH TIÊU ĐỀ HỆ THỐNG (HEADER) -->
+    <header class="bg-white border-b border-slate-200 sticky top-0 z-50 shadow-sm">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
+            
+            <!-- Cụm Logo & Tên đơn vị -->
+            <div class="flex items-center gap-3">
+                <div class="flex items-center gap-2">
+                    <img id="cfgLogoSchool" src="https://placehold.co/100x100?text=Logo+Truong" alt="Logo Trường" class="h-12 w-auto object-contain">
+                    <img id="cfgLogoUnion" src="https://placehold.co/100x100?text=Logo+Doan" alt="Logo Đoàn" class="h-12 w-auto object-contain">
+                    <img id="cfgLogoSV5T" src="https://placehold.co/100x100?text=SV5T" alt="Logo SV5T" class="h-12 w-auto object-contain">
+                </div>
+                <div class="h-10 w-[1.5px] bg-slate-300 hidden sm:block"></div>
+                <div class="leading-tight">
+                    <h1 id="cfgHeaderTitle" class="text-blue-900 font-extrabold text-sm sm:text-lg tracking-tight uppercase">HỆ THỐNG HỖ TRỢ SINH VIÊN 5 TỐT</h1>
+                    <p id="cfgHeaderSubtitle" class="text-red-600 font-bold text-xs sm:text-sm uppercase tracking-wide">TRƯỜNG CAO ĐẲNG ĐẮK LẮK</p>
+                </div>
+            </div>
+
+            <!-- Menu Điều Hướng -->
+            <nav class="hidden md:flex items-center gap-2">
+                <a href="#trang-chu" class="bg-blue-600 text-white font-semibold px-4 py-2 rounded-lg text-sm shadow-sm transition">Trang chủ</a>
+                <a href="#gioi-thieu" class="text-slate-700 hover:bg-slate-100 font-medium px-4 py-2 rounded-lg text-sm transition">Giới thiệu</a>
+                <a href="#tieu-chuan" class="text-slate-700 hover:bg-slate-100 font-medium px-4 py-2 rounded-lg text-sm transition">Tiêu chuẩn</a>
+                <a href="app_2.html" class="bg-slate-200 hover:bg-slate-300 text-slate-800 font-semibold px-4 py-2 rounded-lg text-sm transition">Đăng nhập</a>
+            </nav>
+
+            <div class="md:hidden">
+                <a href="app_2.html" class="bg-blue-600 text-white font-bold text-xs px-3 py-2 rounded-md">Đăng nhập</a>
+            </div>
+        </div>
+    </header>
+
+    <!-- 2. KHU VỰC BANNER CHÍNH (HERO SECTION) -->
+    <section id="trang-chu" class="bg-custom-hero relative overflow-hidden py-10 lg:py-16">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+                
+                <!-- Cột Trái: Tiêu đề lớn & Thẻ tính năng -->
+                <div class="lg:col-span-7 space-y-6">
+                    
+                    <!-- Khung Tiêu đề Banner -->
+                    <div class="text-center lg:text-left space-y-2">
+                        <h2 id="cfgHeroMainHeading" class="text-2xl sm:text-3xl lg:text-4xl font-extrabold text-blue-900 uppercase leading-snug">
+                            MÔ HÌNH HỖ TRỢ SINH VIÊN PHẤN ĐẤU ĐẠT DANH HIỆU SINH VIÊN 5 TỐT CÁC CẤP
+                        </h2>
+                    </div>
+
+                    <!-- Khung Giới thiệu Mô hình -->
+                    <div class="bg-white/90 backdrop-blur-sm p-6 rounded-2xl border border-white/60 custom-card-shadow">
+                        <p id="cfgHeroDescription" class="text-slate-800 text-base leading-relaxed">
+                            Với mục tiêu <b class="text-blue-900">tăng cường ứng dụng công nghệ</b> và thúc đẩy chuyển đổi số trong công tác Đoàn – Hội, <b class="text-blue-900">Hệ thống Hỗ trợ Sinh viên 5 Tốt CDDL</b> là nền tảng trực tuyến do <b class="text-blue-900">Đoàn Trường Cao đẳng Đắk Lắk</b> xây dựng nhằm hỗ trợ sinh viên trong quá trình <b class="text-blue-900">chuẩn bị hồ sơ xét danh hiệu Sinh viên 5 tốt các cấp</b>.
+                        </p>
+                    </div>
+
+                    <!-- 3 Thẻ Tính năng nhỏ -->
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                        <div class="bg-white p-4 rounded-xl border border-blue-100 text-center space-y-2 shadow-sm">
+                            <div class="w-10 h-10 bg-blue-100 text-blue-600 rounded-lg flex items-center justify-center mx-auto text-lg">
+                                <i class="fa-solid fa-folder-open"></i>
+                            </div>
+                            <h3 id="cfgFeature1Title" class="font-bold text-sm text-slate-800">Quản lý minh chứng</h3>
+                            <p id="cfgFeature1Desc" class="text-xs text-slate-500">Lưu trữ và quản lý minh chứng theo từng tiêu chí</p>
+                        </div>
+
+                        <div class="bg-white p-4 rounded-xl border border-blue-100 text-center space-y-2 shadow-sm">
+                            <div class="w-10 h-10 bg-amber-100 text-amber-600 rounded-lg flex items-center justify-center mx-auto text-lg">
+                                <i class="fa-solid fa-[#clipboard-list] fa-list-check"></i>
+                            </div>
+                            <h3 id="cfgFeature2Title" class="font-bold text-sm text-slate-800">Theo dõi tiến độ</h3>
+                            <p id="cfgFeature2Desc" class="text-xs text-slate-500">Cập nhật và theo dõi quá trình hoàn thiện hồ sơ</p>
+                        </div>
+
+                        <div class="bg-white p-4 rounded-xl border border-blue-100 text-center space-y-2 shadow-sm">
+                            <div class="w-10 h-10 bg-emerald-100 text-emerald-600 rounded-lg flex items-center justify-center mx-auto text-lg">
+                                <i class="fa-solid fa-file-export"></i>
+                            </div>
+                            <h3 id="cfgFeature3Title" class="font-bold text-sm text-slate-800">Xuất hồ sơ</h3>
+                            <p id="cfgFeature3Desc" class="text-xs text-slate-500">Xuất hồ sơ phục vụ công tác xét chọn</p>
+                        </div>
+                    </div>
+
+                    <!-- Cụm Nút Đăng nhập & Tải xuống -->
+                    <div class="flex items-center gap-3 pt-2">
+                        <a id="cfgLoginBtnUrl" href="app_2.html" class="bg-blue-600 hover:bg-blue-700 text-white font-bold px-8 py-3 rounded-xl shadow-md transition flex items-center gap-2">
+                            <span>Đăng nhập</span>
+                        </a>
+                        <a id="cfgDownloadGuideUrl" href="#" target="_blank" class="bg-white hover:bg-slate-50 text-blue-900 font-bold p-3 rounded-xl border border-blue-200 shadow-sm transition flex items-center justify-center" title="Tải hướng dẫn">
+                            <i class="fa-solid fa-download text-lg"></i>
+                        </a>
+                    </div>
+
+                </div>
+
+                <!-- Cột Phải: Hình ảnh Mô phỏng Laptop -->
+                <div id="gioi-thieu" class="lg:col-span-5 flex justify-center relative">
+                    <div class="relative w-full max-w-lg">
+                        <img id="cfgHeroLaptopImg" src="https://placehold.co/600x400?text=Minh+hoa+giao+dien+Laptop" alt="Giao diện hệ thống trên Laptop" class="w-full h-auto drop-shadow-2xl rounded-lg">
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </section>
+
+    <!-- 3. TIÊU CHUẨN XÉT DUYỆT -->
+    <section id="tieu-chuan" class="py-12 bg-white">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center max-w-3xl mx-auto mb-10">
+                <h3 class="text-2xl font-bold text-blue-900 uppercase">5 TIÊU CHUẨN SINH VIÊN 5 TỐT</h3>
+                <p class="text-slate-600 text-sm mt-2">Đoàn viên, sinh viên cần tích lũy minh chứng cho đủ 5 tiêu chuẩn bên dưới</p>
+            </div>
+
+            <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4 text-center">
+                <div class="p-4 bg-slate-50 rounded-xl border border-slate-200 hover:border-blue-500 transition">
+                    <div class="text-3xl text-blue-600 mb-2">📖</div>
+                    <h4 class="font-bold text-slate-800 text-sm">Đạo đức tốt</h4>
+                </div>
+                <div class="p-4 bg-slate-50 rounded-xl border border-slate-200 hover:border-blue-500 transition">
+                    <div class="text-3xl text-blue-600 mb-2">✍️</div>
+                    <h4 class="font-bold text-slate-800 text-sm">Học tập tốt</h4>
+                </div>
+                <div class="p-4 bg-slate-50 rounded-xl border border-slate-200 hover:border-blue-500 transition">
+                    <div class="text-3xl text-blue-600 mb-2">🏃</div>
+                    <h4 class="font-bold text-slate-800 text-sm">Thể lực tốt</h4>
+                </div>
+                <div class="p-4 bg-slate-50 rounded-xl border border-slate-200 hover:border-blue-500 transition">
+                    <div class="text-3xl text-blue-600 mb-2">🤝</div>
+                    <h4 class="font-bold text-slate-800 text-sm">Tình nguyện tốt</h4>
+                </div>
+                <div class="p-4 bg-slate-50 rounded-xl border border-slate-200 hover:border-blue-500 transition col-span-2 sm:col-span-1">
+                    <div class="text-3xl text-blue-600 mb-2">🌐</div>
+                    <h4 class="font-bold text-slate-800 text-sm">Hội nhập tốt</h4>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 4. CHÂN TRANG (FOOTER) -->
+    <footer class="bg-white border-t border-slate-200 mt-auto py-8">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid grid-cols-1 md:grid-cols-12 gap-6 items-start">
+                
+                <!-- Cột trái: Thông tin đơn vị -->
+                <div class="md:col-span-8 space-y-2">
+                    <h4 id="cfgFooterUnitName" class="font-bold text-blue-900 text-sm uppercase">MÔ HÌNH HỖ TRỢ SINH VIÊN PHẤN ĐẤU ĐẠT DANH HIỆU SINH VIÊN 5 TỐT CÁC CẤP</h4>
+                    <p id="cfgFooterUnitDesc" class="text-xs text-slate-600">Hệ thống theo dõi hồ sơ Sinh viên 5 tốt thuộc Đoàn Trường Cao đẳng Đắk Lắk.</p>
+                    
+                    <div class="text-xs text-slate-600 space-y-1 pt-2">
+                        <p><i class="fa-solid fa-building text-slate-400 w-5"></i> <span id="cfgFooterOrganization">Đoàn Trường Cao đẳng Đắk Lắk</span></p>
+                        <p><i class="fa-solid fa-location-dot text-slate-400 w-5"></i> <span id="cfgFooterAddress">Tỉnh Đắk Lắk</span></p>
+                        <p><i class="fa-solid fa-envelope text-slate-400 w-5"></i> <span id="cfgFooterEmail">doantruong@cddaklak.edu.vn</span></p>
+                    </div>
+                </div>
+
+                <!-- Cột phải: Kết nối Mạng xã hội -->
+                <div class="md:col-span-4 space-y-2">
+                    <h4 class="font-bold text-slate-800 text-xs uppercase">Kết nối với chúng tôi</h4>
+                    <a id="cfgFooterFacebookUrl" href="https://facebook.com" target="_blank" class="inline-flex items-center gap-2 text-xs text-blue-600 hover:text-blue-800 font-semibold">
+                        <i class="fa-brands fa-square-facebook text-lg"></i>
+                        <span>Facebook Đoàn trường</span>
+                    </a>
+                </div>
+            </div>
+
+            <div class="border-t border-slate-100 mt-6 pt-4 flex flex-col sm:flex-row justify-between items-center text-[11px] text-slate-500 gap-2">
+                <p id="cfgFooterCopyright">© 2026 Hệ thống được phát triển bởi Đoàn Trường Cao đẳng Đắk Lắk - Phiên bản thử nghiệm 1.0</p>
+                <p id="cfgFooterCredit">Hệ thống Quản lý Thi đua Đoàn viên</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- 5. KHU VỰC CẤU HÌNH BIẾN (DỄ DÀNG CHỈNH SỬA) -->
+    <script>
+        // BẠN CHỈ CẦN THAY ĐỔI CÁC THÔNG TIN TRONG NÀY ĐỂ CẬP NHẬT TRANG LANDING
+        const LANDING_CONFIG = {
+            // Logo các cấp (Dán đường dẫn ảnh Google Drive / Link Ảnh công khai vào đây)
+            logoSchool: "https://lh3.googleusercontent.com/d/1...", // Link logo Trường
+            logoUnion: "https://lh3.googleusercontent.com/d/2...",  // Link logo Đoàn
+            logoSV5T: "https://lh3.googleusercontent.com/d/3...",   // Link logo SV5T
+
+            // Tiêu đề Header
+            headerTitle: "HỆ THỐNG HỖ TRỢ SINH VIÊN 5 TỐT",
+            headerSubtitle: "TRƯỜNG CAO ĐẲNG ĐẮK LẮK",
+
+            // Nội dung Banner Banner Hero
+            heroMainHeading: "MÔ HÌNH HỖ TRỢ SINH VIÊN PHẤN ĐẤU ĐẠT DANH HIỆU SINH VIÊN 5 TỐT CÁC CẤP",
+            heroDescription: `Với mục tiêu <b class="text-blue-900">tăng cường ứng dụng công nghệ</b> và thúc đẩy chuyển đổi số trong công tác Đoàn – Hội, <b class="text-blue-900">Hệ thống Hỗ trợ Sinh viên 5 Tốt CDDL</b> là nền tảng trực tuyến do <b class="text-blue-900">Đoàn Trường Cao đẳng Đắk Lắk</b> xây dựng nhằm hỗ trợ sinh viên trong quá trình <b class="text-blue-900">chuẩn bị hồ sơ xét danh hiệu Sinh viên 5 tốt các cấp</b>.`,
+            
+            // Link ảnh minh họa Laptop (Thay bằng link ảnh chụp màn hình ứng dụng của bạn)
+            heroLaptopImg: "https://placehold.co/600x400/2563eb/ffffff?text=Minh+Hoa+Giao+Dien+CDDL",
+
+            // Nội dung 3 thẻ tính năng
+            feature1Title: "Quản lý minh chứng",
+            feature1Desc: "Lưu trữ và quản lý minh chứng theo từng tiêu chí",
+            feature2Title: "Theo dõi tiến độ",
+            feature2Desc: "Cập nhật và theo dõi quá trình hoàn thiện hồ sơ",
+            feature3Title: "Xuất hồ sơ",
+            feature3Desc: "Xuất hồ sơ phục vụ công tác xét chọn",
+
+            // Đường dẫn Nút Đăng nhập & Tải hướng dẫn
+            loginBtnUrl: "app_2.html",
+            downloadGuideUrl: "#",
+
+            // Thông tin Chân trang (Footer)
+            footerUnitName: "MÔ HÌNH HỖ TRỢ SINH VIÊN PHẤN ĐẤU ĐẠT DANH HIỆU SINH VIÊN 5 TỐT CÁC CẤP",
+            footerUnitDesc: "Hệ thống theo dõi hồ sơ Sinh viên 5 tốt thuộc Đoàn Trường Cao đẳng Đắk Lắk.",
+            footerOrganization: "Đoàn Trường Cao đẳng Đắk Lắk",
+            footerAddress: "Tỉnh Đắk Lắk",
+            footerEmail: "doantruong@cddaklak.edu.vn",
+            footerFacebookUrl: "https://facebook.com",
+            footerCopyright: "© 2026 Hệ thống được phát triển bởi Đoàn Trường Cao đẳng Đắk Lắk",
+            footerCredit: "Hệ thống Quản lý Thi đua Đoàn viên"
+        };
+
+        // HÀM TỰ ĐỘNG ĐỔ CẤU HÌNH VÀO GIAO DIỆN
+        document.addEventListener("DOMContentLoaded", function() {
+            if (LANDING_CONFIG.logoSchool) document.getElementById('cfgLogoSchool').src = LANDING_CONFIG.logoSchool;
+            if (LANDING_CONFIG.logoUnion) document.getElementById('cfgLogoUnion').src = LANDING_CONFIG.logoUnion;
+            if (LANDING_CONFIG.logoSV5T) document.getElementById('cfgLogoSV5T').src = LANDING_CONFIG.logoSV5T;
+
+            document.getElementById('cfgHeaderTitle').innerText = LANDING_CONFIG.headerTitle;
+            document.getElementById('cfgHeaderSubtitle').innerText = LANDING_CONFIG.headerSubtitle;
+            document.getElementById('cfgHeroMainHeading').innerText = LANDING_CONFIG.heroMainHeading;
+            document.getElementById('cfgHeroDescription').innerHTML = LANDING_CONFIG.heroDescription;
+            document.getElementById('cfgHeroLaptopImg').src = LANDING_CONFIG.heroLaptopImg;
+
+            document.getElementById('cfgFeature1Title').innerText = LANDING_CONFIG.feature1Title;
+            document.getElementById('cfgFeature1Desc').innerText = LANDING_CONFIG.feature1Desc;
+            document.getElementById('cfgFeature2Title').innerText = LANDING_CONFIG.feature2Title;
+            document.getElementById('cfgFeature2Desc').innerText = LANDING_CONFIG.feature2Desc;
+            document.getElementById('cfgFeature3Title').innerText = LANDING_CONFIG.feature3Title;
+            document.getElementById('cfgFeature3Desc').innerText = LANDING_CONFIG.feature3Desc;
+
+            document.getElementById('cfgLoginBtnUrl').href = LANDING_CONFIG.loginBtnUrl;
+            document.getElementById('cfgDownloadGuideUrl').href = LANDING_CONFIG.downloadGuideUrl;
+
+            document.getElementById('cfgFooterUnitName').innerText = LANDING_CONFIG.footerUnitName;
+            document.getElementById('cfgFooterUnitDesc').innerText = LANDING_CONFIG.footerUnitDesc;
+            document.getElementById('cfgFooterOrganization').innerText = LANDING_CONFIG.footerOrganization;
+            document.getElementById('cfgFooterAddress').innerText = LANDING_CONFIG.footerAddress;
+            document.getElementById('cfgFooterEmail').innerText = LANDING_CONFIG.footerEmail;
+            document.getElementById('cfgFooterFacebookUrl').href = LANDING_CONFIG.footerFacebookUrl;
+            document.getElementById('cfgFooterCopyright').innerText = LANDING_CONFIG.footerCopyright;
+            document.getElementById('cfgFooterCredit').innerText = LANDING_CONFIG.footerCredit;
+        });
+    </script>
 </body>
 </html>
