@@ -4,13 +4,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title id="siteTitle">Cổng thông tin hoạt động Đoàn và Quản lý Thi đua Đoàn viên - Trường Cao đẳng Đắk Lắk</title>
-    <!-- 1. Nhúng Google Font 'Inter' hỗ trợ Tiếng Việt hoàn hảo -->
+    
+    <!-- 1. Nhúng Google Font 'Inter' hỗ trợ Tiếng Việt -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
-        // Cấu hình Tailwind nhận Font Inter làm font mặc định
         tailwind.config = {
             theme: {
                 extend: {
@@ -73,7 +73,6 @@
                 <a href="#" class="bg-[var(--union-blue)] text-white font-semibold px-4 py-2 rounded-lg text-sm shadow">Trang chủ</a>
                 <a href="#features" class="text-slate-700 hover:bg-slate-100 font-medium px-4 py-2 rounded-lg text-sm">Tính năng</a>
                 <a href="app.html" class="btn-school-primary font-bold px-5 py-2.5 rounded-lg text-sm shadow">Vào hệ thống</a>
-                <!-- NÚT QUẢN TRỊ YÊU CẦU MẬT KHẨU -->
                 <button onclick="accessAdmin()" class="bg-slate-800 hover:bg-slate-900 text-white font-bold px-4 py-2.5 rounded-lg text-sm shadow flex items-center gap-2">
                     <i class="fa-solid fa-user-gear"></i>
                     Quản trị
@@ -82,84 +81,89 @@
         </div>
     </header>
 
-    <!-- HERO BANNER -->
-    <section class="hero-bg py-12 border-b border-slate-200">
-        <div class="max-w-7xl mx-auto px-4 grid grid-cols-1 md:grid-cols-12 gap-8 items-center">
-            <div class="md:col-span-7 space-y-6">
-                <div id="viewBadge" class="inline-block bg-amber-100 border border-[var(--school-gold)] text-[var(--school-red)] text-xs font-black px-4 py-2 rounded-full uppercase tracking-wider">
-                    ⚡ Chuyển đổi số - Vững tay nghề - Sáng tương lai
-                </div>
-                
-                <h2 id="viewHeroHeading" class="text-3xl lg:text-4xl font-extrabold text-[var(--union-blue)] uppercase leading-snug">
-                    CỔNG THÔNG TIN VÀ QUẢN LÝ THI ĐUA ĐOÀN VIÊN
-                </h2>
+    <!-- THÔNG BÁO TỪ QUẢN TRỊ VIÊN -->
+    <div id="announcementBar" class="hidden bg-amber-500 text-white px-4 py-2 text-center text-xs font-bold shadow-inner">
+        <i class="fa-solid fa-bullhorn mr-2"></i><span id="announcementText"></span>
+    </div>
 
-                <div class="bg-white/95 backdrop-blur-sm p-6 rounded-2xl border border-white shadow-xl text-slate-700 text-base leading-relaxed">
-                    <p id="viewHeroDesc">Chào mừng bạn đến với Cổng thông tin hoạt động Đoàn và Hệ thống Quản lý Thi đua Đoàn viên Trường Cao đẳng Đắk Lắk. Nền tảng giúp số hóa công tác thi đua, theo dõi kết quả học nghề và xuất báo cáo thành tích nhanh chóng.</p>
+    <!-- TOÀN BỘ KHU VỰC TRANG GIỚI THIỆU (LANDING PAGE SECTION) -->
+    <div id="landingPageSection">
+        
+        <!-- HERO BANNER -->
+        <section class="hero-bg py-12 border-b border-slate-200">
+            <div class="max-w-7xl mx-auto px-4 grid grid-cols-1 md:grid-cols-12 gap-8 items-center">
+                <div class="md:col-span-7 space-y-6">
+                    <div id="viewBadge" class="inline-block bg-amber-100 border border-[var(--school-gold)] text-[var(--school-red)] text-xs font-black px-4 py-2 rounded-full uppercase tracking-wider">
+                        ⚡ Chuyển đổi số - Vững tay nghề - Sáng tương lai
+                    </div>
+                    
+                    <h2 id="viewHeroHeading" class="text-3xl lg:text-4xl font-extrabold text-[var(--union-blue)] uppercase leading-snug">
+                        CỔNG THÔNG TIN VÀ QUẢN LÝ THI ĐƯA ĐOÀN VIÊN
+                    </h2>
+
+                    <div class="bg-white/95 backdrop-blur-sm p-6 rounded-2xl border border-white shadow-xl text-slate-700 text-base leading-relaxed">
+                        <p id="viewHeroDesc">Chào mừng bạn đến với Cổng thông tin hoạt động Đoàn và Hệ thống Quản lý Thi đua Đoàn viên Trường Cao đẳng Đắk Lắk. Nền tảng giúp số hóa công tác thi đua, theo dõi kết quả học nghề và xuất báo cáo thành tích nhanh chóng.</p>
+                    </div>
+
+                    <div class="flex items-center gap-4 pt-2">
+                        <a href="app.html" class="btn-school-primary text-white font-bold px-8 py-3.5 rounded-xl shadow-lg flex items-center gap-2">
+                            <span>Vào hệ thống</span>
+                            <i class="fa-solid fa-arrow-right"></i>
+                        </a>
+                        <a id="viewGuideLink" href="#" target="_blank" class="bg-white text-slate-700 font-semibold px-6 py-3.5 rounded-xl border border-slate-200 shadow flex items-center gap-2">
+                            <i class="fa-solid fa-file-pdf text-red-600"></i>
+                            <span>Hướng dẫn sử dụng</span>
+                        </a>
+                    </div>
                 </div>
 
-                <div class="flex items-center gap-4 pt-2">
-                    <!-- Bấm vào chuyển sang app.html -->
-                    <a href="app.html" class="btn-school-primary text-white font-bold px-8 py-3.5 rounded-xl shadow-lg flex items-center gap-2">
-                        <span>Vào hệ thống</span>
-                        <i class="fa-solid fa-arrow-right"></i>
-                    </a>
-                    <a id="viewGuideLink" href="#" target="_blank" class="bg-white text-slate-700 font-semibold px-6 py-3.5 rounded-xl border border-slate-200 shadow flex items-center gap-2">
-                        <i class="fa-solid fa-file-pdf text-red-600"></i>
-                        <span>Hướng dẫn sử dụng</span>
-                    </a>
-                </div>
-            </div>
-
-            <!-- Màn hình Laptop mô phỏng -->
-            <div class="md:col-span-5 flex justify-center">
-                <div class="relative w-full max-w-lg bg-slate-900 p-4 rounded-3xl shadow-2xl border-[6px] border-slate-700">
-                    <div class="bg-slate-100 rounded-lg overflow-hidden border border-slate-800">
-                        <div class="bg-slate-700 px-3 py-1.5 flex items-center gap-1.5 border-b border-slate-800">
-                            <div class="w-3 h-3 rounded-full bg-red-500"></div>
-                            <div class="w-3 h-3 rounded-full bg-yellow-400"></div>
-                            <div class="w-3 h-3 rounded-full bg-green-500"></div>
-                            <span class="text-[10px] text-slate-300 font-mono ml-2">dashboard.cddaklak.edu.vn</span>
-                        </div>
-                        <div class="p-4 bg-slate-50 space-y-3">
-                            <div class="h-4 bg-amber-200 rounded-full w-2/3"></div>
-                            <div class="grid grid-cols-2 gap-2">
-                                <div class="bg-white rounded p-3 border shadow-sm"><div class="h-4 bg-emerald-500 rounded w-1/2"></div></div>
-                                <div class="bg-white rounded p-3 border shadow-sm"><div class="h-4 bg-red-500 rounded w-1/2"></div></div>
+                <!-- KHUNG BÌNH ẢNH BANNER / HERO VÀ MÔ PHỎNG KHUNG -->
+                <div class="md:col-span-5 flex justify-center">
+                    <div class="relative w-full max-w-lg bg-slate-900 p-4 rounded-3xl shadow-2xl border-[6px] border-slate-700">
+                        <div class="bg-slate-100 rounded-lg overflow-hidden border border-slate-800">
+                            <div class="bg-slate-700 px-3 py-1.5 flex items-center gap-1.5 border-b border-slate-800">
+                                <div class="w-3 h-3 rounded-full bg-red-500"></div>
+                                <div class="w-3 h-3 rounded-full bg-yellow-400"></div>
+                                <div class="w-3 h-3 rounded-full bg-green-500"></div>
+                                <span class="text-[10px] text-slate-300 font-mono ml-2">dashboard.cddaklak.edu.vn</span>
                             </div>
-                            <div class="h-20 bg-white rounded border p-3 shadow-sm"></div>
+                            <!-- Khung xem trước hình ảnh Banner từ Admin -->
+                            <div id="heroImageContainer" class="p-2 bg-slate-50 flex items-center justify-center">
+                                <img id="viewHeroImage" src="Logo_caodangdaklak.jpg" alt="Hero Banner" class="w-full h-56 object-cover rounded border border-slate-200 shadow-sm">
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
-        </div>
-    </section>
+        </section>
 
-    <!-- KHU VỰC TÍNH NĂNG -->
-    <section id="features" class="py-14 bg-white border-b border-slate-100">
-        <div class="max-w-7xl mx-auto px-4">
-            <div class="text-center max-w-3xl mx-auto mb-10">
-                <h3 class="text-3xl font-black text-[var(--union-blue)] uppercase">Tính năng cốt lõi</h3>
+        <!-- KHU VỰC TÍNH NĂNG -->
+        <section id="features" class="py-14 bg-white border-b border-slate-100">
+            <div class="max-w-7xl mx-auto px-4">
+                <div class="text-center max-w-3xl mx-auto mb-10">
+                    <h3 class="text-3xl font-black text-[var(--union-blue)] uppercase">Tính năng cốt lõi</h3>
+                </div>
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-6">
+                    <div class="feature-card p-6 rounded-2xl space-y-2">
+                        <div class="w-12 h-12 bg-amber-100 text-[var(--school-gold)] rounded-xl flex items-center justify-center text-xl font-bold"><i class="fa-solid fa-folder-open"></i></div>
+                        <h4 id="viewF1Title" class="font-extrabold text-lg text-slate-900">Lưu minh chứng kỹ năng</h4>
+                        <p id="viewF1Desc" class="text-slate-600 text-sm">Đoàn viên dễ dàng tải lên & phân loại minh chứng tập trung.</p>
+                    </div>
+                    <div class="feature-card p-6 rounded-2xl space-y-2">
+                        <div class="w-12 h-12 bg-red-100 text-[var(--school-red)] rounded-xl flex items-center justify-center text-xl font-bold"><i class="fa-solid fa-chart-line"></i></div>
+                        <h4 id="viewF2Title" class="font-extrabold text-lg text-slate-900">Theo dõi điểm thi đua</h4>
+                        <p id="viewF2Desc" class="text-slate-600 text-sm">Cập nhật và theo dõi điểm thi đua thực tế trực tiếp trên Dashboard.</p>
+                    </div>
+                    <div class="feature-card p-6 rounded-2xl space-y-2">
+                        <div class="w-12 h-12 bg-blue-100 text-[var(--union-blue)] rounded-xl flex items-center justify-center text-xl font-bold"><i class="fa-solid fa-file-word"></i></div>
+                        <h4 id="viewF3Title" class="font-extrabold text-lg text-slate-900">Xuất báo cáo tự động</h4>
+                        <p id="viewF3Desc" class="text-slate-600 text-sm">Hỗ trợ xuất báo cáo thành tích cá nhân theo mẫu chuẩn file Word.</p>
+                    </div>
+                </div>
             </div>
-            <div class="grid grid-cols-1 sm:grid-cols-3 gap-6">
-                <div class="feature-card p-6 rounded-2xl space-y-2">
-                    <div class="w-12 h-12 bg-amber-100 text-[var(--school-gold)] rounded-xl flex items-center justify-center text-xl font-bold"><i class="fa-solid fa-folder-open"></i></div>
-                    <h4 id="viewF1Title" class="font-extrabold text-lg text-slate-900">Lưu minh chứng kỹ năng</h4>
-                    <p id="viewF1Desc" class="text-slate-600 text-sm">Đoàn viên dễ dàng tải lên & phân loại minh chứng tập trung.</p>
-                </div>
-                <div class="feature-card p-6 rounded-2xl space-y-2">
-                    <div class="w-12 h-12 bg-red-100 text-[var(--school-red)] rounded-xl flex items-center justify-center text-xl font-bold"><i class="fa-solid fa-chart-line"></i></div>
-                    <h4 id="viewF2Title" class="font-extrabold text-lg text-slate-900">Theo dõi điểm thi đua</h4>
-                    <p id="viewF2Desc" class="text-slate-600 text-sm">Cập nhật và theo dõi điểm thi đua thực tế trực tiếp trên Dashboard.</p>
-                </div>
-                <div class="feature-card p-6 rounded-2xl space-y-2">
-                    <div class="w-12 h-12 bg-blue-100 text-[var(--union-blue)] rounded-xl flex items-center justify-center text-xl font-bold"><i class="fa-solid fa-file-word"></i></div>
-                    <h4 id="viewF3Title" class="font-extrabold text-lg text-slate-900">Xuất báo cáo tự động</h4>
-                    <p id="viewF3Desc" class="text-slate-600 text-sm">Hỗ trợ xuất báo cáo thành tích cá nhân theo mẫu chuẩn file Word.</p>
-                </div>
-            </div>
-        </div>
-    </section>
+        </section>
+
+    </div>
 
     <!-- FOOTER -->
     <footer class="bg-white border-t border-slate-200 py-8 mt-auto">
@@ -167,10 +171,10 @@
             <div>
                 <p id="viewFooterOrg" class="font-bold text-[var(--school-red)] text-sm uppercase">ĐOÀN TRƯỜNG CAO ĐẲNG ĐẮK LẮK</p>
                 <p id="viewFooterAddress" class="mt-1"><i class="fa-solid fa-location-dot w-4"></i> Địa chỉ cơ sở đào tạo số 1 (trụ sở chính): Số 594 đường Lê Duẩn, phường Ea Kao, Tỉnh Đắk Lắk</p>
-                <p id="viewFooterAddress" class="mt-1"><i class="fa-solid fa-location-dot w-4"></i> Địa chỉ cơ sở đào tạo số 2: Số 276 đường Trường Chinh, Phường Tuy Hòa, Tỉnh Đắk Lắk</p>
-                <p id="viewFooterAddress" class="mt-1"><i class="fa-solid fa-location-dot w-4"></i> Địa chỉ cơ sở đào tạo số 3: Thôn Xuân Dục, Phường Bình Kiến, Tỉnh Đắk Lắk</p>
-                <p id="viewFooterAddress" class="mt-1"><i class="fa-solid fa-location-dot w-4"></i> Địa chỉ cơ sở đào tạo số 4: Số 30 Y Ngông, Phường Buôn Ma Thuột, Tỉnh Đắk Lắk</p>
-                <p id="viewFooterEmail"><i class="fa-solid fa-envelope w-4"></i> Email: minhtuangdtx@com - Số điện thoại: 0362.869.703</p>
+                <p class="mt-1"><i class="fa-solid fa-location-dot w-4"></i> Địa chỉ cơ sở đào tạo số 2: Số 276 đường Trường Chinh, Phường Tuy Hòa, Tỉnh Đắk Lắk</p>
+                <p class="mt-1"><i class="fa-solid fa-location-dot w-4"></i> Địa chỉ cơ sở đào tạo số 3: Thôn Xuân Dục, Phường Bình Kiến, Tỉnh Đắk Lắk</p>
+                <p class="mt-1"><i class="fa-solid fa-location-dot w-4"></i> Địa chỉ cơ sở đào tạo số 4: Số 30 Y Ngông, Phường Buôn Ma Thuột, Tỉnh Đắk Lắk</p>
+                <p id="viewFooterEmail" class="mt-1"><i class="fa-solid fa-envelope w-4"></i> Email: minhtuangdtx@com - Số điện thoại: 0362.869.703</p>
             </div>
             <div>
                 <a id="viewFacebookUrl" href="#" target="_blank" class="inline-flex items-center gap-2 text-sm text-[var(--union-blue)] font-bold bg-blue-50 px-4 py-2 rounded-lg border">
@@ -181,9 +185,9 @@
         </div>
     </footer>
 
-    <!-- JAVASCRIPT ĐỌC CẤU HÌNH & KIỂM TRA MẬT KHẨU -->
+    <!-- JAVASCRIPT XỬ LÝ CẤU HÌNH SERVER & LOCALSTORAGE -->
     <script>
-        // Mật khẩu quản trị (Có thể thay đổi)
+        const WEB_APP_URL = "web của tôi"; // Thay bằng URL Web App Apps Script nếu xài Fetch
         const ADMIN_PASSWORD = "123456";
 
         function accessAdmin() {
@@ -195,21 +199,71 @@
             }
         }
 
-        // Đọc dữ liệu từ localStorage để cập nhật Landing Page
-        document.addEventListener("DOMContentLoaded", function() {
+        // Hàm áp dụng Cấu hình từ Server/Apps Script
+        function applyServerConfig(cfg) {
+            if (!cfg) return;
+
+            // 1. Kiểm tra Ẩn/Hiện Trang Giới Thiệu theo cấu hình Admin
+            const landingSection = document.getElementById('landingPageSection');
+            const isLandingActive = String(cfg.enableLanding).toUpperCase() === "TRUE";
+
+            if (landingSection) {
+                if (isLandingActive) {
+                    landingSection.classList.remove('hidden');
+                } else {
+                    landingSection.classList.add('hidden');
+                }
+            }
+
+            // 2. Cập nhật thông tin Tiêu đề & Nội dung
+            if (cfg.schoolName) {
+                document.getElementById('viewHeaderSubtitle').innerText = cfg.schoolName;
+            }
+            if (cfg.logoUrl) {
+                document.getElementById('viewLogoSchool').src = cfg.logoUrl;
+            } else if (cfg.logoFile && cfg.logoFile.base64) {
+                document.getElementById('viewLogoSchool').src = cfg.logoFile.base64;
+            }
+
+            if (cfg.heroTitle) document.getElementById('viewHeroHeading').innerText = cfg.heroTitle;
+            if (cfg.heroSubtitle) document.getElementById('viewBadge').innerText = cfg.heroSubtitle;
+            if (cfg.aboutText) document.getElementById('viewHeroDesc').innerText = cfg.aboutText;
+
+            // 3. Cập nhật Banner/Hero Image
+            if (cfg.heroImage) {
+                document.getElementById('viewHeroImage').src = cfg.heroImage;
+            } else if (cfg.heroFile && cfg.heroFile.base64) {
+                document.getElementById('viewHeroImage').src = cfg.heroFile.base64;
+            }
+
+            // 4. Cập nhật Màu sắc Nút chủ đạo nếu có
+            if (cfg.primaryColor) {
+                document.documentElement.style.setProperty('--school-red', cfg.primaryColor);
+            }
+
+            // 5. Cập nhật Thông báo chạy
+            if (cfg.announcement && cfg.announcement.trim() !== "") {
+                const annBar = document.getElementById('announcementBar');
+                const annText = document.getElementById('announcementText');
+                if (annBar && annText) {
+                    annText.innerText = cfg.announcement;
+                    annBar.classList.remove('hidden');
+                }
+            }
+        }
+
+        // Hàm đọc LocalStorage dự phòng
+        function applyLocalConfig() {
             const data = JSON.parse(localStorage.getItem('LANDING_PAGE_CONFIG'));
             if (!data) return;
 
-            // Cập nhật màu sắc CSS Variables
             if (data.colorPrimary) document.documentElement.style.setProperty('--school-red', data.colorPrimary);
             if (data.colorSecondary) document.documentElement.style.setProperty('--school-gold', data.colorSecondary);
             if (data.colorAccent) document.documentElement.style.setProperty('--union-blue', data.colorAccent);
 
-            // Cập nhật Hình ảnh Logo
             if (data.logoSchool) document.getElementById('viewLogoSchool').src = data.logoSchool;
             if (data.logoUnion) document.getElementById('viewLogoUnion').src = data.logoUnion;
 
-            // Cập nhật Nội dung chữ
             if (data.headerTitle) document.getElementById('viewHeaderTitle').innerText = data.headerTitle;
             if (data.headerSubtitle) document.getElementById('viewHeaderSubtitle').innerText = data.headerSubtitle;
             if (data.heroBadge) document.getElementById('viewBadge').innerText = data.heroBadge;
@@ -217,7 +271,6 @@
             if (data.heroDesc) document.getElementById('viewHeroDesc').innerText = data.heroDesc;
             if (data.guideLink) document.getElementById('viewGuideLink').href = data.guideLink;
 
-            // Tính năng
             if (data.f1Title) document.getElementById('viewF1Title').innerText = data.f1Title;
             if (data.f1Desc) document.getElementById('viewF1Desc').innerText = data.f1Desc;
             if (data.f2Title) document.getElementById('viewF2Title').innerText = data.f2Title;
@@ -225,11 +278,34 @@
             if (data.f3Title) document.getElementById('viewF3Title').innerText = data.f3Title;
             if (data.f3Desc) document.getElementById('viewF3Desc').innerText = data.f3Desc;
 
-            // Footer
             if (data.footerOrg) document.getElementById('viewFooterOrg').innerText = data.footerOrg;
             if (data.footerAddress) document.getElementById('viewFooterAddress').innerHTML = `<i class="fa-solid fa-location-dot w-4"></i> ${data.footerAddress}`;
             if (data.footerEmail) document.getElementById('viewFooterEmail').innerHTML = `<i class="fa-solid fa-envelope w-4"></i> Email: ${data.footerEmail}`;
             if (data.facebookUrl) document.getElementById('viewFacebookUrl').href = data.facebookUrl;
+        }
+
+        // Khởi chạy khi tải xong trang
+        document.addEventListener("DOMContentLoaded", function() {
+            // Nạp cấu hình Local trước để giao diện hiện lập tức
+            applyLocalConfig();
+
+            // Lấy dữ liệu mới nhất từ Google Apps Script
+            if (typeof google !== 'undefined' && google.script && google.script.run) {
+                google.script.run
+                    .withSuccessHandler(function(cfg) {
+                        applyServerConfig(cfg);
+                    })
+                    .getConfig();
+            } else if (WEB_APP_URL && WEB_APP_URL !== "web của tôi") {
+                fetch(WEB_APP_URL + "?action=getConfig")
+                    .then(res => res.json())
+                    .then(data => {
+                        if (data && data.config) {
+                            applyServerConfig(data.config);
+                        }
+                    })
+                    .catch(err => console.log("Không thể kết nối máy chủ:", err));
+            }
         });
     </script>
 </body>
