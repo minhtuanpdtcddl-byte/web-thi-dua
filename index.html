@@ -24,8 +24,9 @@
       border-radius: 50px;
       text-decoration: none;
       display: inline-block;
+      transition: all 0.3s ease;
     }
-    .btn-entrance:hover { background-color: #d97706; color: #ffffff; }
+    .btn-entrance:hover { background-color: #d97706; color: #ffffff; transform: translateY(-2px); }
   </style>
 </head>
 <body class="bg-light min-vh-100 d-flex flex-column justify-content-between">
@@ -37,7 +38,7 @@
       <p class="col-md-8 fs-5 mx-auto text-light opacity-90 mb-4" id="hero-subtitle">
         Giải pháp chuyển đổi số trong quản lý danh mục Khoa, Lớp và minh chứng rèn luyện Đoàn viên
       </p>
-      <a href="app.html" class="btn-entrance shadow-lg text-uppercase">
+      <a href="app.html?from=landing" class="btn-entrance shadow-lg text-uppercase">
         🚀 Truy cập hệ thống ngay <i class="fa-solid fa-arrow-right ms-2"></i>
       </a>
     </div>
@@ -64,19 +65,19 @@
   </footer>
 
   <script>
-    // Điền URL Web App Deployment từ Google Apps Script của bạn
+    // Điền URL Web App Deployment Google Apps Script tại đây
     const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxTUubzTQB1IJ-7wEsb9FChEgIWMUHzlM7_AqM5x7ZijHIEx3k-DI3g_l854RnZdrWo/exec";
 
     async function loadConfig() {
-      if (!SCRIPT_URL || SCRIPT_URL.includes("URL_WEB_APP")) return;
+      if (!SCRIPT_URL || SCRIPT_URL.includes("YOUR_GOOGLE_APPS_SCRIPT")) return;
       try {
-        const res = await fetch(`${SCRIPT_URL}?action=getData`);
+        const res = await fetch(`${SCRIPT_URL}?action=getData&t=${Date.now()}`);
         const data = await res.json();
-        if (data && data.landingConfig) {
-          const cfg = data.landingConfig;
-          if (cfg.heroTitle || cfg.HERO_TITLE) document.getElementById('hero-title').innerText = cfg.heroTitle || cfg.HERO_TITLE;
-          if (cfg.heroSubtitle || cfg.HERO_SUBTITLE) document.getElementById('hero-subtitle').innerText = cfg.heroSubtitle || cfg.HERO_SUBTITLE;
-          if (cfg.aboutText || cfg.ABOUT_TEXT) document.getElementById('about-text').innerText = cfg.aboutText || cfg.ABOUT_TEXT;
+        if (data && data.config) {
+          const cfg = data.config;
+          if (cfg.heroTitle) document.getElementById('hero-title').innerText = cfg.heroTitle;
+          if (cfg.heroSubtitle) document.getElementById('hero-subtitle').innerText = cfg.heroSubtitle;
+          if (cfg.aboutText) document.getElementById('about-text').innerText = cfg.aboutText;
         }
       } catch (err) {
         console.warn("Lỗi tải cấu hình:", err);
