@@ -323,28 +323,31 @@
         let heroFileBase64 = null;
         let modalNewsFileBase64 = null;
 
-        // BỔ SUNG: XỬ LÝ CHỌN BỘ MÀU CHỦ ĐỀ NGÀY LỄ
-        function applyAdminThemePreset(presetKey) {
-            const presets = {
-                'DEFAULT': '#8b0000',
-                'DOAN_26_3': '#0052cc',
-                'TET': '#c62828',
-                'LE_LON': '#b71c1c',
-                'NGAY_NHA_GIAO': '#1565c0'
-            };
+       // BỔ SUNG & SỬA LỖI: XỬ LÝ CHỌN BỘ MÀU CHỦ ĐỀ NGÀY LỄ
+function applyAdminThemePreset(presetKey) {
+    const presets = {
+        'DEFAULT': '#8b0000',
+        'DOAN_26_3': '#0052cc',
+        'TET': '#c62828',
+        'LE_LON': '#b71c1c',
+        'NGAY_NHA_GIAO': '#1565c0'
+    };
 
-            if (presets[presetKey]) {
-                syncPrimaryColorInput(presets[presetKey]);
-            }
-        }
+    if (presets[presetKey]) {
+        syncPrimaryColorInput(presets[presetKey]);
+    }
+}
 
-        function syncPrimaryColorInput(val) {
-            const colorInput = document.getElementById('cfgPrimaryColor');
-            const picker = document.getElementById('cfgPrimaryColorPicker');
-            if (colorInput) colorInput.value = val;
-            if (picker) picker.value = val;
-        }
-
+function syncPrimaryColorInput(val) {
+    const colorInput = document.getElementById('cfgPrimaryColor');
+    const picker = document.getElementById('cfgPrimaryColorPicker');
+    
+    // Đảm bảo mã màu luôn có dấu #
+    let formattedColor = val.startsWith('#') ? val : '#' + val;
+    
+    if (colorInput) colorInput.value = formattedColor;
+    if (picker) picker.value = formattedColor;
+}
         function syncPrimaryColorPicker(val) {
             const picker = document.getElementById('cfgPrimaryColorPicker');
             const select = document.getElementById('cfgThemeSelect');
