@@ -11,10 +11,6 @@
     <!-- Chart.js & SheetJS -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
-    
-    <!-- DocxTemplater & PizZip -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/pizzip/3.1.4/pizzip.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/docxtemplater/3.37.11/docxtemplater.js"></script>
 
     <style>
       .counter-widget-vertical {
@@ -388,14 +384,20 @@
                 }
             }
 
-            // 3. Chuẩn hóa dữ liệu Minh chứng (Đọc linh hoạt Array & Object)
+            // 3. An toàn hóa dữ liệu Minh chứng (Safe mapping)
             if (result.data && Array.isArray(result.data)) {
                 globalData = result.data.map(item => {
+                    if (!item) return ['', '', '', '', '', '', '', 'Chờ duyệt'];
                     if (Array.isArray(item)) {
                         return [
-                            item[0] || '', item[1] || '', item[2] || '', 
-                            item[3] || '', item[4] || '', item[5] || '', 
-                            item[6] || '', item[7] || 'Đã duyệt'
+                            item[0] || '', 
+                            item[1] || '', 
+                            item[2] || '', 
+                            item[3] || '', 
+                            item[4] || '', 
+                            item[5] || '', 
+                            item[6] || '', 
+                            item[7] || 'Chờ duyệt'
                         ];
                     } else {
                         return [
@@ -406,7 +408,7 @@
                             item.activityName || item['Hoạt động'] || '',
                             item.achievementName || item['Thành tích'] || '',
                             item.fileUrls || item['Minh chứng'] || '',
-                            item.status || item['Trạng thái'] || 'Đã duyệt'
+                            item.status || item['Trạng thái'] || 'Chờ duyệt'
                         ];
                     }
                 });
@@ -435,7 +437,7 @@
         classSelect.innerHTML = '<option value="">-- Vui lòng chọn Liên Chi Đoàn / Khoa trước --</option>';
         classSelect.disabled = true;
 
-        Object.keys(departmentStructure).forEach(faculty => {
+        Object.keys(departmentStructure || {}).forEach(faculty => {
             facultySelect.innerHTML += `<option value="${faculty}">${faculty}</option>`;
         });
     }
@@ -460,7 +462,7 @@
         if (!facultySelect) return;
 
         facultySelect.innerHTML = '<option value="">-- Tất cả Liên Chi đoàn --</option>';
-        Object.keys(departmentStructure).forEach(f => {
+        Object.keys(departmentStructure || {}).forEach(f => {
             facultySelect.innerHTML += `<option value="${f}">${f}</option>`;
         });
 
@@ -485,8 +487,8 @@
             });
         } else {
             let allClass = [];
-            Object.values(departmentStructure).forEach(arr => {
-                allClass = allClass.concat(arr);
+            Object.values(departmentStructure || {}).forEach(arr => {
+                if(Array.isArray(arr)) allClass = allClass.concat(arr);
             });
             [...new Set(allClass)].sort().forEach(c => {
                 classSelect.innerHTML += `<option value="${c}">${c}</option>`;
@@ -500,9 +502,9 @@
         const activity = document.getElementById('filterActivity')?.value || '';
 
         currentFilteredData = globalData.filter(row => {
-            return (!faculty || row[3] === faculty) &&
-                   (!className || row[2] === className) &&
-                   (!activity || row[4] === activity);
+            return (!faculty || (row[3] || '') === faculty) &&
+                   (!className || (row[2] || '') === className) &&
+                   (!activity || (row[4] || '') === activity);
         });
 
         currentPage = 1;
@@ -539,14 +541,14 @@
             const searchFac = (originalFaculty || '').trim().toLowerCase();
             
             if (searchClass) {
-                for (const [fac, classes] of Object.entries(departmentStructure)) {
-                    if (classes.some(c => String(c).trim().toLowerCase() === searchClass)) {
+                for (const [fac, classes] of Object.entries(departmentStructure || {})) {
+                    if (Array.isArray(classes) && classes.some(c => String(c).trim().toLowerCase() === searchClass)) {
                         return fac;
                     }
                 }
             }
             
-            for (const fac of Object.keys(departmentStructure)) {
+            for (const fac of Object.keys(departmentStructure || {})) {
                 if (fac.trim().toLowerCase() === searchFac) {
                     return fac;
                 }
@@ -556,6 +558,7 @@
         }
 
         data.forEach(row => {
+            if(!row) return;
             const studentId = String(row[0] || '').trim();
             const studentName = String(row[1] || '').trim();
             const className = String(row[2] || '').trim();
@@ -599,7 +602,7 @@
                 data: {
                     labels: ['Đã duyệt', 'Chờ duyệt', 'Từ chối'],
                     datasets: [{
-                        data: [statusStats.approved, statusStats.pending, statusStats.rejected],
+                        data: [statusStats.approved || 0, statusStats.pending || 0, statusStats.rejected || 0],
                         backgroundColor: ['#10b981', '#f59e0b', '#ef4444']
                     }]
                 },
@@ -610,8 +613,8 @@
         const ctxFaculty = document.getElementById('facultyChart');
         if (ctxFaculty) {
             if (facultyChartInstance) facultyChartInstance.destroy();
-            const labels = Object.keys(facultyCounts);
-            const values = Object.values(facultyCounts);
+            const labels = Object.keys(facultyCounts || {});
+            const values = Object.values(facultyCounts || {});
 
             facultyChartInstance = new Chart(ctxFaculty, {
                 type: 'bar',
@@ -651,6 +654,7 @@
         } else {
             let rowsHtml = '';
             pageData.forEach(row => {
+                if(!row) return;
                 const [studentId, name, classId, facultyId, actName, achName, fileUrlStr, status] = row;
                 const displayActivity = actName || achName || '-';
 
@@ -681,7 +685,7 @@
                     </tr>
                 `;
             });
-            container.innerHTML = rowsHtml;
+            container.innerHTML = rowsHtml || `<tr><td colspan="6" class="p-4 text-center text-gray-500">Không có dữ liệu.</td></tr>`;
         }
 
         document.getElementById('pageInfoText').innerText = `Trang ${currentPage} / ${totalPages}`;
@@ -714,6 +718,7 @@
         }
 
         currentFilteredData = globalData.filter(row => {
+            if(!row) return false;
             return String(row[0]||'').toLowerCase().includes(keyword) ||
                    String(row[1]||'').toLowerCase().includes(keyword) ||
                    String(row[2]||'').toLowerCase().includes(keyword) ||
@@ -812,8 +817,8 @@
     function populateActivities(data) {
         const actSelect = document.getElementById('activityName');
         const setActivity = new Set();
-        data.forEach(row => {
-            if (row[4] && String(row[4]).trim() !== '') setActivity.add(String(row[4]).trim());
+        (data || []).forEach(row => {
+            if (row && row[4] && String(row[4]).trim() !== '') setActivity.add(String(row[4]).trim());
         });
         actSelect.innerHTML = '<option value="">-- Chọn Hoạt động (Nếu có) --</option>';
         setActivity.forEach(a => { actSelect.innerHTML += `<option value="${a}">${a}</option>`; });
@@ -882,7 +887,6 @@
         }
     });
 
-    // Xuất báo cáo
     function openFormatModal(type) {
         selectedExportType = type;
         document.getElementById('modalReportTypeTitle').innerText = type === 'personal' ? 'XUẤT BÁO CÁO CÁ NHÂN' : 'XUẤT BÁO CÁO TẬP THỂ';
@@ -903,6 +907,7 @@
         }
 
         const approvedData = currentFilteredData.filter(row => {
+            if(!row) return false;
             const status = String(row[7] || '').trim().toLowerCase();
             return status === "đã duyệt" || status === "duyệt";
         });
