@@ -332,7 +332,7 @@
         function syncPrimaryColorInput(val) {
             const colorInput = document.getElementById('cfgPrimaryColor');
             const picker = document.getElementById('cfgPrimaryColorPicker');
-            let formattedColor = val.startsWith('#') ? val : '#' + val;
+            let formattedColor = String(val || '').startsWith('#') ? String(val) : '#' + String(val || '');
             if (colorInput) colorInput.value = formattedColor;
             if (picker) picker.value = formattedColor;
         }
@@ -340,15 +340,15 @@
         function syncPrimaryColorPicker(val) {
             const picker = document.getElementById('cfgPrimaryColorPicker');
             const select = document.getElementById('cfgThemeSelect');
-            if (picker && val.startsWith('#') && (val.length === 4 || val.length === 7)) {
-                picker.value = val;
+            const strVal = String(val || '');
+            if (picker && strVal.startsWith('#') && (strVal.length === 4 || strVal.length === 7)) {
+                picker.value = strVal;
             }
             if (select) select.value = 'CUSTOM';
         }
 
         function getStandardFaculty(facultyStr, classStr = '') {
-            if (!facultyStr) facultyStr = '';
-            let rawFac = facultyStr.trim().replace(/\s+/g, ' ');
+            let rawFac = String(facultyStr || '').trim().replace(/\s+/g, ' ');
             let lowerFac = rawFac.toLowerCase();
 
             if (lowerFac.includes('cơ khí') || lowerFac.includes('điện') || lowerFac.includes('cơ - điện')) return 'Cơ - Điện - Xây dựng';
@@ -397,9 +397,10 @@
 
         function previewLogoUrl(url) {
             const preview = document.getElementById('logoPreview');
+            const strUrl = String(url || '').trim();
             if (preview) {
-                if (url && url.trim() !== '') {
-                    preview.src = url.trim();
+                if (strUrl !== '') {
+                    preview.src = strUrl;
                     preview.classList.remove('hidden');
                 } else if (!logoFileBase64) {
                     preview.classList.add('hidden');
@@ -421,9 +422,10 @@
 
         function previewHeroUrl(url) {
             const preview = document.getElementById('heroImagePreview');
+            const strUrl = String(url || '').trim();
             if (preview) {
-                if (url && url.trim() !== '') {
-                    preview.src = url.trim();
+                if (strUrl !== '') {
+                    preview.src = strUrl;
                     preview.classList.remove('hidden');
                 } else if (!heroFileBase64) {
                     preview.classList.add('hidden');
@@ -463,37 +465,35 @@
             }
         }
 
-        // TỰ ĐỘNG CHUẨN HÓA DỮ LIỆU TỪ BACKEND ĐỂ FIX LỖI BẢNG TRỐNG
+        // TỰ ĐỘNG ÉP KIỂU STRING ĐỂ NGHĨA KHÔNG BỊ LỖI toLowerCase()
         function normalizeSubmissions(rawList) {
             if (!Array.isArray(rawList)) return [];
             return rawList.map((item, idx) => {
-                // Nếu item là mảng 2 chiều
                 if (Array.isArray(item)) {
                     return {
                         rowIndex: idx + 2,
-                        studentId: item[0] || '',
-                        studentName: item[1] || '',
-                        classId: item[2] || '',
-                        facultyId: item[3] || '',
-                        activityName: item[4] || '',
-                        achievementName: item[5] || '',
-                        fileUrls: item[6] || '',
-                        status: item[7] || 'Chờ duyệt',
+                        studentId: String(item[0] || ''),
+                        studentName: String(item[1] || ''),
+                        classId: String(item[2] || ''),
+                        facultyId: String(item[3] || ''),
+                        activityName: String(item[4] || ''),
+                        achievementName: String(item[5] || ''),
+                        fileUrls: String(item[6] || ''),
+                        status: String(item[7] || 'Chờ duyệt'),
                         submittedAt: item[8] ? new Date(item[8]).toLocaleString('vi-VN') : ''
                     };
                 }
-                // Nếu item là Object
                 return {
                     rowIndex: item.rowIndex || item.row || item.id || (idx + 2),
-                    studentId: item.studentId || item.mssv || item.maSV || '',
-                    studentName: item.studentName || item.fullName || item.name || item.ten || '',
-                    classId: item.classId || item.className || item.lop || '',
-                    facultyId: item.facultyId || item.faculty || item.khoa || '',
-                    activityName: item.activityName || item.activity || item.hoatDong || '',
-                    achievementName: item.achievementName || item.achievement || item.thanhTich || '',
-                    fileUrls: item.fileUrls || item.files || item.fileUrl || item.link || '',
-                    status: item.status || item.trangThai || 'Chờ duyệt',
-                    submittedAt: item.submittedAt || item.timestamp || item.time || item.thoiGian || ''
+                    studentId: String(item.studentId || item.mssv || item.maSV || ''),
+                    studentName: String(item.studentName || item.fullName || item.name || item.ten || ''),
+                    classId: String(item.classId || item.className || item.lop || ''),
+                    facultyId: String(item.facultyId || item.faculty || item.khoa || ''),
+                    activityName: String(item.activityName || item.activity || item.hoatDong || ''),
+                    achievementName: String(item.achievementName || item.achievement || item.thanhTich || ''),
+                    fileUrls: String(item.fileUrls || item.files || item.fileUrl || item.link || ''),
+                    status: String(item.status || item.trangThai || 'Chờ duyệt'),
+                    submittedAt: String(item.submittedAt || item.timestamp || item.time || item.thoiGian || '')
                 };
             });
         }
@@ -513,7 +513,6 @@
                     sessionStorage.setItem('admin_pass', pass);
                     loadConfigToForm(data.config, data.landingConfig);
                     
-                    // Chuẩn hóa danh sách dữ liệu đầu vào
                     submissionsList = normalizeSubmissions(data.submissions || data.data || []);
                     filterSubmissions();
 
@@ -581,19 +580,19 @@
         }
 
         function filterSubmissions() {
-            const searchText = (document.getElementById('filterSearch')?.value || '').toLowerCase().trim();
-            const statusText = (document.getElementById('filterStatus')?.value || '').trim();
-            const classText = (document.getElementById('filterClass')?.value || '').toLowerCase().trim();
+            const searchText = String(document.getElementById('filterSearch')?.value || '').toLowerCase().trim();
+            const statusText = String(document.getElementById('filterStatus')?.value || '').trim();
+            const classText = String(document.getElementById('filterClass')?.value || '').toLowerCase().trim();
 
             const filtered = submissionsList.filter(item => {
-                const name = (item.studentName || '').toLowerCase();
-                const id = (item.studentId || '').toLowerCase();
+                const name = String(item.studentName || '').toLowerCase();
+                const id = String(item.studentId || '').toLowerCase();
                 const matchSearch = !searchText || name.includes(searchText) || id.includes(searchText);
 
-                const matchStatus = !statusText || item.status.toLowerCase() === statusText.toLowerCase();
+                const matchStatus = !statusText || String(item.status || '').toLowerCase() === statusText.toLowerCase();
 
-                const classId = (item.classId || '').toLowerCase();
-                const facultyId = (item.facultyId || '').toLowerCase();
+                const classId = String(item.classId || '').toLowerCase();
+                const facultyId = String(item.facultyId || '').toLowerCase();
                 const stdFaculty = getStandardFaculty(facultyId, classId).toLowerCase();
                 const matchClass = !classText || classId.includes(classText) || facultyId.includes(classText) || stdFaculty.includes(classText);
 
@@ -622,9 +621,9 @@
                 tr.className = "hover:bg-slate-50 transition border-b border-slate-200";
 
                 let filesHtml = '<span class="text-slate-400 text-xs italic">Không có file</span>';
-                if (item.fileUrls && item.fileUrls.toString().trim() !== '') {
-                    const rawUrls = item.fileUrls.toString();
-                    const links = rawUrls.includes('|') ? rawUrls.split('|') : rawUrls.split(',');
+                const strFiles = String(item.fileUrls || '').trim();
+                if (strFiles !== '') {
+                    const links = strFiles.includes('|') ? strFiles.split('|') : strFiles.split(',');
                     filesHtml = links.map((link, idx) => {
                         const cleanLink = link.trim();
                         if (!cleanLink) return '';
@@ -635,7 +634,7 @@
                 }
 
                 let statusBadge = '<span class="px-2.5 py-1 bg-amber-100 text-amber-800 rounded-full font-semibold text-xs inline-block">Chờ duyệt</span>';
-                const st = (item.status || '').toLowerCase();
+                const st = String(item.status || '').toLowerCase();
                 if (st.includes('đã duyệt') || st === 'duyệt') {
                     statusBadge = '<span class="px-2.5 py-1 bg-emerald-100 text-emerald-800 rounded-full font-semibold text-xs inline-block">Đã duyệt</span>';
                 } else if (st.includes('từ chối')) {
