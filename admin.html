@@ -449,6 +449,26 @@
             }
         }
 
+        async function postData(payload) {
+            if (typeof google !== 'undefined' && google.script && google.script.run) {
+                return new Promise((resolve, reject) => {
+                    google.script.run
+                        .withSuccessHandler(res => {
+                            try { resolve(typeof res === 'string' ? JSON.parse(res) : res); }
+                            catch(e) { resolve(res); }
+                        })
+                        .withFailureHandler(reject)
+                        .doPost({ postData: { contents: JSON.stringify(payload) } });
+                });
+            } else {
+                const res = await fetch(WEB_APP_URL, {
+                    method: 'POST',
+                    body: JSON.stringify(payload)
+                });
+                return await res.json();
+            }
+        }
+
         async function handleLogin(e) {
             if(e) e.preventDefault();
             const pass = document.getElementById('adminPassword').value.trim();
@@ -457,21 +477,7 @@
             btn.innerText = "⏳ Đang xác thực...";
 
             try {
-                let data;
-                if (typeof google !== 'undefined' && google.script && google.script.run) {
-                    data = await new Promise((resolve, reject) => {
-                        google.script.run
-                            .withSuccessHandler(resolve)
-                            .withFailureHandler(reject)
-                            .adminLogin(pass);
-                    });
-                } else {
-                    const res = await fetch(WEB_APP_URL, {
-                        method: 'POST',
-                        body: JSON.stringify({ action: "adminLogin", password: pass })
-                    });
-                    data = await res.json();
-                }
+                const data = await postData({ action: "adminLogin", password: pass });
 
                 if (data.status === "success") {
                     currentPassword = pass;
@@ -526,12 +532,13 @@
                 const themeSelect = document.getElementById('cfgThemeSelect');
                 if (themeSelect) themeSelect.value = landingCfg.selectedTheme || 'CUSTOM';
 
+                const heroBanner = landingCfg.heroBannerUrl || landingCfg.heroImage || '';
                 const heroImgEl = document.getElementById('cfgHeroImage');
-                if (heroImgEl) heroImgEl.value = landingCfg.heroImage || '';
+                if (heroImgEl) heroImgEl.value = heroBanner;
 
                 const heroPreview = document.getElementById('heroImagePreview');
-                if (heroPreview && landingCfg.heroImage) {
-                    heroPreview.src = landingCfg.heroImage;
+                if (heroPreview && heroBanner) {
+                    heroPreview.src = heroBanner;
                     heroPreview.classList.remove('hidden');
                 }
 
@@ -633,26 +640,12 @@
             if (!confirm(`Xác nhận chuyển trạng thái dòng này thành "${newStatus}"?`)) return;
 
             try {
-                let data;
-                if (typeof google !== 'undefined' && google.script && google.script.run) {
-                    data = await new Promise((resolve, reject) => {
-                        google.script.run
-                            .withSuccessHandler(resolve)
-                            .withFailureHandler(reject)
-                            .updateStatus({ password: currentPassword, rowIndex: rowIndex, newStatus: newStatus });
-                    });
-                } else {
-                    const res = await fetch(WEB_APP_URL, {
-                        method: 'POST',
-                        body: JSON.stringify({
-                            action: "updateStatus",
-                            password: currentPassword,
-                            rowIndex: rowIndex,
-                            newStatus: newStatus
-                        })
-                    });
-                    data = await res.json();
-                }
+                const data = await postData({
+                    action: "updateStatus",
+                    password: currentPassword,
+                    rowIndex: rowIndex,
+                    newStatus: newStatus
+                });
 
                 if (data.status === "success") {
                     submissionsList = data.submissions || [];
@@ -783,8 +776,8 @@
             const activitiesArray = activitiesText.split('\n').map(a => a.trim()).filter(a => a !== '');
 
             const isLandingChecked = document.getElementById('cfgEnableLanding')?.checked ? "TRUE" : "FALSE";
+            const heroBannerInput = document.getElementById('cfgHeroImage')?.value.trim() || '';
 
-            // TÁCH VÀ TRẢI PHẲNG DỮ LIỆU ĐỂ KHÔNG BỊ KHÔNG TƯƠNG THÍCH VỚI DOPOST
             const payload = {
                 action: "updateConfig",
                 password: currentPassword,
@@ -795,14 +788,15 @@
                 logoFile: logoFileBase64,
                 announcement: document.getElementById('cfgAnnouncement')?.value.trim() || '',
                 
-                // Cấu hình Landing Page
+                // Cấu hình Landing Page (Đồng bộ Key heroBannerUrl)
                 landingConfig: {
                     enableLanding: isLandingChecked,
                     heroTitle: document.getElementById('cfgHeroTitle')?.value.trim() || '',
                     heroSubtitle: document.getElementById('cfgHeroSubtitle')?.value.trim() || '',
                     aboutText: document.getElementById('cfgAboutText')?.value.trim() || '',
                     selectedTheme: document.getElementById('cfgThemeSelect')?.value || 'CUSTOM',
-                    heroImage: document.getElementById('cfgHeroImage')?.value.trim() || '',
+                    heroBannerUrl: heroBannerInput,
+                    heroImage: heroBannerInput,
                     primaryColor: document.getElementById('cfgPrimaryColor')?.value.trim() || ''
                 },
                 heroFile: heroFileBase64,
@@ -816,21 +810,7 @@
             };
 
             try {
-                let data;
-                if (typeof google !== 'undefined' && google.script && google.script.run) {
-                    data = await new Promise((resolve, reject) => {
-                        google.script.run
-                            .withSuccessHandler(resolve)
-                            .withFailureHandler(reject)
-                            .updateConfig(payload);
-                    });
-                } else {
-                    const res = await fetch(WEB_APP_URL, {
-                        method: 'POST',
-                        body: JSON.stringify(payload)
-                    });
-                    data = await res.json();
-                }
+                const data = await postData(payload);
 
                 if (data.status === "success") {
                     alert("🎉 Đã lưu cấu hình thành công! Hãy tải lại trang chủ để kiểm tra.");
