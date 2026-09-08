@@ -35,7 +35,7 @@
     
     <div class="max-w-5xl mx-auto bg-white p-6 rounded-xl shadow-lg w-full mb-8">
         
-        <!-- 1. HEADER CÓ LOGO DOÀN -->
+        <!-- HEADER -->
         <div class="border-b-2 border-blue-600 pb-4 mb-5 flex flex-col items-center justify-center text-center">
             <img id="uiLogo" src="" alt="Logo" class="h-16 md:h-20 w-auto object-contain mb-2 hidden" onerror="this.classList.add('hidden')">
             <div>
@@ -46,7 +46,7 @@
             </div>
         </div>
 
-        <!-- 2. THÔNG BÁO -->
+        <!-- THÔNG BÁO -->
         <div id="uiAnnouncementBox" class="bg-gradient-to-r from-amber-50 to-orange-50 border-l-8 border-orange-500 p-4 mb-6 rounded-r-lg shadow-sm hidden">
             <div class="flex items-center gap-2">
                 <span class="text-xl">📢</span>
@@ -55,7 +55,7 @@
             <p id="uiAnnouncement" class="text-base md:text-lg font-bold text-orange-950 mt-1 pl-7 leading-relaxed"></p>
         </div>
 
-        <!-- 3. BẢNG TIN THÔNG TIN (SLIDER) -->
+        <!-- BẢNG TIN -->
         <div id="uiNewsBox" class="hidden mb-8 bg-white border border-blue-200 rounded-xl overflow-hidden shadow-md">
             <div class="bg-blue-900 text-white p-4 font-bold text-base md:text-lg flex items-center justify-between">
                 <div class="flex items-center gap-2">
@@ -63,7 +63,6 @@
                 </div>
                 <span id="slideCounter" class="text-xs bg-blue-800 px-2.5 py-1 rounded-full text-blue-200 font-normal"></span>
             </div>
-            
             <div class="relative group" onmouseenter="pauseNewsSlider()" onmouseleave="startNewsSlider()">
                 <div id="newsSliderContainer" class="p-5 min-h-[280px]"></div>
                 <button onclick="prevNewsSlide()" class="absolute left-2 top-1/2 -translate-y-1/2 bg-black/40 hover:bg-black/70 text-white p-2 rounded-full opacity-0 group-hover:opacity-100 transition duration-300">❮</button>
@@ -72,14 +71,14 @@
             </div>
         </div>
 
-        <!-- 4. FORM NỘP MINH CHỨNG -->
+        <!-- FORM NỘP MINH CHỨNG -->
         <div class="bg-blue-50/70 p-5 rounded-lg border border-blue-200 mb-8">
             <h2 class="text-md font-bold text-blue-900 mb-4 flex items-center gap-2">
                 📝 NỘP MINH CHỨNG THÀNH TÍCH / HOẠT ĐỘNG
             </h2>
             <form id="uploadForm" class="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                    <label class="block text-xs font-semibold text-gray-700 uppercase mb-1">Mã Sinh Viên <span class="text-gray-400 font-normal">(Nếu có)</span></label>
+                    <label class="block text-xs font-semibold text-gray-700 uppercase mb-1">Mã Sinh Viên</label>
                     <input type="text" id="studentId" placeholder="Bỏ trống nếu chưa có mã" class="w-full p-2.5 border rounded-md outline-none bg-white text-sm">
                 </div>
                 <div>
@@ -108,14 +107,12 @@
                 </div>
 
                 <div>
-                    <label class="block text-xs font-semibold text-gray-700 uppercase mb-1">Tóm tắt thành tích trong hoạt động</label>
+                    <label class="block text-xs font-semibold text-gray-700 uppercase mb-1">Tóm tắt thành tích</label>
                     <input type="text" id="achievementName" placeholder="VD: Sinh viên 5 tốt / Giải Nhất..." class="w-full p-2.5 border rounded-md outline-none bg-white text-sm">
                 </div>
 
                 <div class="md:col-span-2 bg-white p-3.5 border rounded-md">
-                    <label class="block text-xs font-semibold text-gray-700 uppercase mb-1">
-                        📎 Minh chứng (File PDF/Word hoặc Ảnh)
-                    </label>
+                    <label class="block text-xs font-semibold text-gray-700 uppercase mb-1">📎 Minh chứng (File PDF/Word/Ảnh)</label>
                     <input type="file" id="evidenceFiles" multiple accept="image/*,.pdf,.doc,.docx" required class="w-full text-sm text-gray-500">
                 </div>
 
@@ -127,12 +124,13 @@
             </form>
         </div>
 
-        <!-- 5. DASHBOARD BÁO CÁO -->
+        <!-- 5. DASHBOARD BÁO CÁO THỐNG KÊ (ĐÃ ĐỒNG BỘ ĐẦY ĐỦ) -->
         <div class="mb-8">
             <h2 class="text-base font-bold text-slate-800 uppercase mb-4 flex items-center gap-2">
                 📊 BÁO CÁO THỐNG KÊ TỔNG QUAN
             </h2>
 
+            <!-- Bộ lọc -->
             <div class="grid grid-cols-1 md:grid-cols-4 gap-3 w-full text-xs items-end mb-6 bg-slate-50 p-3 rounded-lg border border-slate-200">
                 <div>
                     <label class="block font-semibold mb-1 text-slate-700">Liên Chi đoàn / Khoa:</label>
@@ -162,6 +160,7 @@
                 </div>
             </div>
 
+            <!-- Khối KPI -->
             <div class="grid grid-cols-2 md:grid-cols-5 gap-3 mb-6">
                 <div class="bg-blue-50 border-l-4 border-blue-600 p-3.5 rounded-r-lg shadow-sm">
                     <p class="text-[11px] font-bold text-blue-700 uppercase">Tổng số minh chứng</p>
@@ -185,6 +184,7 @@
                 </div>
             </div>
 
+            <!-- Khối Đồ thị -->
             <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
                 <div class="bg-white p-4 rounded-xl border border-slate-200 shadow-sm flex flex-col items-center">
                     <h3 class="text-xs font-bold text-slate-600 uppercase mb-3">Tỷ lệ Trạng thái Duyệt</h3>
@@ -223,7 +223,7 @@
                         <th class="p-3 min-w-[140px]">Họ và Tên</th>
                         <th class="p-3 min-w-[100px]">Chi đoàn</th>
                         <th class="p-3 min-w-[180px]">Liên Chi Đoàn / Khoa</th>
-                        <th class="p-3 min-w-[160px]">Hoạt động</th>
+                        <th class="p-3 min-w-[160px]">Hoạt động / Thành tích</th>
                         <th class="p-3 whitespace-nowrap">Kết quả</th>
                     </tr>
                 </thead>
@@ -236,7 +236,7 @@
         <div class="flex flex-col sm:flex-row justify-between items-center gap-4 mt-4 px-2 text-sm text-slate-600">
             <div class="flex items-center gap-2">
                 <span>Hiển thị:</span>
-                <select id="rowsPerPageSelect" onchange="changeRowsPerPage(this.value)" class="border border-slate-300 rounded px-2 py-1 bg-white focus:outline-none focus:ring-1 focus:ring-blue-500">
+                <select id="rowsPerPageSelect" onchange="changeRowsPerPage(this.value)" class="border border-slate-300 rounded px-2 py-1 bg-white focus:outline-none">
                     <option value="5">5 hàng</option>
                     <option value="10" selected>10 hàng</option>
                     <option value="20">20 hàng</option>
@@ -245,11 +245,11 @@
             </div>
 
             <div class="flex items-center gap-2">
-                <button id="btnPrevPage" onclick="changePage(-1)" class="px-3 py-1 border border-slate-300 rounded bg-white hover:bg-slate-100 disabled:opacity-40 disabled:cursor-not-allowed transition-colors">
+                <button id="btnPrevPage" onclick="changePage(-1)" class="px-3 py-1 border border-slate-300 rounded bg-white hover:bg-slate-100 disabled:opacity-40 transition-colors">
                     Trước
                 </button>
                 <span id="pageInfoText" class="font-medium text-slate-700">Trang 1 / 1</span>
-                <button id="btnNextPage" onclick="changePage(1)" class="px-3 py-1 border border-slate-300 rounded bg-white hover:bg-slate-100 disabled:opacity-40 disabled:cursor-not-allowed transition-colors">
+                <button id="btnNextPage" onclick="changePage(1)" class="px-3 py-1 border border-slate-300 rounded bg-white hover:bg-slate-100 disabled:opacity-40 transition-colors">
                     Sau
                 </button>
             </div>
@@ -297,7 +297,7 @@
         <p id="uiFooterInfo">Hệ thống Quản lý Thi đua Đoàn viên</p>
     </footer>
 
-    <!-- LOGIC JAVASCRIPT XỬ LÝ -->
+    <!-- SCRIPT XỬ LÝ CHÍNH - ĐÃ SỬA VÀ ĐỒNG BỘ 100% -->
     <script>
     const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbxS0cwcZuYj-hYGRzQV1NwaY5IOXC0MJOA3BgEFsM0JyUBSXrPfwEdPzoQ4zIEgboRl/exec";
 
@@ -312,7 +312,6 @@
     let newsDataList = [];
     let currentSlideIndex = 0;
     let newsSliderTimer = null;
-    let slideIntervalTime = 15000;
 
     let statusChartInstance = null;
     let facultyChartInstance = null;
@@ -322,6 +321,7 @@
         initSafeCounter();
     });
 
+    // Chuẩn hóa đường dẫn hình ảnh từ Drive
     function formatDriveUrl(url) {
         if (!url) return '';
         if (url.includes('drive.google.com') || url.includes('lh3.googleusercontent.com')) {
@@ -333,10 +333,10 @@
         return url;
     }
 
+    // TẢI DỮ LIỆU VÀ CHUẨN HÓA ĐỊNH DẠNG STRUCT
     async function loadData() {
         if (!WEB_APP_URL || WEB_APP_URL.includes("YOUR_GOOGLE_APPS_SCRIPT")) {
-            console.warn("Chưa cấu hình WEB_APP_URL!");
-            document.getElementById('uiSchoolName').innerText = "HỆ THỐNG QUẢN LÝ THI ĐUA ĐOÀN VIÊN";
+            console.warn("Chưa cấu hình URL Google Apps Script!");
             return;
         }
 
@@ -347,11 +347,13 @@
             if (!res.ok) throw new Error("HTTP Status: " + res.status);
             const result = await res.json();
 
+            // 1. Nạp cơ cấu Khoa / Chi đoàn
             if (result.donVi) {
                 departmentStructure = result.donVi;
                 initFormFacultyDropdown();
             }
 
+            // 2. Nạp Cấu hình hệ thống
             if (result.config) {
                 if (result.config.schoolName) document.getElementById('uiSchoolName').innerText = result.config.schoolName;
                 if (result.config.logoUrl) {
@@ -367,37 +369,49 @@
                 
                 if (result.config.activities && result.config.activities.length > 0) {
                     populateActivitiesFromConfig(result.config.activities);
-                } else {
-                    populateActivities(result.data || []);
                 }
-                
+
                 if (result.config.newsList && result.config.newsList.length > 0) {
                     newsDataList = result.config.newsList;
-                    currentSlideIndex = 0;
-                    renderNewsSlide(currentSlideIndex);
+                    renderNewsSlide(0);
                     startNewsSlider();
                     document.getElementById('uiNewsBox').classList.remove('hidden');
-                } else {
-                    document.getElementById('uiNewsBox').classList.add('hidden');
                 }
             }
 
-            if (result.data) {
-                globalData = result.data.map(item => [
-                    item.studentId || '',
-                    item.studentName || '',
-                    item.classId || '',
-                    item.facultyId || '',
-                    item.activityName || '',
-                    item.achievementName || '',
-                    item.fileUrls || '',
-                    item.status || 'Đã duyệt'
-                ]);
+            // 3. Chuẩn hóa mảng Dữ liệu Minh Chứng (Object Mapping)
+            if (result.data && Array.isArray(result.data)) {
+                globalData = result.data.map(item => {
+                    // Xử lý linh hoạt cả 2 trường hợp: Object có thuộc tính hoặc Array thuần
+                    if (Array.isArray(item)) {
+                        return {
+                            studentId: String(item[0] || '').trim(),
+                            studentName: String(item[1] || '').trim(),
+                            classId: String(item[2] || '').trim(),
+                            facultyId: String(item[3] || '').trim(),
+                            activityName: String(item[4] || '').trim(),
+                            achievementName: String(item[5] || '').trim(),
+                            fileUrls: String(item[6] || '').trim(),
+                            status: String(item[7] || 'Đã duyệt').trim()
+                        };
+                    } else {
+                        return {
+                            studentId: String(item.studentId || item.maSV || '').trim(),
+                            studentName: String(item.studentName || item.hoTen || '').trim(),
+                            classId: String(item.classId || item.chiDoan || item.lop || '').trim(),
+                            facultyId: String(item.facultyId || item.khoa || item.lcd || '').trim(),
+                            activityName: String(item.activityName || item.hoatDong || '').trim(),
+                            achievementName: String(item.achievementName || item.thanhTich || '').trim(),
+                            fileUrls: String(item.fileUrls || item.files || '').trim(),
+                            status: String(item.status || item.trangThai || 'Đã duyệt').trim()
+                        };
+                    }
+                });
             } else {
                 globalData = [];
             }
 
-            currentFilteredData = globalData;
+            currentFilteredData = [...globalData];
             currentPage = 1;
             
             initDashboardFilters();
@@ -405,12 +419,12 @@
             updateDashboard(currentFilteredData);
 
         } catch (err) { 
-            console.error("Lỗi kết nối dữ liệu:", err); 
-            document.getElementById('uiSchoolName').innerText = "HỆ THỐNG QUẢN LÝ THI ĐUA ĐOÀN VIÊN";
-            document.getElementById('listContainer').innerHTML = `<tr><td colspan="6" class="p-4 text-center text-red-500 font-bold">⚠️ Không thể tải dữ liệu từ Google Apps Script. Vui lòng kiểm tra lại.</td></tr>`;
+            console.error("Lỗi tải dữ liệu:", err); 
+            document.getElementById('listContainer').innerHTML = `<tr><td colspan="6" class="p-4 text-center text-red-500 font-bold">⚠️ Lỗi kết nối Google Apps Script. Vui lòng kiểm tra lại.</td></tr>`;
         }
     }
 
+    // ĐỔ DỮ LIỆU SELECT FORM
     function initFormFacultyDropdown() {
         const facultySelect = document.getElementById('facultyId');
         const classSelect = document.getElementById('classId');
@@ -435,9 +449,9 @@
             classSelect.innerHTML += `<option value="${c}">${c}</option>`;
         });
         classSelect.disabled = false;
-        classSelect.required = true;
     }
 
+    // KHỞI TẠO BỘ LỌC DASHBOARD
     function initDashboardFilters() {
         const facultySelect = document.getElementById('filterFaculty');
         if (!facultySelect) return;
@@ -477,15 +491,16 @@
         }
     }
 
+    // XỬ LÝ LỌC THỐNG KÊ (KPI + TABLE + CHARTS)
     function filterSubmissions() {
         const faculty = document.getElementById('filterFaculty')?.value || '';
         const className = document.getElementById('filterClass')?.value || '';
         const activity = document.getElementById('filterActivity')?.value || '';
 
-        currentFilteredData = globalData.filter(row => {
-            return (!faculty || row[3] === faculty) &&
-                   (!className || row[2] === className) &&
-                   (!activity || row[4] === activity);
+        currentFilteredData = globalData.filter(item => {
+            return (!faculty || item.facultyId === faculty) &&
+                   (!className || item.classId === className) &&
+                   (!activity || item.activityName === activity);
         });
 
         currentPage = 1;
@@ -502,6 +517,7 @@
         filterSubmissions();
     }
 
+    // TÍNH TÁN KPI VÀ CẬP NHẬT BIỂU ĐỒ BÁO CÁO
     function updateDashboard(data) {
         data = data || [];
         const total = data.length;
@@ -510,15 +526,11 @@
         const studentSet = new Set();
         const facultyCounts = {};
 
-        data.forEach(row => {
-            const studentId = String(row[0] || '').trim();
-            const studentName = String(row[1] || '').trim();
-            const originalFaculty = String(row[3] || '').trim();
-            const status = String(row[7] || '').trim().toLowerCase();
-
-            const studentKey = studentId || studentName;
+        data.forEach(item => {
+            const studentKey = item.studentId || item.studentName;
             if (studentKey) studentSet.add(studentKey);
 
+            const status = String(item.status || '').toLowerCase();
             if (status === "đã duyệt" || status === "duyệt") {
                 approved++;
             } else if (status === "từ chối" || status === "không duyệt") {
@@ -527,23 +539,26 @@
                 pending++;
             }
 
-            if (originalFaculty) {
-                facultyCounts[originalFaculty] = (facultyCounts[originalFaculty] || 0) + 1;
+            if (item.facultyId) {
+                facultyCounts[item.facultyId] = (facultyCounts[item.facultyId] || 0) + 1;
             }
         });
 
-        if(document.getElementById('kpiTotal')) document.getElementById('kpiTotal').innerText = total;
-        if(document.getElementById('kpiUniqueStudents')) document.getElementById('kpiUniqueStudents').innerText = studentSet.size;
-        if(document.getElementById('kpiApproved')) document.getElementById('kpiApproved').innerText = approved;
-        if(document.getElementById('kpiPending')) document.getElementById('kpiPending').innerText = pending;
-        if(document.getElementById('kpiRejected')) document.getElementById('kpiRejected').innerText = rejected;
+        // Gán KPI ra giao diện
+        document.getElementById('kpiTotal').innerText = total;
+        document.getElementById('kpiUniqueStudents').innerText = studentSet.size;
+        document.getElementById('kpiApproved').innerText = approved;
+        document.getElementById('kpiPending').innerText = pending;
+        document.getElementById('kpiRejected').innerText = rejected;
 
         renderCharts({ approved, pending, rejected }, facultyCounts);
     }
 
+    // VẼ BIỂU ĐỒ DÙNG CHART.JS
     function renderCharts(statusStats, facultyCounts) {
         if (typeof Chart === 'undefined') return;
 
+        // Biểu đồ hình tròn: Trạng thái
         const ctxStatus = document.getElementById('statusChart');
         if (ctxStatus) {
             if (statusChartInstance) statusChartInstance.destroy();
@@ -560,6 +575,7 @@
             });
         }
 
+        // Biểu đồ cột: Theo Khoa/Chi đoàn
         const ctxFaculty = document.getElementById('facultyChart');
         if (ctxFaculty) {
             if (facultyChartInstance) facultyChartInstance.destroy();
@@ -571,7 +587,7 @@
                 data: {
                     labels: labels.length ? labels : ['Chưa có dữ liệu'],
                     datasets: [{
-                        label: 'Số lượng minh chứng',
+                        label: 'Số minh chứng',
                         data: values.length ? values : [0],
                         backgroundColor: '#2563eb',
                         borderRadius: 6
@@ -587,6 +603,7 @@
         }
     }
 
+    // HIỂN THỊ BẢNG DỮ LIỆU
     function renderTable(dataRows) {
         currentFilteredData = dataRows || [];
         const totalRows = currentFilteredData.length;
@@ -600,17 +617,16 @@
         const container = document.getElementById('listContainer');
         
         if (!pageData || pageData.length === 0) {
-            container.innerHTML = `<tr><td colspan="6" class="p-4 text-center text-gray-500">Không tìm thấy dữ liệu.</td></tr>`;
+            container.innerHTML = `<tr><td colspan="6" class="p-4 text-center text-gray-500">Không tìm thấy minh chứng phù hợp.</td></tr>`;
         } else {
             let rowsHtml = '';
-            pageData.forEach(row => {
-                const [studentId, name, classId, facultyId, actName, achName, fileUrlStr, status] = row;
-                const displayActivity = actName || achName || '-';
+            pageData.forEach(item => {
+                const actDisplay = item.activityName || item.achievementName || '-';
 
                 let statusColor = "bg-amber-100 text-amber-800 border border-amber-300";
-                let statusText = status || 'Chờ duyệt';
+                let statusText = item.status || 'Chờ duyệt';
 
-                const statusLower = String(statusText).trim().toLowerCase();
+                const statusLower = String(statusText).toLowerCase();
                 if (statusLower === "đã duyệt" || statusLower === "duyệt") {
                     statusColor = "bg-emerald-100 text-emerald-800 border border-emerald-300 font-bold";
                     statusText = "Đã duyệt";
@@ -621,11 +637,11 @@
 
                 rowsHtml += `
                     <tr class="hover:bg-slate-50 transition">
-                        <td class="p-3 font-semibold text-blue-900 whitespace-nowrap">${studentId || 'Chưa có'}</td>
-                        <td class="p-3 font-medium text-slate-800">${name || ''}</td>
-                        <td class="p-3 text-gray-600">${classId || ''}</td>
-                        <td class="p-3 text-gray-800 font-semibold">${facultyId || ''}</td>
-                        <td class="p-3 text-slate-700">${displayActivity}</td>
+                        <td class="p-3 font-semibold text-blue-900 whitespace-nowrap">${item.studentId || 'Chưa có'}</td>
+                        <td class="p-3 font-medium text-slate-800">${item.studentName || ''}</td>
+                        <td class="p-3 text-gray-600">${item.classId || ''}</td>
+                        <td class="p-3 text-gray-800 font-semibold">${item.facultyId || ''}</td>
+                        <td class="p-3 text-slate-700">${actDisplay}</td>
                         <td class="p-3 whitespace-nowrap">
                             <span class="${statusColor} px-2.5 py-1 rounded-full text-xs shadow-sm inline-block">
                                 ${statusText}
@@ -653,24 +669,25 @@
         renderTable(currentFilteredData);
     }
 
+    // TÌM KIẾM
     function searchData() {
         const keyword = document.getElementById('searchKeyword').value.trim().toLowerCase();
         const countDiv = document.getElementById('searchResultCount');
         currentPage = 1;
 
         if (!keyword) {
-            currentFilteredData = globalData;
+            currentFilteredData = [...globalData];
             renderTable(globalData);
             updateDashboard(globalData);
             if (countDiv) countDiv.innerText = "";
             return;
         }
 
-        currentFilteredData = globalData.filter(row => {
-            return String(row[0]||'').toLowerCase().includes(keyword) ||
-                   String(row[1]||'').toLowerCase().includes(keyword) ||
-                   String(row[2]||'').toLowerCase().includes(keyword) ||
-                   String(row[3]||'').toLowerCase().includes(keyword);
+        currentFilteredData = globalData.filter(item => {
+            return item.studentId.toLowerCase().includes(keyword) ||
+                   item.studentName.toLowerCase().includes(keyword) ||
+                   item.classId.toLowerCase().includes(keyword) ||
+                   item.facultyId.toLowerCase().includes(keyword);
         });
 
         renderTable(currentFilteredData);
@@ -682,11 +699,12 @@
         document.getElementById('searchKeyword').value = '';
         document.getElementById('searchResultCount').innerText = '';
         currentPage = 1;
-        currentFilteredData = globalData;
+        currentFilteredData = [...globalData];
         renderTable(globalData);
         updateDashboard(globalData);
     }
 
+    // BẢNG TIN SLIDER
     function renderNewsSlide(index) {
         const container = document.getElementById('newsSliderContainer');
         const dotsContainer = document.getElementById('newsDotsContainer');
@@ -716,9 +734,7 @@
         if (newsDataList.length > 1) {
             newsDataList.forEach((_, i) => {
                 const activeClass = i === index ? 'bg-blue-600 w-6' : 'bg-slate-300 w-2.5';
-                dotsContainer.innerHTML += `
-                    <button onclick="goToNewsSlide(${i})" class="h-2.5 rounded-full transition-all duration-300 ${activeClass}"></button>
-                `;
+                dotsContainer.innerHTML += `<button onclick="goToNewsSlide(${i})" class="h-2.5 rounded-full transition-all duration-300 ${activeClass}"></button>`;
             });
         }
     }
@@ -743,7 +759,7 @@
 
     function startNewsSlider() {
         stopNewsSlider();
-        if (newsDataList.length > 1) newsSliderTimer = setInterval(nextNewsSlide, slideIntervalTime);
+        if (newsDataList.length > 1) newsSliderTimer = setInterval(nextNewsSlide, 15000);
     }
 
     function pauseNewsSlider() { stopNewsSlider(); }
@@ -762,23 +778,9 @@
         });
     }
 
-    function populateActivities(data) {
-        const actSelect = document.getElementById('activityName');
-        const setActivity = new Set();
-        data.forEach(row => {
-            if (row[4] && String(row[4]).trim() !== '') setActivity.add(String(row[4]).trim());
-        });
-        actSelect.innerHTML = '<option value="">-- Chọn Hoạt động (Nếu có) --</option>';
-        setActivity.forEach(a => { actSelect.innerHTML += `<option value="${a}">${a}</option>`; });
-    }
-
+    // FORM NỘP DỮ LIỆU
     document.getElementById('uploadForm').addEventListener('submit', async function(e) {
         e.preventDefault();
-        
-        if (!WEB_APP_URL || WEB_APP_URL.includes("YOUR_GOOGLE_APPS_SCRIPT")) {
-            alert("⚠️ Hệ thống chưa được kết nối với Google Apps Script! Vui lòng điền WEB_APP_URL.");
-            return;
-        }
 
         const submitBtn = document.getElementById('submitBtn');
         const originalBtnText = submitBtn.innerText;
@@ -826,15 +828,14 @@
                 alert('⚠️ Có lỗi xảy ra: ' + (result.message || 'Không thể gửi dữ liệu.'));
             }
         } catch (err) {
-            console.error(err);
-            alert('❌ Lỗi kết nối hoặc xử lý tệp: ' + err.message);
+            alert('❌ Lỗi gửi dữ liệu: ' + err.message);
         } finally {
             submitBtn.disabled = false;
             submitBtn.innerText = originalBtnText;
         }
     });
 
-    // MỞ / ĐÓNG MODAL XUẤT BÁO CÁO
+    // MODAL XUẤT BÁO CÁO
     function openFormatModal(type) {
         selectedExportType = type;
         document.getElementById('modalReportTypeTitle').innerText = type === 'personal' ? 'XUẤT BÁO CÁO CÁ NHÂN' : 'XUẤT BÁO CÁO TẬP THỂ';
@@ -849,7 +850,6 @@
         modal.classList.remove('flex');
     }
 
-    // XỬ LÝ XUẤT FILE (PDF / WORD / EXCEL)
     function executeReportExport(format) {
         closeFormatModal();
         
@@ -859,8 +859,8 @@
             return;
         }
 
-        const approvedData = currentFilteredData.filter(row => {
-            const status = String(row[7] || '').trim().toLowerCase();
+        const approvedData = currentFilteredData.filter(item => {
+            const status = String(item.status || '').toLowerCase();
             return status === "đã duyệt" || status === "duyệt";
         });
 
@@ -871,51 +871,40 @@
 
         const firstRow = approvedData[0];
         const isPersonal = selectedExportType === 'personal';
-        
         const schoolName = document.getElementById('uiSchoolName').innerText || "TRƯỜNG CAO ĐẲNG ĐẮK LẮK";
         
-        const templateConfig = {
-            unitHeader: `ĐOÀN TỈNH ĐẮK LẮK<br><b>BCH ${schoolName}</b>`,
-            nationalHeader: "CỘNG HÒA XÃ HỘI CHỦ NGHĨA VIỆT NAM<br><b>Độc lập - Tự do - Hạnh phúc</b>",
-            locationDate: "Đắk Lắk, ngày ..... tháng ..... năm 2026",
-            personalTitle: "BÁO CÁO THÀNH TÍCH CÁ NHÂN",
-            groupTitle: "BÁO CÁO THÀNH TÍCH TẬP THỂ",
-            signerLeft: "<b>XÁC NHẬN CỦA CHI ĐOÀN</b>",
-            signerRight: "<b>TM. BAN CHẤP HÀNH ĐOÀN TRƯỜNG</b><br><i>(Ký, ghi rõ họ tên và đóng dấu)</i>"
-        };
-
-        let reportTitle = isPersonal ? templateConfig.personalTitle : templateConfig.groupTitle;
-        let fileName = isPersonal ? `Bao_Cao_Ca_Nhan_${firstRow[1] || 'SV'}` : `Bao_Cao_Tap_The_${keyword}`;
+        let reportTitle = isPersonal ? "BÁO CÁO THÀNH TÍCH CÁ NHÂN" : "BÁO CÁO THÀNH TÍCH TẬP THỂ";
+        let fileName = isPersonal ? `Bao_Cao_Ca_Nhan_${firstRow.studentName}` : `Bao_Cao_Tap_The_${keyword}`;
         
         let infoHeader = isPersonal 
             ? `<div style="margin-bottom: 15px; font-size: 14px; line-height: 1.6;">
-                <p><b>Họ và tên Đoàn viên:</b> ${firstRow[1]} &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <b>Mã SV:</b> ${firstRow[0] || '...'}</p>
-                <p><b>Chi đoàn / Lớp:</b> ${firstRow[2]} &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <b>Liên Chi Đoàn/Khoa:</b> ${firstRow[3]}</p>
+                <p><b>Họ và tên Đoàn viên:</b> ${firstRow.studentName} &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <b>Mã SV:</b> ${firstRow.studentId || '...'}</p>
+                <p><b>Chi đoàn / Lớp:</b> ${firstRow.classId} &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <b>Liên Chi Đoàn/Khoa:</b> ${firstRow.facultyId}</p>
                </div>`
             : `<div style="margin-bottom: 15px; font-size: 14px; line-height: 1.6;">
-                <p><b>Đơn vị / Chi đoàn:</b> ${firstRow[2] || keyword} &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <b>Thuộc Khoa/LCĐ:</b> ${firstRow[3]}</p>
+                <p><b>Đơn vị / Chi đoàn:</b> ${firstRow.classId || keyword} &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <b>Thuộc Khoa/LCĐ:</b> ${firstRow.facultyId}</p>
                 <p><b>Tổng số minh chứng được công nhận:</b> ${approvedData.length}</p>
                </div>`;
 
-        let tableRowsHtml = approvedData.map((row, idx) => `
+        let tableRowsHtml = approvedData.map((item, idx) => `
             <tr>
                 <td style="border:1px solid #333; padding:8px; text-align:center;">${idx + 1}</td>
-                <td style="border:1px solid #333; padding:8px;">${row[1]}</td>
-                <td style="border:1px solid #333; padding:8px;">${row[2]}</td>
-                <td style="border:1px solid #333; padding:8px;">${row[4] || row[5] || '-'}</td>
-                <td style="border:1px solid #333; padding:8px;">${row[5] || 'Đã hoàn thành'}</td>
-                <td style="border:1px solid #333; padding:8px; text-align:center;">${row[7] || 'Đã duyệt'}</td>
+                <td style="border:1px solid #333; padding:8px;">${item.studentName}</td>
+                <td style="border:1px solid #333; padding:8px;">${item.classId}</td>
+                <td style="border:1px solid #333; padding:8px;">${item.activityName || item.achievementName || '-'}</td>
+                <td style="border:1px solid #333; padding:8px;">${item.achievementName || 'Đã hoàn thành'}</td>
+                <td style="border:1px solid #333; padding:8px; text-align:center;">${item.status || 'Đã duyệt'}</td>
             </tr>
         `).join('');
 
         const fullBodyHtml = `
             <table style="width: 100%; margin-bottom: 20px;">
                 <tr>
-                    <td style="width: 45%; text-align: center; vertical-align: top; font-size: 13px;">${templateConfig.unitHeader}</td>
-                    <td style="width: 55%; text-align: center; vertical-align: top; font-size: 13px;">${templateConfig.nationalHeader}</td>
+                    <td style="width: 45%; text-align: center; vertical-align: top; font-size: 13px;">ĐOÀN TỈNH ĐẮK LẮK<br><b>BCH ${schoolName}</b></td>
+                    <td style="width: 55%; text-align: center; vertical-align: top; font-size: 13px;">CỘNG HÒA XÃ HỘI CHỦ NGHĨA VIỆT NAM<br><b>Độc lập - Tự do - Hạnh phúc</b></td>
                 </tr>
             </table>
-            <div style="text-align: right; font-style: italic; font-size: 13px; margin-bottom: 10px;">${templateConfig.locationDate}</div>
+            <div style="text-align: right; font-style: italic; font-size: 13px; margin-bottom: 10px;">Đắk Lắk, ngày ..... tháng ..... năm 2026</div>
             <div style="text-align: center; font-size: 18px; font-weight: bold; margin: 20px 0; text-transform: uppercase;">${reportTitle}</div>
             ${infoHeader}
             <table style="width: 100%; border-collapse: collapse; margin-top: 15px; font-size: 13px;">
@@ -933,8 +922,8 @@
             </table>
             <table style="width: 100%; margin-top: 40px;">
                 <tr>
-                    <td style="width: 50%; text-align: center; vertical-align: top; font-size: 13px;">${templateConfig.signerLeft}</td>
-                    <td style="width: 50%; text-align: center; vertical-align: top; font-size: 13px;">${templateConfig.signerRight}<br><br><br><br></td>
+                    <td style="width: 50%; text-align: center; vertical-align: top; font-size: 13px;"><b>XÁC NHẬN CỦA CHI ĐOÀN</b></td>
+                    <td style="width: 50%; text-align: center; vertical-align: top; font-size: 13px;"><b>TM. BAN CHẤP HÀNH ĐOÀN TRƯỜNG</b><br><i>(Ký, ghi rõ họ tên và đóng dấu)</i><br><br><br><br></td>
                 </tr>
             </table>
         `;
@@ -942,11 +931,7 @@
         if (format === 'pdf') {
             const win = window.open('', '_blank');
             if (win) {
-                win.document.write(`
-                    <!DOCTYPE html><html><head><title>${reportTitle}</title>
-                    <style>body { font-family: 'Times New Roman', serif; padding: 25px; color: #000; }</style>
-                    </head><body>${fullBodyHtml}<script>window.onload = function() { window.print(); }<\/script></body></html>
-                `);
+                win.document.write(`<!DOCTYPE html><html><head><title>${reportTitle}</title><style>body { font-family: 'Times New Roman', serif; padding: 25px; color: #000; }</style></head><body>${fullBodyHtml}<script>window.onload = function() { window.print(); }<\/script></body></html>`);
                 win.document.close();
             }
         } else if (format === 'word') {
