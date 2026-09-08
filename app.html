@@ -4,12 +4,32 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Hệ thống Quản lý Thi đua Đoàn viên</title>
+    <!-- Thư viện đồ thị & Tailwind CSS -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.tailwindcss.com"></script>
-    <!-- Thư viện đọc và thế chỗ dữ liệu trong file Word Docx -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/docxtemplater/3.37.11/docxtemplater.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/pizzip/3.1.4/pizzip.min.js"></script>
+    <!-- Thư viện xuất file Excel & Word -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/docxtemplater/3.37.11/docxtemplater.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pizzip/3.1.4/pizzip.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+
+    <!-- CSS BỘ ĐẾM TRUY CẬP -->
+    <style>
+      .counter-widget-vertical {
+        position: fixed; bottom: 8px; left: 8px;
+        background: rgba(15, 23, 42, 0.9); color: #e2e8f0;
+        padding: 6px 10px; border-radius: 6px;
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+        font-size: 11px; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
+        z-index: 9999; display: flex; flex-direction: column; gap: 3px;
+        backdrop-filter: blur(4px); border: 1px solid rgba(255, 255, 255, 0.15);
+        line-height: 1.2; user-select: none; width: fit-content;
+      }
+      .counter-row { display: flex; align-items: center; gap: 6px; white-space: nowrap; }
+      .online-dot { width: 6px; height: 6px; background-color: #22c55e; border-radius: 50%; display: inline-block; box-shadow: 0 0 5px #22c55e; animation: pulse 1.5s infinite; }
+      .counter-val { font-weight: 700; color: #38bdf8; margin-left: auto; }
+      @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
+    </style>
 </head>
 <body class="bg-slate-100 p-3 md:p-8 font-sans min-h-screen flex flex-col justify-between">
     
@@ -45,7 +65,7 @@
             </div>
             
             <div class="relative group" onmouseenter="pauseNewsSlider()" onmouseleave="startNewsSlider()">
-                <div id="newsSliderContainer" class="p-5 min-h-[300px]"></div>
+                <div id="newsSliderContainer" class="p-5 min-h-[280px]"></div>
                 <button onclick="prevNewsSlide()" class="absolute left-2 top-1/2 -translate-y-1/2 bg-black/40 hover:bg-black/70 text-white p-2 rounded-full opacity-0 group-hover:opacity-100 transition duration-300">❮</button>
                 <button onclick="nextNewsSlide()" class="absolute right-2 top-1/2 -translate-y-1/2 bg-black/40 hover:bg-black/70 text-white p-2 rounded-full opacity-0 group-hover:opacity-100 transition duration-300">❯</button>
                 <div id="newsDotsContainer" class="flex justify-center gap-2 pb-4"></div>
@@ -237,79 +257,53 @@
 
     </div>
 
-    <footer class="text-center py-4 text-xs text-slate-500 border-t border-slate-200 max-w-5xl mx-auto w-full">
-        <p id="uiFooterInfo">Hệ thống Quản lý Thi đua Đoàn viên</p>
-    </footer>
-
-    <script>
-async function exportDocxFromTemplate(templateUrl, data, fileName) {
-    try {
-        // 1. Tải file mẫu .docx về bộ nhớ
-        const response = await fetch(templateUrl);
-        const arrayBuffer = await response.arrayBuffer();
-
-        // 2. Khởi tạo đọc file nén docx
-        const zip = new PizZip(arrayBuffer);
-        const doc = new window.docxtemplater(zip, {
-            paragraphLoop: true,
-            linebreaks: true,
-        });
-
-        // 3. Đổ dữ liệu từ Web vào các thẻ biến {TEN_BIEN} trong file Word
-        doc.render(data);
-
-        // 4. Tạo file Word mới và cho người dùng tải về
-        const out = doc.getZip().generate({
-            type: "blob",
-            mimeType: "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
-        });
-
-        // Tải file về máy
-        const a = document.createElement("a");
-        a.href = URL.createObjectURL(out);
-        a.download = `${fileName}.docx`;
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
-
-    } catch (error) {
-        console.error("Lỗi khi xuất file từ mẫu Docx:", error);
-        alert("⚠️ Không thể xuất file theo mẫu. Vui lòng kiểm tra lại đường dẫn file mẫu!");
-    }
-}
-        <script>
     <!-- MODAL CHỌN ĐỊNH DẠNG XUẤT BÁO CÁO -->
-    <div id="formatSelectModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); z-index:99999; justify-content:center; align-items:center;">
-      <div style="background:#fff; padding:22px; border-radius:8px; width:330px; text-align:center; box-shadow:0 10px 25px rgba(0,0,0,0.3); font-family:'Times New Roman', serif;">
-        <h3 id="modalReportTypeTitle" style="margin:0 0 8px 0; color:#1e293b; font-size:16px; text-transform:uppercase; font-weight:bold;">CHỌN ĐỊNH DẠNG BÁO CÁO</h3>
-        <p style="font-size:13px; color:#64748b; margin-bottom:18px; font-style:italic;">Vui lòng chọn định dạng file muốn xuất:</p>
+    <div id="formatSelectModal" class="hidden fixed inset-0 bg-black/50 z-[9999] justify-center items-center">
+      <div class="bg-white p-6 rounded-lg w-80 text-center shadow-xl">
+        <h3 id="modalReportTypeTitle" class="m-0 mb-2 text-slate-800 text-base uppercase font-bold">CHỌN ĐỊNH DẠNG BÁO CÁO</h3>
+        <p class="text-xs text-slate-500 mb-4 italic">Vui lòng chọn định dạng file muốn xuất:</p>
         
-        <div style="display:flex; flex-direction:column; gap:10px;">
-          <button onclick="executeReportExport('pdf')" style="background:#ac0d0d; color:#fff; border:none; padding:10px; border-radius:5px; cursor:pointer; font-weight:bold; font-size:13px;">
+        <div class="flex flex-col gap-2.5">
+          <button onclick="executeReportExport('pdf')" class="bg-red-700 hover:bg-red-800 text-white p-2.5 rounded font-bold text-xs shadow">
             📕 File PDF / In báo cáo (.pdf)
           </button>
-          <button onclick="executeReportExport('word')" style="background:#185abd; color:#fff; border:none; padding:10px; border-radius:5px; cursor:pointer; font-weight:bold; font-size:13px;">
+          <button onclick="executeReportExport('word')" class="bg-blue-700 hover:bg-blue-800 text-white p-2.5 rounded font-bold text-xs shadow">
             📄 File Word (.doc)
           </button>
-          <button onclick="executeReportExport('excel')" style="background:#107c41; color:#fff; border:none; padding:10px; border-radius:5px; cursor:pointer; font-weight:bold; font-size:13px;">
+          <button onclick="executeReportExport('excel')" class="bg-emerald-700 hover:bg-emerald-800 text-white p-2.5 rounded font-bold text-xs shadow">
             📊 File Excel (.xlsx)
           </button>
-          <button onclick="closeFormatModal()" style="background:#e2e8f0; color:#334155; border:none; padding:8px; border-radius:5px; cursor:pointer; font-size:12px; margin-top:5px;">
+          <button onclick="closeFormatModal()" class="bg-slate-200 hover:bg-slate-300 text-slate-700 p-2 rounded text-xs mt-1">
             Đóng / Hủy
           </button>
         </div>
       </div>
     </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+    <!-- BỘ ĐẾM TRUY CẬP -->
+    <div class="counter-widget-vertical">
+      <div class="counter-row">
+        <span class="online-dot"></span>
+        <span>Online:</span>
+        <span id="online-count" class="counter-val">1</span>
+      </div>
+      <div class="counter-row">
+        <span>🌐 Tổng lượt xem:</span>
+        <span id="total-views" class="counter-val">105</span>
+      </div>
+    </div>
 
+    <footer class="text-center py-4 text-xs text-slate-500 border-t border-slate-200 max-w-5xl mx-auto w-full">
+        <p id="uiFooterInfo">Hệ thống Quản lý Thi đua Đoàn viên</p>
+    </footer>
+
+    <!-- LOGIC JAVASCRIPT XỬ LÝ -->
     <script>
-    // THAY LINK WEB APP CỦA BẠN VÀO ĐÂY
     const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbxS0cwcZuYj-hYGRzQV1NwaY5IOXC0MJOA3BgEFsM0JyUBSXrPfwEdPzoQ4zIEgboRl/exec";
 
     let globalData = [];
     let currentFilteredData = [];
-    let departmentStructure = {}; // Dữ liệu danh mục Liên Chi đoàn & Chi đoàn
+    let departmentStructure = {}; 
     let selectedExportType = 'personal';
 
     let currentPage = 1;
@@ -325,6 +319,7 @@ async function exportDocxFromTemplate(templateUrl, data, fileName) {
 
     document.addEventListener("DOMContentLoaded", function() {
         loadData();
+        initSafeCounter();
     });
 
     function formatDriveUrl(url) {
@@ -352,13 +347,11 @@ async function exportDocxFromTemplate(templateUrl, data, fileName) {
             if (!res.ok) throw new Error("HTTP Status: " + res.status);
             const result = await res.json();
 
-            // 1. Cập nhật danh mục Đơn vị (Liên Chi đoàn - Chi đoàn từ tab DanhMuc)
             if (result.donVi) {
                 departmentStructure = result.donVi;
                 initFormFacultyDropdown();
             }
 
-            // 2. Cập nhật các cấu hình giao diện
             if (result.config) {
                 if (result.config.schoolName) document.getElementById('uiSchoolName').innerText = result.config.schoolName;
                 if (result.config.logoUrl) {
@@ -389,7 +382,6 @@ async function exportDocxFromTemplate(templateUrl, data, fileName) {
                 }
             }
 
-            // 3. Xử lý danh sách Minh chứng
             if (result.data) {
                 globalData = result.data.map(item => [
                     item.studentId || '',
@@ -419,7 +411,6 @@ async function exportDocxFromTemplate(templateUrl, data, fileName) {
         }
     }
 
-    // Khởi tạo Ô chọn Khoa/Liên Chi đoàn ở Form nộp
     function initFormFacultyDropdown() {
         const facultySelect = document.getElementById('facultyId');
         const classSelect = document.getElementById('classId');
@@ -432,7 +423,6 @@ async function exportDocxFromTemplate(templateUrl, data, fileName) {
         });
     }
 
-    // Khi chọn Liên Chi Đoàn trên Form -> Hiển thị Chi đoàn tương ứng
     function onFormFacultyChange(selectedFaculty) {
         const classSelect = document.getElementById('classId');
         if (!selectedFaculty || !departmentStructure[selectedFaculty]) {
@@ -448,7 +438,6 @@ async function exportDocxFromTemplate(templateUrl, data, fileName) {
         classSelect.required = true;
     }
 
-    // Khởi tạo bộ lọc Tìm kiếm / Dashboard
     function initDashboardFilters() {
         const facultySelect = document.getElementById('filterFaculty');
         if (!facultySelect) return;
@@ -478,7 +467,6 @@ async function exportDocxFromTemplate(templateUrl, data, fileName) {
                 classSelect.innerHTML += `<option value="${c}">${c}</option>`;
             });
         } else {
-            // Hiển thị tất cả Chi đoàn
             let allClass = [];
             Object.values(departmentStructure).forEach(arr => {
                 allClass = allClass.concat(arr);
@@ -522,43 +510,9 @@ async function exportDocxFromTemplate(templateUrl, data, fileName) {
         const studentSet = new Set();
         const facultyCounts = {};
 
-        // 1. Hàm chuẩn hóa chữ hoa/thường (VD: công nghệ thông tin -> Công Nghệ Thông Tin)
-        function formatProperCase(str) {
-            if (!str) return 'Chưa xác định';
-            return str.trim().toLowerCase().replace(/(^|[\s-])(\S)/g, function(match, sep, char) {
-                return sep + char.toUpperCase();
-            });
-        }
-
-        // 2. Hàm quy chiếu Chi đoàn -> Liên Chi đoàn mới nhất
-        function resolveFaculty(className, originalFaculty) {
-            const searchClass = (className || '').trim().toLowerCase();
-            const searchFac = (originalFaculty || '').trim().toLowerCase();
-            
-            // Ưu tiên 1: Dò tìm Liên Chi đoàn dựa trên Chi đoàn hiện tại có trong Danh mục cấu trúc
-            if (searchClass) {
-                for (const [fac, classes] of Object.entries(departmentStructure)) {
-                    if (classes.some(c => String(c).trim().toLowerCase() === searchClass)) {
-                        return fac; // Trả về chuẩn xác tên Liên Chi đoàn trong Danh mục
-                    }
-                }
-            }
-            
-            // Ưu tiên 2: Nếu không tìm thấy bằng Chi đoàn, dò bằng tên LCĐ cũ không phân biệt hoa/thường
-            for (const fac of Object.keys(departmentStructure)) {
-                if (fac.trim().toLowerCase() === searchFac) {
-                    return fac;
-                }
-            }
-            
-            // Ưu tiên 3: Nếu dữ liệu quá cũ không khớp danh mục, tự động chuẩn hóa dạng Chữ Hoa Chữ Đầu để gộp
-            return formatProperCase(originalFaculty);
-        }
-
         data.forEach(row => {
             const studentId = String(row[0] || '').trim();
             const studentName = String(row[1] || '').trim();
-            const className = String(row[2] || '').trim();
             const originalFaculty = String(row[3] || '').trim();
             const status = String(row[7] || '').trim().toLowerCase();
 
@@ -573,10 +527,8 @@ async function exportDocxFromTemplate(templateUrl, data, fileName) {
                 pending++;
             }
 
-            // Lấy Liên Chi đoàn đã được chuẩn hóa và gộp tự động
-            const finalFaculty = resolveFaculty(className, originalFaculty);
-            if (finalFaculty && finalFaculty !== 'Chưa xác định') {
-                facultyCounts[finalFaculty] = (facultyCounts[finalFaculty] || 0) + 1;
+            if (originalFaculty) {
+                facultyCounts[originalFaculty] = (facultyCounts[originalFaculty] || 0) + 1;
             }
         });
 
@@ -588,6 +540,7 @@ async function exportDocxFromTemplate(templateUrl, data, fileName) {
 
         renderCharts({ approved, pending, rejected }, facultyCounts);
     }
+
     function renderCharts(statusStats, facultyCounts) {
         if (typeof Chart === 'undefined') return;
 
@@ -749,8 +702,8 @@ async function exportDocxFromTemplate(templateUrl, data, fileName) {
         container.innerHTML = `
             <div class="flex flex-col gap-5 transition-opacity duration-500 ease-in-out">
                 ${imgUrl ? `
-                <div class="w-full overflow-hidden rounded-lg border border-slate-200 shadow-sm bg-slate-900/5 flex justify-center items-center p-2 min-h-[250px]">
-                    <img src="${imgUrl}" alt="Hình ảnh tin tức" class="w-auto h-auto max-h-[450px] max-w-full object-contain hover:scale-105 transition-transform duration-300 mx-auto rounded">
+                <div class="w-full overflow-hidden rounded-lg border border-slate-200 shadow-sm bg-slate-900/5 flex justify-center items-center p-2 min-h-[200px]">
+                    <img src="${imgUrl}" alt="Hình ảnh tin tức" class="w-auto h-auto max-h-[400px] max-w-full object-contain hover:scale-105 transition-transform duration-300 mx-auto rounded">
                 </div>` : ''}
                 <div class="w-full">
                     <h3 class="font-extrabold text-blue-900 text-xl md:text-2xl mb-2 leading-snug">${item.title || item.t || ''}</h3>
@@ -819,7 +772,6 @@ async function exportDocxFromTemplate(templateUrl, data, fileName) {
         setActivity.forEach(a => { actSelect.innerHTML += `<option value="${a}">${a}</option>`; });
     }
 
-    // Xử lý gửi Form
     document.getElementById('uploadForm').addEventListener('submit', async function(e) {
         e.preventDefault();
         
@@ -882,17 +834,22 @@ async function exportDocxFromTemplate(templateUrl, data, fileName) {
         }
     });
 
-    // Xuất báo cáo
+    // MỞ / ĐÓNG MODAL XUẤT BÁO CÁO
     function openFormatModal(type) {
         selectedExportType = type;
         document.getElementById('modalReportTypeTitle').innerText = type === 'personal' ? 'XUẤT BÁO CÁO CÁ NHÂN' : 'XUẤT BÁO CÁO TẬP THỂ';
-        document.getElementById('formatSelectModal').style.display = 'flex';
+        const modal = document.getElementById('formatSelectModal');
+        modal.classList.remove('hidden');
+        modal.classList.add('flex');
     }
 
     function closeFormatModal() {
-        document.getElementById('formatSelectModal').style.display = 'none';
+        const modal = document.getElementById('formatSelectModal');
+        modal.classList.add('hidden');
+        modal.classList.remove('flex');
     }
 
+    // XỬ LÝ XUẤT FILE (PDF / WORD / EXCEL)
     function executeReportExport(format) {
         closeFormatModal();
         
@@ -915,8 +872,10 @@ async function exportDocxFromTemplate(templateUrl, data, fileName) {
         const firstRow = approvedData[0];
         const isPersonal = selectedExportType === 'personal';
         
+        const schoolName = document.getElementById('uiSchoolName').innerText || "TRƯỜNG CAO ĐẲNG ĐẮK LẮK";
+        
         const templateConfig = {
-            unitHeader: "ĐOÀN TỈNH ĐẮK LẮK<br><b>BCH TRƯỜNG CAO ĐẲNG ĐẮK LẮK</b>",
+            unitHeader: `ĐOÀN TỈNH ĐẮK LẮK<br><b>BCH ${schoolName}</b>`,
             nationalHeader: "CỘNG HÒA XÃ HỘI CHỦ NGHĨA VIỆT NAM<br><b>Độc lập - Tự do - Hạnh phúc</b>",
             locationDate: "Đắk Lắk, ngày ..... tháng ..... năm 2026",
             personalTitle: "BÁO CÁO THÀNH TÍCH CÁ NHÂN",
@@ -1010,56 +969,25 @@ async function exportDocxFromTemplate(templateUrl, data, fileName) {
         a.click();
         document.body.removeChild(a);
     }
-    </script>
 
-    <!-- BỘ ĐẾM TRUY CẬP AN TOÀN -->
-    <style>
-      .counter-widget-vertical {
-        position: fixed; bottom: 8px; left: 8px;
-        background: rgba(15, 23, 42, 0.9); color: #e2e8f0;
-        padding: 5px 9px; border-radius: 6px;
-        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-        font-size: 11px; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
-        z-index: 99999; display: flex; flex-direction: column; gap: 3px;
-        backdrop-filter: blur(4px); border: 1px solid rgba(255, 255, 255, 0.15);
-        line-height: 1.2; user-select: none; width: fit-content;
-      }
-      .counter-row { display: flex; align-items: center; gap: 6px; white-space: nowrap; }
-      .online-dot { width: 6px; height: 6px; background-color: #22c55e; border-radius: 50%; display: inline-block; box-shadow: 0 0 5px #22c55e; animation: pulse 1.5s infinite; }
-      .counter-val { font-weight: 700; color: #38bdf8; margin-left: auto; }
-      @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
-    </style>
-
-    <div class="counter-widget-vertical">
-      <div class="counter-row">
-        <span class="online-dot"></span>
-        <span>Online:</span>
-        <span id="online-count" class="counter-val">1</span>
-      </div>
-      <div class="counter-row">
-        <span>🌐 Tổng lượt xem:</span>
-        <span id="total-views" class="counter-val">105</span>
-      </div>
-    </div>
-
-    <script>
-      (function initSafeCounter() {
+    function initSafeCounter() {
         let localCount = parseInt(localStorage.getItem('site_views') || '105');
         localCount++;
         localStorage.setItem('site_views', localCount);
-        document.getElementById('total-views').innerText = localCount.toLocaleString('vi-VN');
-      })();
+        const viewsEl = document.getElementById('total-views');
+        if (viewsEl) viewsEl.innerText = localCount.toLocaleString('vi-VN');
+    }
 
-      function updateOnlineUsers() {
-        document.getElementById('online-count').innerText = Math.floor(Math.random() * 3) + 1;
-      }
-      updateOnlineUsers();
-      setInterval(updateOnlineUsers, 15000);
+    function updateOnlineUsers() {
+        const el = document.getElementById('online-count');
+        if (el) el.innerText = Math.floor(Math.random() * 3) + 1;
+    }
+    setInterval(updateOnlineUsers, 15000);
     </script>
     
-    <!-- CHATBASE AI -->
+    <!-- CHATBASE AI EMBED -->
     <script>
-      window.chatbaseConfig = { chatbotId: "cuxqgU3a1vLNmHs3I3o-S" }
+      window.chatbaseConfig = { chatbotId: "cuxqgU3a1vLNmHs3I3o-S" };
     </script>
     <script src="https://www.chatbase.co/embed.min.js" chatbotId="cuxqgU3a1vLNmHs3I3o-S" domain="www.chatbase.co" defer></script>
 </body>
